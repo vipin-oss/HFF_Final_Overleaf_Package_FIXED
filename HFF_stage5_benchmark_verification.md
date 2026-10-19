@@ -43,9 +43,11 @@ Nothing in this report is labelled *validated*. Validation requires comparison w
 
 ### 1.2 What the table actually contains
 
-The publisher-hosted text of Chapter VII reproduces Table 43, including the parallel-plate limit. The relevant row is the aspect-ratio `2b/2a = 0.0` row, whose single-heated-wall entry is **4.861**. The same page records the provenance of the numbers in words:
+The publisher-hosted rendering of the Chapter VII text reproduces Table 43, including the parallel-plate limit. The relevant row is the aspect-ratio `2b/2a = 0.0` row, whose single-heated-wall entry is **4.861**. The accompanying narrative records the provenance of the numbers:
 
-> "Shah and London defined the Nusselt number with the hydraulic diameter based on the **wetted perimeter**, instead of the heated perimeter, as done in [Schmidt]. They **recomputed** Nu_T … and [these] are reported in Table 43 and Fig. 39."
+> "Shah and London [13] defined the Nusselt number with the hydraulic diameter based on the wetted perimeter, instead of the heated perimeter, as done in [95]. They recomputed Nu_T, as provided by Schmidt [252], and are reported in Table 43 and Fig. 39."
+
+(Quoted from the publisher's rendering of the chapter, not from a scanned copy of the printed page.)
 
 Two consequences follow immediately and matter for us:
 
@@ -55,7 +57,7 @@ Two consequences follow immediately and matter for us:
 ### 1.3 What thermal boundary condition the value belongs to
 
 - **T1 family**: one wall held at a **uniform (constant) temperature**, the opposite wall **adiabatic**. This is *not* uniform wall heat flux.
-- The sibling single-heated-wall value in the same chapter is **Nu_H1 = 5.385** for one wall at uniform heat flux with the other adiabatic (Table 44).
+- The sibling single-heated-wall value is **Nu_H1 = 5.385** for one wall at uniform heat flux with the other adiabatic (Table 44 of the same chapter; the value was verified in an earlier stage and was **not** re-inspected in this one).
 - The two-sided values belong to different configurations: **Nu_T = 7.541** (both walls at the same uniform temperature) and **Nu_H2 = 8.235** (both walls at equal uniform heat flux). The document already forbids using these as one-sided targets (Chapter 9); that prohibition is correct.
 
 So the four values used in V‑B map as:
