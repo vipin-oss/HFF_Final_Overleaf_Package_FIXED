@@ -186,3 +186,14 @@ independent reasons, neither of which is a document defect:
 Push the Stage 16 commit to `arena/c875f9b3-hff-final-overleaf-package-fix` and request a fresh
 independent audit of the **corrected sources**, explicitly asking whether I-01, I-03, I-04, I-05/I-06,
 I-08, I-09, I-11, I-13 and I-15 are now closed, and whether the new tests are non-vacuous.
+
+## Commit record
+
+| Commit | Contents |
+|---|---|
+| `7c9749f` | Stage 15 audit artefacts (parent of the Stage 16 work) |
+| `388688a` | Stage 16 source corrections D-26 … D-31, regression v2 (56 checks), mutation suite (6 mutants), packaging script, ZIP + manifest, README/ledger/log updates |
+
+Working tree at the time of writing: clean apart from this hash record. Branch:
+`arena/c875f9b3-hff-final-overleaf-package-fix` (push target; `origin/main` untouched at
+`5a255212`).
