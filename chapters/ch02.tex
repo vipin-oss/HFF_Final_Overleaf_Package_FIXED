@@ -131,10 +131,12 @@ channel} (hence $w=-d_2$ in terms of the upward-positive solid displacement $d_2
 is taken positive when the wall bows into the channel; within the small-slope assumption this gives
 the design relation $\kappa=-w^{''}$, and a constant eigen-curvature $\kappa_{\mathrm{th}}>0$
 produces $w=\kappa_{\mathrm{th}}x(L-x)/2\ge0$ (Section~\ref{sec:deriv:deflection}).
-Fluid heat flux along $+\bn$ carries heat out of the fluid. Using one normal on both sides of the
-traction equality is what renders the interface boundary terms in the weak statement of
-Section~\ref{sec:coupling} exactly antisymmetric, so that they cancel in a monolithic assembly
-without modelling error.
+Fluid heat flux along $+\bn$ carries heat out of the fluid, so the flux \emph{into} the fluid is
+$+k_f\nabla T_f\cdot\bn$ and is positive on the heated wall. Using one normal throughout makes the
+traction equality \eqref{eq:iftraction} and the flux equality \eqref{eq:ifflux} single-valued and
+gives the two subdomains opposite boundary-term signs. That convention is bookkeeping: it does not
+by itself make any interface integral cancel, and Section~\ref{sec:coupling} states what does and
+does not cancel and under which conditions.
 
 \begin{figure}[t]
 \centering

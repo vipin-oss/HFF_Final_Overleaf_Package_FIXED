@@ -35,9 +35,9 @@ $\bu\in V_g$, $p\in Q$, $T_f\in S_f$, $\bd\in V_s$, $T_s\in S_s$ such that
 \begin{align}
 &\hat a_f(\bu,\mathbf v)+b(\mathbf v,p)+c(\bu;\bu,\mathbf v)
 =\int_{\Ga}\sigma_f(\bu,p)\bn\cdot\mathbf v\,\mathrm ds
-+\int_{\Ga_{\mathrm{out}}}\sigma_f\bn\cdot\mathbf v\,\mathrm ds +\langle\text{data}\rangle,
++\int_{\Ga_{\mathrm{out}}}\sigma_f\bn\cdot\mathbf v\,\mathrm ds,
 \qquad b(\bu,q)=0\ \ \forall\,q, \label{eq:weakf}\\
-&\rho c_p\,a_T(T_f,\chi)+a_{kf}(T_f,\chi)
+&\rho c_p\,a_T(\bu;T_f,\chi)+a_{kf}(T_f,\chi)
 =+\int_{\Ga}k_f\nabla T_f\cdot\bn\,\chi\,\mathrm ds, \label{eq:weaktf}\\
 &\int_{\Om_s^0}\bsig(\bd,\theta):\beps(\boldsymbol\varphi)\,\mathrm dX
 =-\int_{\Ga}\bsig\bn\cdot\boldsymbol\varphi\,\mathrm ds, \label{eq:weaks}\\
@@ -49,34 +49,57 @@ for all test functions, where the bilinear and trilinear forms are
 \hat a_f(\bu,\mathbf v)&=2\mu\int_{\Om_f}\mathbf D(\bu):\mathbf D(\mathbf v)\,\mathrm dx,
 & b(\mathbf v,p)&=-\int_{\Om_f}p\nabla\cdot\mathbf v\,\mathrm dx,\\
 c(\bu;\bu,\mathbf v)&=\rho\int_{\Om_f}(\bu\cdot\nabla\bu)\cdot\mathbf v\,\mathrm dx,
-& a_T(T,\chi)&=\int_{\Om_f}(\bu\cdot\nabla T)\,\chi\,\mathrm dx,\\
+& a_T(\bu;T,\chi)&=\int_{\Om_f}(\bu\cdot\nabla T)\,\chi\,\mathrm dx,\\
 a_{kf}(T,\chi)&=k_f\int_{\Om_f}\nabla T\cdot\nabla\chi\,\mathrm dx,
 & a_{ks}(T,\chi)&=k_s\int_{\Om_s^0}\nabla T\cdot\nabla\chi\,\mathrm dX,
 \end{align*}
-and $\sigma_f=-p\bI+2\mu\mathbf D(\bu)$ is the fluid Cauchy stress. In $a_T$ the advecting velocity
-is the current state, so that the Newton linearization of the solution procedure below applies to
-$c$ and $a_T$ together. The sign of each boundary term is fixed
-by the outward normal of the subdomain concerned: with $\bn_f=\bn$ and $\bn_s=-\bn$, the two
-subdomains acquire opposite signs, which is precisely what permits the cancellation below. The
-interface mechanism is worth stating exactly, because it is the load-bearing sign argument of the
-coupling. After integration
-by parts, the fluid residual contains the interface term
-$-\int_{\Ga}\sigma_f\bn\cdot\mathbf v\,\mathrm ds$ (with $\bn$ the outward normal of $\Om_f$),
-while the solid residual contains $+\int_{\Ga}\sigma_s\bn\cdot\boldsymbol\varphi\,\mathrm ds$
-(the solid's outward normal on $\Ga$ is $-\bn$). Under the traction equality
-\eqref{eq:iftraction}, $\sigma_s\bn=\sigma_f\bn$, and with identical test functions on a
-conforming interface mesh the two terms enter the assembled residual with opposite signs and
-cancel identically; likewise the flux terms $-\int_{\Ga}k_f\nabla T_f\cdot\bn\,\chi\,\mathrm ds$
-and $+\int_{\Ga}k_s\nabla T_s\cdot\bn\,\chi\,\mathrm ds$ cancel under \eqref{eq:ifflux}. The
-monolithic statement therefore contains \emph{no} modelled interface quantity, which removes one
-class of coupling error by construction. Three conditions are required for the cancellation to
-survive discretization, and all three are part of the specification: (i) the single-normal
-convention of Section~\ref{sec:signs}; (ii) a conforming interface mesh, so that traction and
-temperature transfer without projection; and (iii) identical quadrature and the same
-isoparametric representation of the curved P2 interface on both sides, so that the two boundary
-integrals are evaluated on the same discrete surface --- this quadrature-consistency audit is
-part of tests V-B and V-D. The outflow term in \eqref{eq:weakf} is the do-nothing natural
-condition of Section~\ref{sec:bcs} and does not cancel.
+and $\sigma_f=-p\bI+2\mu\mathbf D(\bu)$ is the fluid Cauchy stress. The forms $\hat a_f$, $b$,
+$a_{kf}$ and $a_{ks}$ are bilinear; $c$ and $a_T$ are trilinear and are written with the advecting
+velocity in the first (parameter) slot, that velocity being the current state. The Newton
+linearization of the solution procedure below therefore applies to $c$ and $a_T$ together. The sign
+of each boundary term is fixed by the outward normal of the subdomain concerned: with $\bn_f=\bn$ and
+$\bn_s=-\bn$, the two subdomains acquire opposite signs. What follows from that must be read
+separately for the two couplings, because they are not the same kind of statement.
+
+\emph{Mechanics.} After integration
+by parts, the solid residual contains $+\int_{\Ga}\bsig_s\bn\cdot\boldsymbol\varphi\,\mathrm ds$
+(the solid's outward normal on $\Ga$ is $-\bn$), which under the traction equality
+\eqref{eq:iftraction} equals $+\int_{\Ga}\bsig_f\bn\cdot\boldsymbol\varphi\,\mathrm ds$, i.e.\ the
+virtual work of the fluid traction on the solid. The fluid residual contains the corresponding term
+$-\int_{\Ga}\bsig_f\bn\cdot\mathbf v\,\mathrm ds$, but on $\Ga_{\mathrm{if}}$ the velocity is
+prescribed by the no-slip condition \eqref{eq:ifkin}: admissible test functions vanish there, so
+this term is identically zero. The two mechanical terms therefore do \emph{not} cancel against one
+another. The fluid problem is closed by a Dirichlet condition on $\Ga_{\mathrm{if}}$, and the solid
+equation carries the fluid traction as a computed load; no interface traction is discretized as an
+independent unknown because it is evaluated from $(\bu,p)$, not because two nonzero integrals
+cancel. The reverse coupling acts through the domain: $\Ga_{\mathrm{if}}$ moves with $\bd$, so the
+fluid residual depends on $\bd$ through the geometry, and it is there that the shape-derivative
+terms of the monolithic escalation enter.
+
+\emph{Thermal.} The temperature is not prescribed on $\Ga_{\mathrm{if}}$. Continuity
+\eqref{eq:iftemp} is enforced by a single interface unknown shared by the two subdomains, so one
+test function $\chi$ serves both sides and the two residuals are summed for that unknown. The fluid
+residual contributes $-\int_{\Ga}k_f\nabla T_f\cdot\bn\,\chi\,\mathrm ds$ and the solid residual
+$+\int_{\Ga}k_s\nabla T_s\cdot\bn\,\chi\,\mathrm ds$; under the flux continuity \eqref{eq:ifflux}
+their sum vanishes, and the equation for the interface unknown becomes the discrete statement of
+normal-flux balance. Here the cancellation is genuine, and it is the reason no separate interface
+heat flux is discretized. It depends on the shared unknown: if the two temperatures were carried as
+separate unknowns with continuity imposed as an additional constraint, the interface terms would not
+cancel and the flux condition would have to be enforced explicitly.
+
+Both statements are exact for a common interface surface. The solid is posed on the reference
+configuration and the fluid on the deformed one, so the two boundary integrals are taken over
+$\Ga_{\mathrm{if}}^0$ and $\Ga_{\mathrm{if}}$ respectively; these coincide only to $O(\varepsilon)$
+in the strain, $5.4\times10^{-3}$ at the baseline (Assumption~A4). The cancellation is accordingly
+exact at the level of the model on a common surface, and accurate to that order in the adopted
+reference-configuration solid --- it is not an identity of the discrete system. Three conditions are
+required for it to survive discretization, and all three are part of the specification: (i) the
+single-normal convention of Section~\ref{sec:signs}; (ii) a conforming interface mesh, so that
+traction and temperature transfer without projection and the two discrete surfaces coincide; and
+(iii) identical quadrature and the same isoparametric representation of the curved P2 interface on
+both sides, so that the two boundary integrals are evaluated on the same discrete surface --- this
+quadrature-consistency audit is part of tests V-B and V-D. The outflow term in \eqref{eq:weakf} is
+the do-nothing natural condition of Section~\ref{sec:bcs} and does not cancel.
 
 \section{Solution procedure for the steady problem}
 The domain map $\widehat{\mathbf w}$ is defined as the solution of a pseudo-elastic problem on
