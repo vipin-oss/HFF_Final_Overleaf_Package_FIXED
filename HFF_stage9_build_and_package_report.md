@@ -193,3 +193,36 @@ Unchanged from Stage 7 — packaging resolves none of them:
 | Validation | **NOT PERFORMED** — no benchmark comparison has been run |
 
 Stage-7 audit totals, for the record: **19 PASS / 6 FAIL / 4 UNRESOLVED** across 29 findings.
+
+---
+
+## 10. Stage-10 addendum — build-environment re-investigation (19 October 2026)
+
+Added in Stage 10; the body of this report above is left as it was written at Stage 9.
+
+A reported `bibtex: Permission denied` was investigated. Findings:
+
+1. **The message cannot originate in this environment.** No `bibtex`, `pdflatex`, `latexmk` or
+   `tectonic` binary exists anywhere on the filesystem (`find / -xdev` returns only the Python
+   `bibtexparser` library directory), `command -v bibtex` is empty, and running `bibtex main` here
+   produces `/bin/bash: line 1: bibtex: command not found` with **exit 127** — not the exit-126
+   class that a permission denial produces. There are no `.aux`, `.log`, `.bbl` or `.blg` files
+   anywhere in the workspace, so no build has ever been executed here.
+2. **A toolchain was still pursued further than at Stage 9.** The npm package
+   `node-tectonic-linux-x64` (versions 1.0.0 and 1.1.0) installs a real 55.8 MB engine binary, but
+   the binary will not start on this image: it requires `GLIBC_2.38` and `GLIBC_2.39` (image has
+   glibc **2.36**, Debian 12) and is missing `libgraphite2.so.3`. The static musl build that would
+   avoid both problems is served only from `release-assets.githubusercontent.com`, which is
+   unreachable, and Tectonic's bundle relay `relay.fullyjustified.net` is unreachable as well.
+   WASM engines (`@typeward/texlive-wasm`, `texlyre-busytex`, `@siglum/engine`) fetch their TeX Live
+   data from GitHub releases or a CDN at runtime, equally unreachable.
+3. **Build status is unchanged: NOT VERIFIED.** pdfLaTeX, BibTeX and both further passes were not
+   run; no log, no warnings, no PDF. No bibliography output was fabricated and no `.bbl` was
+   hand-written.
+
+Because no source file changed, no new package was built: `HFF_Stage9_Overleaf_Source.zip` remains
+current at 103,062 bytes, SHA-256
+`cbed50183679c48f7cef679ca5df2cb1c6c61a75f3c29880e7358e7fae396953`, 24 entries, re-verified in Stage 10.
+
+Full evidence, the diagnostic procedure for the permission error on a machine that does have TeX,
+and 16 static build-risk checks are in **`HFF_stage10_build_environment_report.md`**.
