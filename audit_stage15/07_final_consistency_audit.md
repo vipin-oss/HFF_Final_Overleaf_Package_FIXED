@@ -131,7 +131,7 @@ what a batch broke.
 | SUPG label `eq:supgwf` referenced, not orphaned | yes |
 | register D-25 annotated as partly superseded | yes (D-26, D-27, D-30) |
 | 31 register rows, 88 unique labels, no dangling refs | yes |
-| README names exactly the files the ZIP contains | yes (69 members, all files, no directory entries) |
+| README names exactly the files the ZIP contains | yes (every member is a file, no directory entries; counts and hashes are in the manifest, not repeated here) |
 
 Defects introduced by the batches themselves, caught on this pass and fixed:
 

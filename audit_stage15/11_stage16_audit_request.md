@@ -1,7 +1,9 @@
 # Request for a fresh independent audit (Stage 16)
 
 **Branch:** `arena/c875f9b3-hff-final-overleaf-package-fix`
-**Commit under audit:** `8c3e716` (implementation `388688a`, hash record `0bc2888`)
+**Commit under audit:** the tip of the branch. The substantive implementation is `388688a`; the
+commits after it only add the commit-hash record, this request, and a deterministic rebuild of the
+package, so auditing the tip is equivalent to auditing `388688a` plus record-keeping.
 **Baseline audited previously:** `7c9749f` — thank you; every finding below refers to it.
 
 Please audit the **corrected sources**, not this summary. Nothing here is offered as evidence of
