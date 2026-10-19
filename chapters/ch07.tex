@@ -1,0 +1,144 @@
+\chapter{Baseline operating conditions and analytical calculations}
+\label{ch:baseline}
+
+Every quantity below is recomputed from the inputs of Tables~\ref{tab:geometry} and
+\ref{tab:props} by the equations of Chapters~\ref{ch:equations}--\ref{ch:dimensionless}; the
+arithmetic cells in Appendix~\ref{app:arith} show representative substitutions. Quantities that
+depend on datasheet values not yet frozen (Appendix~B, C-6) carry the remark ``datasheet
+dependent'' and would shift with the frozen data, without structural change to the analysis.
+
+\section{Baseline calculation table}
+\label{sec:baselinecalc}
+\begin{longtable}{p{3.0cm}p{3.4cm}p{4.2cm}p{2.6cm}}
+\caption{Analytical baseline at the design point. ``R'' refers to the equation number where the
+expression is derived. Datasheet-dependent inputs: see Table~\ref{tab:props}.}\label{tab:baseline}\\
+\toprule
+Quantity & Expression & Substitution and result & Basis \\
+\midrule
+\endfirsthead
+\toprule
+Quantity & Expression & Substitution and result & Basis \\
+\midrule
+\endhead
+$\mathrm{Re}_{D_h}$ & $2\rho UH_0/\mu$ & $2(10^3)(5\times10^{-2})(5\times10^{-4})/10^{-3}=50$ & \eqref{eq:momentum} \\
+$\mathrm{Pr}$; $\mathrm{Pe}$ & $\mu c_p/k_f$; $\mathrm{Re}_{D_h}\mathrm{Pr}$ & $6.97$; $348$ & \eqref{eq:fluidenergy} \\
+$f_D$ (rigid check) & $96/\mathrm{Re}_{D_h}$ & $1.92$ & \cite{shah1978laminar} \\
+$\Delta p$ & $12\mu UL/H_0^2$, \eqref{eq:dp} & $72$ Pa; checks: $f_D(L/D_h)\rho U^2/2=72$ Pa; $\Delta pH_0=2\tau_wL$ with $\tau_w=0.6$ Pa & \eqref{eq:dp} \\
+$\Delta T^{*}$ & $q^{''}H_0/k_f$ & $(5\times10^3)(5\times10^{-4})/0.6=4.17$ K & scale of Ch.~\ref{ch:dimensionless} \\
+$\Delta T_t$ & $q^{''}d/k_s$ & $(5\times10^3)(3\times10^{-3})/0.25=60$ K & \cite{carslaw1947conduction}; datasheet dependent \\
+$\kappa_{\mathrm{th}}$ & $(1+\nu)\alpha q^{''}/k_s$, \eqref{eq:kappa} & $1.4(5\times10^{-5})(5\times10^3)/0.25=1.4$ \si{\per\metre} & \eqref{eq:kappa}; datasheet dependent \\
+$w_{\max}$ (linear) & $\kappa_{\mathrm{th}}L^2/8$, \eqref{eq:wmax} & $1.4(9\times10^{-4})/8=1.58\times10^{-4}$ m & \eqref{eq:wmax} \\
+$w_{\max}$ (beam--column, frozen force) & \eqref{eq:beamcolsol}, $\mu L=1.65$ & $2.19\times10^{-4}$ m; $w_{\max}/H_0=0.438$ (self-consistent comparison: $2.14\times10^{-4}$ m, $0.428\,H_0$) & \eqref{eq:beamcolbase} \\
+$w_{\max}/H_0$ & \eqref{eq:relbow}; \eqref{eq:beamcolbase} & $0.315$ (linear); $0.438$ (beam--column); A-3 check below & \eqref{eq:relbow} \\
+fibre / arc strain & $(\kappa_{\mathrm{geo}}-\kappa_{\mathrm{th}})d/2$; $\tfrac12\langle w^{'}{}^2\rangle$ & $9.9\times10^{-4}$; $1.8\times10^{-4}$ & \eqref{eq:beamcol}; \eqref{eq:nupdate} \\
+$\bar\theta$ (mean wall rise) & $\Delta T_t/2+q^{''}/h+\Delta T_b/2$ & $30+1.6+0.7\approx32$ K & estimate; see text \\
+$N_\theta$ & $-Ed\alpha\bar\theta/(1-\nu)$, \eqref{eq:ntheta} & $-(3.6\times10^9)(3\times10^{-3})(5\times10^{-5})(32)/0.6=-2.9\times10^4$ N/m & \eqref{eq:ntheta} \\
+$D_s$ & $Ed^3/[12(1-\nu^2)]$ & $(3.6\times10^9)(2.7\times10^{-8})/10.08=9.6$ N\,m & \eqref{eq:beam} \\
+$N_{\mathrm{cr}}$ & $\pi^2D_s/L^2$ & $9.87(9.6)/(9\times10^{-4})=1.06\times10^5$ N/m & \cite{timoshenko1961stability} \\
+$\bar T_{\mathrm{cr}}$ & \eqref{eq:tcr} & $\pi^2(3\times10^{-3})^2/[12(5\times10^{-5})(1.4)(9\times10^{-4})]=117$ K & \eqref{eq:tcr} \\
+$M_b$ & $\bar T_{\mathrm{cr}}/\bar\theta$ & $117.5/32.3=3.64$ ($\ge2$, bound A-2 met) & def.\ Ch.~\ref{ch:dimensionless} \\
+$w_p$ & $5\bar pL^4/(384D_s)$, $\bar p$ from \eqref{eq:pbar} & $5(84)(8.1\times10^{-7})/(384\cdot9.6)=9.2\times10^{-8}$ m & \eqref{eq:wpdef} \\
+$\Gamma_p$ & $w_{\max}/w_p$, \eqref{eq:gammap} & $2.19\times10^{-4}/9.2\times10^{-8}=2.4\times10^{3}$ ($\ge5$, A-5 met) & \eqref{eq:gammap} \\
+$\sigma_{\mathrm{bend}}$ & $6|M_{\mathrm{mid}}|/d^2$, $M_{\mathrm{mid}}$ from \eqref{eq:beamcol} & $6(6.4)/9\times10^{-6}=4.2\times10^{6}$ Pa & \eqref{eq:beamcol} \\
+$\sigma_{\mathrm{memb}}$ & $-E\alpha\bar\theta/(1-\nu)$ & $-(3.6\times10^9)(5\times10^{-5})(32)/0.6=-9.6\times10^{6}$ Pa & \eqref{eq:widebeam} \\
+stress fraction & $|\sigma|_{\max}/\sigma_y$, $|\sigma|_{\max}\simeq1.4\times10^{7}$ Pa & $0.15$ with $\sigma_y\simeq9\times10^7$ Pa (A-6 cap $0.2\sigma_y$ met, datasheet band) & datasheet dependent \\
+$\mathrm{Gr}$ & $g\beta_f\Delta T^*H_0^3/\nu_{\mathrm{kin}}^2$ & $(9.81)(2.1\times10^{-4})(4.17)(1.25\times10^{-10})/10^{-12}=1.07$ & datasheet dependent ($\beta_f$) \\
+$\mathrm{Ri}$ & $\mathrm{Gr}/\mathrm{Re}_{H_0}^2=g\beta_f\Delta T^*H_0/U^2$, \eqref{eq:grri} & $1.07/625=1.7\times10^{-3}$ ($3.4\times10^{-3}$ on the $D_h$ basis) & \eqref{eq:grri} \\
+$\mathrm{Br}$ & $\mu U^2/(k_f\Delta T^*)$ & $(10^{-3})(2.5\times10^{-3})/2.5=1.0\times10^{-6}$ & \eqref{eq:fluidenergy} note \\
+$\Delta T_b$ & $q^{''}L/(\dot m'c_p)$, $\dot m'=\rho UH_0$ & $150/(0.025\cdot4180)=1.44$ K & energy balance \\
+$h_{\mathrm{rigid}}$; $q^{''}/h$ & $\mathrm{Nu}_{H1}k_f/D_h$ & $(5.385)(0.6)/10^{-3}=3231$ \si{\watt\per\square\metre\per\kelvin}; $1.55$ K & \cite{shah1978laminar} (H1 family) \\
+$t_{\mathrm{wave}}$ & $d\sqrt{\rho_s/E}$ & $1.8\times10^{-6}$ s & Sec.~\ref{sec:steadytimes} \\
+$t_s$; $t_f$ & $d^2/\kappa_s$; $H_0^2/\kappa_f$ & $51$ s; $1.7$ s & Sec.~\ref{sec:steadytimes} \\
+$\xi$ & $\beta^2T_0/[(\lambda{+}2\mu_L)\rho_sc_s]$, $T_0=293$ K & $2.2\times10^{-2}$ & \cite{boley1960theory} \\
+$L_h$; $L_T$ (entry lengths, est.) & $0.05\,\mathrm{Re}_{D_h}D_h$; $0.05\,\mathrm{Pe}\,D_h$ & $2.5$ mm; $17.4$ mm & engineering estimates \\
+\bottomrule
+\end{longtable}
+
+The mean-wall-rise estimate $\bar\theta$ collects the one-dimensional through-wall mean drop
+$\Delta T_t/2$, the interface excess over the bulk fluid $q^{''}/h$ with the rigid-wall H1
+coefficient, and half the bulk rise; it is an estimate with component-wise accuracy, and main
+sweeps will report $\bar\theta$ as a range rather than a point value (Appendix~B, register D-7).
+
+\section{Interpretation}
+\label{sec:interpretation}
+\textbf{(i) What sets the deformation magnitude.} Since $\kappa_{\mathrm{th}}=(1+\nu)\alpha
+q^{''}/k_s$, the thermal curvature at fixed material scales linearly with the applied flux and is
+\emph{independent of the wall thickness}: thickness cancels between the through-wall resistance and
+the curvature law. The relative bowing \eqref{eq:relbow} is thus controlled by the geometric ratio
+$\Lambda=L/H_0$ and the material group $\alpha/k_s$. At the baseline the linear relation gives
+$w_{\max}^{\mathrm{lin}}/H_0=0.315$ and the beam--column form of
+Section~\ref{sec:deriv:beamcolumn} --- the frozen-force reduction appropriate to the strip's own
+membrane state --- gives the adopted $w_{\max}/H_0=0.438$ (self-consistent comparison value
+$0.428$; the reduction is conservative by $2.3\%$): the deformation is a substantial
+modification of the passage, and the kinematic conditions of bound A-3 (fibre strain
+$9.9\times10^{-4}$, total surface strain $5.4\times10^{-3}$, arc strain
+$1.8\times10^{-4}$, slope $0.027$~rad) are met with wide margins.
+
+\textbf{(ii) Why this mechanism is specific to the wall material class.} Repeating cell
+$\kappa_{\mathrm{th}}$ for stainless steel ($k_s=16$ \si{\watt\per\metre\per\kelvin},
+$\alpha=1.2\times10^{-5}$ \si{\per\kelvin}) at the same flux and geometry gives
+$\kappa_{\mathrm{th}}=1.2\times10^{-5}\times1.4\times(5\times10^3)/16=5.3\times10^{-3}$
+\si{\per\metre} and $w_{\max}/H_0\approx1.2\times10^{-3}$: a physically real deformation that is
+irrelevant for the convective field. The combination of low $k_s$ and high $\alpha$ of the polymer
+class is what raises the bowing by more than two orders of magnitude; this material dependence,
+rather than any fluid-side property, selects the design space of the study.
+
+\textbf{(iii) The binding mechanical constraints are deformation and stress, with buckling as the
+outer ceiling.} With the datum-consistent strip load, $\Gamma_p\approx2.4\times10^{3}$ at the
+baseline: pressure-induced deflection is negligible against thermal bowing throughout the design
+space examined (bound A-5). Under the frozen-force beam--column relation the admissible heating
+is capped in sequence, all three ceilings scaling with
+$\kappa_{\mathrm{geo}}\sim\kappa_{\mathrm{th}}$ and $\bar\theta\propto q^{''}$: the A-3
+mesh-generation bound $|w|/H_0\le0.5$ is reached at
+$N_\theta^c/N_{\mathrm{cr}}=0.30$, i.e.\ $q^{''}\approx5.5\times10^{3}$
+\si{\watt\per\square\metre}; the wall-stress cap A-6 ($\sigma_{\max}\le0.2\sigma_y$,
+$\sigma_{\max}\approx13.9$ MPa at the baseline) at
+$N_\theta^c/N_{\mathrm{cr}}=0.33$, i.e.\ $q^{''}\approx5.9\times10^{3}$
+\si{\watt\per\square\metre} ($w_{\max}/H_0\approx0.56$, $M_b=3.1$, still sub-critical by A-2);
+and only at the extreme by buckling, $M_b\ge2$ restricting $\bar\theta\le58.8$ K, i.e.\
+$q^{''}\approx9.1\times10^{3}$ \si{\watt\per\square\metre}
+($N_\theta^c/N_{\mathrm{cr}}=0.5$, $w_{\max}/H_0\approx1.2$ frozen-force), at which the
+deflection would be of order $H_0$ and unacceptable in its own right. Within the envelope so
+bounded ($N_\theta^c/N_{\mathrm{cr}}\le0.33$) the frozen-force reduction of
+Section~\ref{sec:deriv:beamcolumn} carries a deflection error below $4\%$, one-sided
+(conservative) against the self-consistent von K\'arm\'an solution. The design-ordering
+statement of the earlier draft --- ``the binding constraint is buckling'' --- is therefore
+corrected: deformation kinematics and stress bind first at the baseline geometry, and buckling
+caps the extreme (Appendix~B, register D-15; the catalog of $\bar T_{\mathrm{cr}}$ versus
+thickness is in Appendix~\ref{app:arith}, cell A4).
+
+\textbf{(iv) Stress state.} The load-case decomposition \eqref{eq:superposition} splits the wall
+stress into a bending part (beam--column extrema $\pm4.2$ MPa at the faces near mid-span) and a
+compressive membrane part ($-9.7$ MPa, uniform). The combined magnitude $\sim14$ MPa is about
+$0.15$ of the PEEK yield stress, inside the A-6 cap with margin $\ge6$ at the band edge; residual
+compressive membrane stress is the by-product of the axial constraint that also produces the
+buckling ceiling.
+
+\textbf{(v) Thermal bookkeeping.} The fluid picks up only $\Delta T_b=1.44$ K of bulk rise and an
+interface excess of about $1.6$ K, while the wall sustains a 60 K through-thickness drop.
+Because the thermal entry length exceeds the heated length ($L/L_T\approx1.7$), the
+developing-flow transfer coefficient along the strip is enhanced relative to the fully developed
+value used in the estimate of Section~\ref{sec:baselinecalc} (Table~\ref{tab:baseline}):
+the tabulated $\bar\theta$ is accordingly a conservative (upper) estimate, to be revised once
+computed fields exist. This
+partition (conductivity ratio $R_k=0.42$, thickness ratio $D_r=6$) confirms that constant fluid
+properties are self-consistent (bound A-4) and that the wall temperature field is dominated by the
+imposed load, not by feedback from the fluid -- the \emph{deformation}, however, is exactly the
+first-order bookkeeping that changes the convective boundary condition.
+
+\section{Buoyancy disposition at the baseline}
+\label{sec:buoyancy-baseline}
+At the baseline $\mathrm{Gr}=1.07$ and, on the length-consistent definition \eqref{eq:grri},
+$\mathrm{Ri}=1.7\times10^{-3}$ ($3.4\times10^{-3}$ on the $D_h$ basis; an earlier draft quoted
+$\mathrm{Ri}=0.43$ from a mixed-basis division with mis-transcribed powers of ten, corrected in
+register D-14). The buoyant forcing is therefore three orders of magnitude below the inertial
+forcing, and the constant-density equations \eqref{eq:momentum} are adopted on the standard
+order-of-magnitude argument, without recourse to stratification stability. Two provisions are
+retained. First, a Boussinesq body-force term is kept as a dormant option in the weak form (one
+term), so that any future operating point with substantially larger fluid-side temperature
+excursions can be re-examined at negligible cost. Second, for context on the regime where the
+exclusion would fail --- bulk Richardson numbers of order $10$ and above, where stable
+stratification measurably modifies and deteriorates channel heat transfer --- see
+\cite{draskic2025stability}. The corrected estimate closes the question at the baseline; the
+disposition is revisited only if a parameter-study point drives Ri above $\mathcal{O}(10^{-2})$,
+which is recorded as a regime guard on the reported set.

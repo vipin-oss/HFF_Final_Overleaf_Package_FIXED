@@ -1,0 +1,141 @@
+\chapter{Audit record: discrepancies, evidence status, and open checks}
+\label{app:audit}
+
+This appendix is deliberately separated from the research exposition of Chapters
+\ref{ch:intro}--\ref{ch:limitations}. It records, for independent review, the discrepancies found
+during preparation of the formulation, the consolidated status of evidence, the bibliographic and
+data items still open, and the conditions attached to the staged implementation decisions. The six
+source documents from which this record derives are preserved verbatim in the \texttt{audit/}
+folder of this package.
+
+\section{Discrepancy register}
+Where working drafts disagreed with each other or with the derivations presented here, neither
+value was silently preferred; the arithmetic was redone and both positions are recorded.
+
+\begin{longtable}{p{1cm}p{4.6cm}p{5.2cm}p{3.2cm}}
+\caption{Discrepancy register D-1\,\ldots\,D-20 (D-14--D-19 added at the second reconciliation pass; D-20 at the Stage-3 synchronization).}\label{tab:register}\\
+\toprule
+ID & Divergence & Resolution adopted (with basis) & Status \\
+\midrule
+\endfirsthead
+\toprule
+ID & Divergence & Resolution & Status \\
+\midrule
+\endhead
+D-1 & Plane-strain constitutive forms across drafts differed in the treatment of $\sigma_{zz}$ (occasionally set to zero) & Rigorous $\eps_{zz}=0$ elimination, \eqref{eq:sigmazz}, \eqref{eq:widebeam} & resolved \\
+D-2 & Free uniform-expansion mean-stress expectation quoted as $\sigma_m=0$ & Plane-strain value $\sigma_m=-E\alpha\theta/3$, \eqref{eq:freemean} & resolved \\
+D-3 & Early conceptual framing spoke of pressure-augmented compliance and buckling-linked deformation as the mechanism & Pure thermal-eigen-curvature mechanism adopted; supports and buckling treated as regime constraints only & resolved \\
+D-4 & Critical temperature derived with the clamped--clamped eigenvalue ($\approx200$ K) versus the pinned design & Pinned value \eqref{eq:tcr}; catalog in cell A4 & resolved, design-locked \\
+D-5 & Pressure-drop expression printed with $H_0^3$ (dimensionally Pa/m), giving $\Delta p\sim1.4\times10^5$ Pa and $\Gamma_p\simeq3$ & Correct \eqref{eq:dp}; $\Delta p=72$ Pa at baseline (cell A1); $\Gamma_p$ now governed by D-13 & resolved \\
+D-6 & Friction-factor basis left implicit between text and tables & Darcy $f_D\mathrm{Re}_{D_h}=96$; basis must be printed on computed outputs & resolved as convention \\
+D-7 & Mean wall rise $\bar\theta$ treated variously as exact linear-drop value and as order-one estimate & Estimate with component-wise accuracy (Table~\ref{tab:baseline}); sweeps to report ranges & resolved as convention \\
+D-8 & Buoyancy exclusion first justified by $\mathrm{Ri}=0.43<1$ alone (value itself defective: mixed length basis and mis-transcribed powers) & Length-consistent re-evaluation: $\mathrm{Ri}=\mathrm{Gr}(H_0)/\mathrm{Re}(H_0)^2=1.7\times10^{-3}$ ($3.4\times10^{-3}$ on the $D_h$ basis); exclusion by three-order magnitude margin; regime guard $\mathrm{Ri}>10^{-2}$ re-arms a Boussinesq-enabled case; dormant Boussinesq term kept in the weak form & resolved (second pass) \\
+D-9 & Constant fluid properties asserted project-wide & Self-consistency shown at baseline only (fluid-side excursions 1--3 K); bound A-4 enforced & resolved at baseline, bounded \\
+D-10 & Positioning note ``no two-way T-FSI exists'' & T-FSI exists as a class \cite{kumar2026thermo,saleh2025laminar}; scoped claim of Ch.~\ref{ch:contribution} replaces it & resolved \\
+D-11 & Admissibility bound $|w|/H_0\le0.2$ conflicted with the baseline value 0.315; membrane strain figures of different origin mixed & Strain-based bounds (A-3, re-derived at the beam--column level, D-15): bending fibre $9.9\times10^{-4}$, total mechanical surface $5.4\times10^{-3}$, arc-stretching $1.8\times10^{-4}$ (circular-arc estimate $1.6\times10^{-4}$), slope $0.027$~rad; mesh-generation bound 0.5 with positive Jacobians & resolved \\
+D-12 & Restrained-strip benchmark paired $\sigma_{xx}$ of one restraint case with $\sigma_m$ of another & Cases separated: \eqref{eq:vca1} and \eqref{eq:vcb1} & resolved \\
+D-13 & Pinned--pinned uniform-load deflection written with the clamped--clamped coefficient $1/384$ & Correct pinned coefficient $5/384$, \eqref{eq:wpdef}; load level re-examined in D-16; conclusion (thermal dominance) unchanged & resolved \\
+D-14 & $\mathrm{Gr}$ quoted as $1.1\times10^3$, $\mathrm{Ri}$ as $0.43$, $\mathrm{Br}$ as $1.0\times10^{-3}$ (three powers-of-ten defects in one cluster; an intermediate audit corrected $\mathrm{Ri}$ to $4.3\times10^{-4}$ on the $H_0$ basis but retained the mixed-division definition) & All three recomputed with full arithmetic (cells A6a, dictionary): $\mathrm{Gr}=1.07$; $\mathrm{Ri}=\mathrm{Gr}(H_0)/\mathrm{Re}(H_0)^2=1.7\times10^{-3}$ on the single-length basis, with the basis stated on the group; $\mathrm{Br}=1.0\times10^{-6}$ & resolved (second pass) \\
+D-15 & Baseline bowing quoted from the zero-force parabola although the strip's own thermal membrane force is finite ($N_\theta^c/N_{\mathrm{cr}}=0.275$); binding mechanical constraint stated as buckling & Beam--column relation \eqref{eq:beamcolsol} adopted: $w_{\max}=2.19\times10^{-4}$ m $=0.438H_0$ (amplification $1.39$; cell A9); A-3 strain bounds re-derived at that level; constraint ordering corrected. Ceiling re-solve at Stage 3 on the frozen-force relation (the second-pass interpolation used an inconsistent amplification scaling): A-3 mesh bound ($|w|/H_0\le0.5$) binds at $N_\theta^c/N_{\mathrm{cr}}=0.302$ ($q''\approx5.5\times10^3$ \si{\watt\per\square\metre}), the wall-stress cap at $0.327$ ($\approx5.9\times10^3$), buckling remains the outer ceiling ($M_b=2$ at $0.5$, $\approx9.1\times10^3$); ordering unchanged & resolved (second pass; ceilings exact at Stage 3, D-20) \\
+D-16 & Mean hydraulic load on the strip taken as $\bar p=\Delta p/2=36$ Pa, although the pressure \emph{level} is fixed by the outlet datum B2 and the casing environment, not by $\Delta p$ & Datum statement added to A9/B2: gauge $48$--$120$ Pa along the strip, mean $\bar p=84$ Pa \eqref{eq:pbar}; $w_p=9.2\times10^{-8}$ m, $\Gamma_p=2.4\times10^3$ (cell A8); conclusion (thermal dominance, $\Gamma_p\gg5$) unchanged under any plausible casing datum & resolved (second pass) \\
+D-17 & Bending-stress scale quoted from the fully restrained-curvature expression $E\kappa_{\mathrm{th}}(d/2)/(1-\nu^2)=9.0$ MPa, which corresponds to no admissible support state of the pinned strip & Beam--column mid-span moment used instead: $M_{\mathrm{mid}}=-6.4$ N\,m, $\sigma_{\mathrm{bend}}=4.2$ MPa; combined stress $\approx14$ MPa $=0.15\sigma_y$ (cell A9) & resolved (second pass) \\
+D-18 & Symbol collisions: conductivity ratio $K$ and thickness ratio $D$ against bulk modulus and rate-of-deformation tensor; conduction matrix $K$ against capacity matrix in the solver equations & Renamed: $R_k$, $D_r$, $K_T$, $C_{\mathrm{lump}}$ (Ch.~\ref{ch:dimensionless}, \ref{ch:numerics}) & resolved (second pass) \\
+D-19 & Admissibility bound A-6 worded ``within $20\%$ of the yield stress'', which reads as $0.8\sigma_y$ & Recast as design cap $\sigma_{\max}\le0.2\sigma_y$ with margin statement (Ch.~\ref{ch:dimensionless}) & resolved (second pass) \\
+D-20 & The beam--column equation was described as the ``consistent von K\'arm\'an wall equation'' and the frozen-force treatment as ``self-consistent''; the second-pass ceiling estimates used an inconsistent amplification scaling; three Chapter-11 limitation updates (buoyancy, supports, reduced wall equation) were lost to a failed editing pass and absent from Revision 2 & Targeted audit (beam--column consistency) reclassified the model: reduced (frozen-force) von K\'arm\'an reduction, first iterate of the compatibility update \eqref{eq:nupdate}; justified with explicit limitation --- overpredicts the self-consistent deflection by $2.3\%$ at baseline ($0.438$ vs $0.428\,H_0$), error $<4\%$ inside the admissible envelope, one-sided (conservative), buckling margin $M_b=3.64$ exact, error grows beyond $N_\theta^c/N_{\mathrm{cr}}\approx0.5$ where escalation triggers; force relaxation $6.1\%$ (first iterate), $5.9\%$ (self-consistent); ceilings re-solved exactly (D-15); sign convention (signed resultant $N_\theta<0$ in compression vs positive magnitude $N_\theta^c$) stated; Chapter-11 limitations restored & resolved (Stage 3 synchronization) \\
+\bottomrule
+\end{longtable}
+
+\section{Consolidated evidence status}
+The external claim-\--evidence register (\texttt{audit/HFF\_claim\_evidence\_register.csv}, 41
+entries) is summarised here with status labels restricted to this appendix:
+\begin{center}
+\begin{tabular}{lr}
+\toprule
+Status in the register & Count \\
+\midrule
+\VER & 18 \\
+\VER{} as specification/convention & 4 \\
+\VWC & 3 \\
+derived (with assumed property inputs as noted) & 2 \\
+bounded claims, recommendations, decisions & 5 \\
+\UNR{} / data not extracted / not applicable & 5 \\
+\INC{} (superseded by this document) & 4 \\
+\midrule
+Total & 41 \\
+\bottomrule
+\end{tabular}
+\end{center}
+All statements superseded by draft errors have been absorbed into Table~\ref{tab:register}; none
+remains active in the equations of the present formulation. Nothing marked \UNR{} may be quoted
+as fact in any manuscript derived from this document.
+
+\section{Open checks (with named action items)}
+\begin{itemize}\itemsep1pt
+\item \textbf{C-1} Digit-level extraction of the T1 Nusselt value from the primary table of
+\cite{shah1978laminar}. Only H1 and T/H2 values are anchored at source level.
+\item \textbf{C-2} Extraction and geometry matching ($R_k$, $D_r$, $\mathrm{Pe}$) of a published
+conjugate thick-wall channel Nusselt series for V-D. The flattened thick-wall channel series of
+\cite{rahimi2024conjugate} (steady laminar water, constant outer wall temperature, Re 50--1250,
+single-side heating, reported thickness- and conductivity-ratio parameters) is the designated
+matching target identified at the second pass; the digit-level matching points remain to be
+extracted.
+\item \textbf{C-3} Construction of the steady compliant-channel benchmark data set for V-E from the
+lubrication/plate-theory predictions of \cite{christov2018flow} (shallow-channel limit).
+\item \textbf{C-6} Freeze of the PEEK datasheet set ($E,\nu,\alpha,k_s,\rho_s,c_s$, yield band) and
+of $\beta_f$ at fixed $T_{\mathrm{ref}}$; until then, baseline numbers carry the marked dependency.
+\item \textbf{C-7} Systematic originality search (Scopus/WoS and full-document pass), after which
+the positioning of Chapter~\ref{ch:contribution} may be finalised.
+\item \textbf{C-9} Outflow-condition sensitivity (exit length, no-backflow, datum convention) for
+condition B2.
+\item \textbf{C-12} Commitment to the second-solver platform (FEniCS default) required by
+Section~\ref{sec:replication}.
+\end{itemize}
+
+\section{Bibliographic integrity statement}
+Every entry in \texttt{references.bib} was verified at assembly against Crossref metadata or a
+publisher record; DOI, volume, pages, and authorship were confirmed at source level for all
+journal articles and for the book chapters cited. Two records are intentionally incomplete:
+\cite{gupta2024photothermo} (title and DOI not retrievable at assembly; indexing facts verified
+from the publication record) and the T1 digit of \cite{shah1978laminar} pending C-1. No entry
+contains invented fields; fields not verified are either absent or marked in \texttt{note}.
+
+\section{Staged decisions carried from the audit}
+Isolated solver verifications may proceed as specified in Chapter~\ref{ch:validation} (V-A without
+condition; V-B after C-1 for T1 quotations; V-C with the corrected unit-test expectations of
+register D-2 and D-12). Coupled production computations remain on HOLD pending C-2, C-3,
+C-6, and implementation of regime guards as runtime assertions (the buoyancy check B-1 is closed
+by the corrected estimate, D-8, and survives only as the regime guard); manuscript positioning
+statements remain on HOLD pending C-7. These decisions are recorded here verbatim in effect: \emph{no} part
+of this document authorises coupled production runs.
+
+\section{Second reconciliation pass: scope and disposition}
+\label{sec:secondpass}
+An independent second reconciliation pass re-derived every dimensionless group and design
+quantity of the formulation from its defining expression with explicit units and substitutions,
+re-derived the pinned beam--column relation from the von K\'arm\'an wall equations, and
+re-examined each item of the register above against both the original working values and the
+first-pass audit values; neither source was accepted automatically. The outcomes are recorded in
+rows D-14--D-19 and in the reconciliation log accompanying this document. Items resolved at the
+second pass: the Grashof/Richardson/Brinkman cluster (D-14), the finite-force bowing relation and
+the resulting constraint ordering (D-15), the hydraulic load datum (D-16), the bending-stress
+scale (D-17), the symbol collisions (D-18), and the A-6 wording (D-19). Items deliberately left
+open, with named actions: C-1 (T1 Nusselt digits), C-2 (digit-level V-D matching), C-3 (V-E data
+set), C-6 (property freeze), C-7 (systematic originality search), C-9 (outflow-condition
+sensitivity), and C-12 (second-solver platform commitment). No discrepancy was resolved by
+adjusting geometry, material data, or operating conditions.
+
+\section{Stage-3 synchronization: beam--column model classification}
+\label{sec:stage3}
+A targeted consistency audit of the beam--column model (record
+\path{HFF_Reconciliation_2/HFF_beamcolumn_model_consistency.md}) confirmed the adopted
+equation as the \emph{reduced (frozen-force) von K\'arm\'an} beam--column relation --- the
+transverse member of the von K\'arm\'an system with the membrane force frozen at its
+blocked-state value --- and quantified its error against the fully consistent (force-updated)
+solution: $2.3\%$ overprediction of $w_{\max}$ at the baseline, one-sided (conservative),
+below $4\%$ inside the admissible envelope, with an exact buckling margin; the error grows
+beyond $N_\theta^c/N_{\mathrm{cr}}\approx0.5$, where the escalation criterion of
+Chapter~\ref{ch:numerics} applies. Verdict: \emph{existing model justified with an explicit
+limitation}; no model change. The same pass corrected the ceiling estimates (D-15), the
+arc-strain bookkeeping (D-11), restored three Chapter-11 limitation updates lost to a failed
+editing pass (D-20), and stated the axial-force sign convention (signed resultant
+$N_\theta<0$ in compression; positive magnitude $N_\theta^c$ in all force ratios).

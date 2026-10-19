@@ -1,0 +1,20 @@
+% fig_signs.tex -- body content of Figure 2 (sign/traction conventions at the interface)
+\begin{tikzpicture}[x=1pt,y=1pt,>=Stealth,font=\small]
+% fluid (below) / solid (above) separated by interface
+\fill[blue!10] (-10,-44) rectangle (190,0);
+\fill[orange!25] (-10,0) rectangle (190,26);
+\node at (40,-14) {fluid $\Om_f$};
+\node at (150,17) {solid $\Om_s^{0}$};
+% interface
+\draw[very thick] (-10,0) -- (190,0) node[midway,above=2pt] {$\Ga$};
+% normal convention: n points out of the fluid, i.e. up and into the solid
+\draw[->,thick,blue!60!black] (55,0) -- ++(0,22) node[midway,right=2pt] {$\bn$ (out of fluid)};
+% by (5.1) with the single normal n (out of fluid, into solid): the force ON the solid is
+% -sigma_f n (pressure part +p n, pointing up, away from the fluid); sigma_f n is the reaction on the fluid
+\draw[->,thick,red!70!black] (95,0) -- ++(0,20) node[midway,left] {$-\bsig\bn$: force ON solid};
+\draw[->,thick,red!70!black] (95,0) -- ++(0,-20) node[midway,right] {$\bsig\bn$: reaction traction on fluid};
+% wall shear sense
+\draw[->,thick] (130,-8) -- ++(26,0) node[midway,below] {$\tau_w$ (flow direction)};
+% flux continuity
+\node[align=left] at (105,-32) {flux: $-k_f\partial_nT_f=-k_s\partial_nT_s$ on $\Ga$ (single normal convention)};
+\end{tikzpicture}

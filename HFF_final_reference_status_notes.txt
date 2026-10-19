@@ -1,0 +1,11 @@
+Companion notes (HFF_final_reference_status.csv):
+
+(i) Verification was performed during audit stages 1-2 (Crossref/DOI resolution and
+publisher-page checks recorded in HFF_Independent_Audit_2/HFF_reference_audit.csv and
+HFF_Reconciliation_2/HFF_reference_audit_v2.csv). This Stage-4 table consolidates that work and
+does NOT claim any new independent verification performed at Stage 4.
+(ii) The seven pre-DOI books/incollection entries are standard bibliographic records without
+DOIs; none carries an unresolved field except the two noted actions (REF-06: C-1 digit-level T1
+confirmation; REF-07: page range).
+(iii) The bibliography contains 18 entries, all cited in the document, with no duplicates and no
+invented fields.

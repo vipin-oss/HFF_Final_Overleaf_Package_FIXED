@@ -1,0 +1,96 @@
+% !TEX program = pdflatex
+% Scholarly research formulation: thermally induced deformation and conjugate heat
+% transfer in a channel with two-way thermoelastic coupling.
+% Compile: pdflatex -> bibtex -> pdflatex -> pdflatex
+\documentclass[11pt,a4paper]{report}
+
+\usepackage[margin=2.4cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs,longtable,array}
+\usepackage[table]{xcolor}
+\usepackage{siunitx}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning}
+\usepackage{caption}
+\captionsetup{labelfont=bf,labelsep=period}
+\usepackage{graphicx}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage[hidelinks,pdftitle={Thermally induced deformation and conjugate heat transfer in a channel},pdfauthor={Research formulation document}]{hyperref}
+
+% status macros used ONLY in the consolidated evidence tables of Appendix B
+\newcommand{\VER}{\textcolor{green!50!black}{\textbf{verified}}}
+\newcommand{\VWC}{\textcolor{blue!60!black}{\textbf{verified with conditions}}}
+\newcommand{\INC}{\textcolor{red!70!black}{\textbf{superseded (incorrect)}}}
+\newcommand{\UNR}{\textcolor{orange!80!black}{\textbf{unresolved}}}
+
+% short macros
+\newcommand{\eps}{\varepsilon}
+\newcommand{\bn}{\mathbf{n}}
+\newcommand{\bu}{\mathbf{u}}
+\newcommand{\bd}{\mathbf{d}}
+\newcommand{\bsig}{\boldsymbol{\sigma}}
+\newcommand{\beps}{\boldsymbol{\eps}}
+\newcommand{\bI}{\mathbf{I}}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\Om}{\Omega}
+\newcommand{\Ga}{\Gamma}
+
+\title{\textbf{Thermally induced deformation and conjugate heat transfer in a
+channel with two-way thermoelastic coupling}\\[6pt]
+\large Mathematical formulation, reconciled analytical development, and verification plan\\[4pt]
+\normalsize Pre-implementation research document ---
+\emph{International Journal of Numerical Methods for Heat \& Fluid Flow} (target venue)}
+\author{}
+\date{Version of 18 October 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+A mathematical formulation is developed for steady conjugate heat transfer in a two-dimensional
+channel whose upper wall contains a finite thermoelastic segment heated on its outer face. Heat
+conduction through the wall establishes a through-thickness temperature gradient; the associated
+thermal eigen-curvature deflects the segment into the flow passage; the deformed passage modifies
+the velocity and temperature fields; and the resulting interfacial heat flux closes the coupling
+back onto the wall temperature. The model couples incompressible laminar flow, advection--diffusion
+heat transfer, steady conduction, and linear isotropic thermoelasticity under plane strain, with
+traction and heat-flux continuity imposed on a common deformed interface, the wall equation being
+carried to the pinned beam--column form at finite membrane force. The plane-strain
+constitutive reduction, mean-stress identity, free thermal curvature, support-dependent bowing and
+thermal-buckling limits, and the pressure-datum-consistent relative magnitude of hydraulic and
+thermally driven deflection are derived explicitly for the present configuration. A baseline
+operating point is evaluated from first principles, the governing dimensionless groups are
+identified from the equations on a single characteristic-length basis, and a conforming-mesh
+finite-element formulation with streamline-stabilized transport and a deformed-domain fixed-point
+iteration is proposed together with a verification hierarchy based on analytical solutions and
+published benchmark data. The document distinguishes established theory, analytical results derived
+for this configuration, and quantities that can only be obtained from the future computations; no
+simulation results are reported. Discrepancies identified and reconciled during preparation of the formulation --- each with its
+resolution basis, and the few items that remain explicitly unresolved --- together with the
+conditions gating coupled production computations, are collected in the appendices and in the
+accompanying audit archive.
+\end{abstract}
+
+\tableofcontents
+
+\input{chapters/ch01}
+\input{chapters/ch02}
+\input{chapters/ch03}
+\input{chapters/ch04}
+\input{chapters/ch05}
+\input{chapters/ch06}
+\input{chapters/ch07}
+\input{chapters/ch08}
+\input{chapters/ch09}
+\input{chapters/ch10}
+\input{chapters/ch11}
+
+\appendix
+\input{chapters/appendix}
+\input{chapters/audit_appendix}
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}

@@ -1,0 +1,125 @@
+\chapter{Verification and validation methodology}
+\label{ch:validation}
+
+This chapter specifies how each part of the future implementation will be checked before any
+coupled production computation is undertaken. Benchmarks are organised as a hierarchy from exact
+solutions to literature benchmarks; each entry states the exact configuration, the benchmark
+quantity with its normalisation, the source, and the applicability to the present solver.
+``Direct'' means the benchmark exercises the same equations and boundary conditions as a verified
+component; ``analogous'' means it tests a mechanism under different conditions and is labelled as
+such.
+
+\section{Benchmark hierarchy}
+\begin{longtable}{p{1.1cm}p{3.4cm}p{3.4cm}p{3.2cm}p{3.2cm}}
+\caption{Verification hierarchy V-A\ldots V-F.}\label{tab:validation}\\
+\toprule
+ID & Exact problem & Reference quantity / value & Source & Applicability and tolerance \\
+\midrule
+\endfirsthead
+\toprule
+ID & Problem & Value & Source & Applicability/tolerance \\
+\midrule
+\endhead
+V-A & Plane Poiseuille flow in the slit, fully developed, rigid walls &
+Profile $u(y)=6U(y/H_0)(1-y/H_0)$; $f_D\mathrm{Re}_{D_h}=96$ (Darcy) &
+Analytic; tabulated in \cite{shah1978laminar} &
+Direct. $L^2$ velocity error to machine precision on the fine mesh; friction within $10^{-4}$ relative \\
+V-B1 & Rigid slit, both walls at (i) uniform $T_w$, (ii) equal uniform flux &
+$\mathrm{Nu}_T=7.541$; $\mathrm{Nu}_{H2}=8.235$ ($\mathrm{Nu}$ on $T_w-T_b$, basis $D_h$) &
+\cite{shah1978laminar} &
+Direct thermal family, two-sided heating only \\
+V-B2 & Rigid slit, one wall uniform flux / adiabatic other (H1); one wall uniform $T$ (T1) &
+$\mathrm{Nu}_{H1}=5.385$; $\mathrm{Nu}_{T1}\approx4.861$ &
+\cite{shah1978laminar}; T1 digits corroborated by independent table reproductions, primary-table confirmation still the practice standard (App.~B, C-1) &
+Direct: this is the geometry's own rigid family \\
+V-C1a & Fully constrained body, uniform rise $\theta$ &
+$\sigma_{xx}=\sigma_{yy}=\sigma_{zz}=-\beta\theta$; $\sigma_m=-3K\alpha\theta$ &
+Derived here, \eqref{eq:vca1} &
+Direct, to quadrature precision \\
+V-C1b & Axially restrained plane-strain strip, free faces, uniform $\theta$ &
+$\sigma_{xx}=\sigma_{zz}=-E\alpha\theta/(1-\nu)$; $\sigma_m=-2E\alpha\theta/[3(1-\nu)]$ &
+Derived here, \eqref{eq:vcb1} (corrected pairing, App.~B, D-12) & Direct \\
+V-C2 & Free plane-strain strip: (i) uniform $\theta$; (ii) linear through-thickness gradient &
+(i) $\sigma_m=-E\alpha\theta/3$, \eqref{eq:freemean}; (ii) $\kappa=(1+\nu)\alpha\Delta T_t/d$, \eqref{eq:kappa} &
+Derived here; classical theory \cite{boley1960theory} & Direct; curvature to $0.1\%$ \\
+V-C3 & Pinned--pinned plane-strain strip with constant eigen-curvature, slender specimen $L/d=25$:
+(i) zero membrane force; (ii) sub-critical compressive force &
+(i) $w_{\max}=\kappa_{\mathrm{th}}L^2/8$, \eqref{eq:wmax}; (ii) \eqref{eq:beamcolsol}, amplification
+$1.39$ at $\mu L=1.65$ &
+Derived here; beam theory \cite{timoshenko1961stability} & Direct; $1\%$ (documented shear estimate) \\
+V-D & The frozen geometry in the rigid-wall limit (deformation suppressed by scaling $E$), single-side conjugate heating &
+Developing $\mathrm{Nu}(x)$ versus published conjugate thick-wall channel data at matched $R_k,D_r,\mathrm{Pe}$ &
+The flattened thick-wall channel series of \cite{rahimi2024conjugate} (steady laminar water, single-side heating, thickness and conductivity ratios) is the designated matching target; exact matching points to be extracted (App.~B, C-2) & Direct after matching; analogous otherwise. Also in-house enthalpy identity \\
+V-E & Steady bulge of an elastic-wall shallow slit channel under imposed $\Delta p$, small deflection, linear elastic wall &
+Mid-deflection and $Q$--$\Delta p$ relation versus lubrication/plate-theory predictions &
+Theory class: \cite{christov2018flow}; the shallow-channel assumption holds here ($H_0/L=1/60$); the benchmark data set is to be constructed for the present geometry (App.~B, C-3) &
+Direct for the fluid--elastic coupling of the steady code \\
+V-F & Per-run quality controls of Section~\ref{sec:quality} & residual- and balance-based pass/fail &
+Specification of this document & Mandatory for every reported configuration \\
+V-G & One case computed on the mapped domain \emph{and} on an independently generated body-fitted mesh of the same deformed geometry &
+Field-level difference (deflection, $\overline{\mathrm{Nu}}$, $\Delta p$) isolating the mesh-map contribution &
+Specification of this document & Mandatory once for the coupled solver, at the anchor operating point \\
+\bottomrule
+\end{longtable}
+
+\medskip
+Because the baseline P\'eclet number is $\mathrm{Pe}=348$, every thermal case above is run with the
+stabilized transport discretization of Chapter~\ref{ch:numerics}. The acceptance criterion in each
+case is that the stabilized fine-mesh value reproduce the benchmark within the stated tolerance
+with no under- or overshoot of the temperature field beyond $0.1\%$ of the applied range; in
+addition, the stabilization contribution is reported as the stabilized-minus-Galerkin difference
+on the finest mesh on which the unstabilized solve remains bounded, so that the size of the
+numerical, as opposed to physical, contribution is on record. Energy-stabilization requirements
+beyond SUPG are not invoked at the baseline parameters (cell P\'eclet well above unity is handled
+by the upwinding itself); any re-arming of stronger stabilization would be a documented change of
+the discretization specification.
+
+\section{Benchmarks explicitly not used}
+Turek and Hron's widely used FSI benchmark \cite{turek2006proposal} consists of
+\emph{large-displacement} configurations (the steady FSI1 set and the transient FSI2/FSI3 sets)
+with hyperelastic flag behaviour; it does not exercise, and cannot validate, a
+steady small-strain linear formulation, and agreement with it would not be evidence for or against
+the present solver. If a transient ALE extension (Section~\ref{sec:limitations}) is later
+undertaken, that benchmark becomes an appropriate acceptance test and is reserved for it; such an
+extension must also state its relation to the steady formulation explicitly --- initial condition
+taken as the converged steady solution, or start-up transient reported to stationarity --- rather
+than inherit the steady results silently (register D-10). Likewise,
+the two-sided-heating Nusselt values of V-B1 must not be quoted as targets for the single-heated-wall
+geometry: one-sided ranges are governed by the H1/T1 family \cite{shah1978laminar}.
+
+\section{Cross-component verification items}
+Two items cut across the hierarchy. Item \textbf{B-1} (buoyancy, cf.\
+Section~\ref{sec:buoyancy-baseline}): at the baseline the exclusion is now closed by the
+corrected order-of-magnitude estimate ($\mathrm{Ri}=1.7\times10^{-3}$, three orders below unity);
+the item is retained as a regime guard, re-armed only if a parameter-study point drives
+$\mathrm{Ri}$ above $10^{-2}$, in which case a Boussinesq-enabled case at that point is required
+with the neutral-density difference reported. Item \textbf{C-4} (second-solver replication): an independent implementation of
+one anchor operating point in an open-source finite-element platform (FEniCS is the default,
+requiring no licence), with field-level differences reported.
+
+\section{Staged implementation decisions}
+The verifications are decoupled from the coupling ambition in a staged manner:
+\begin{center}
+\begin{tabular}{p{4.2cm}p{7.2cm}p{3.0cm}}
+\toprule
+Component & Conditions recorded for proceeding & Current status \\
+\midrule
+Rigid-fluid solver (V-A) & none & \textbf{may proceed} \\
+Rigid conjugate thermal solver (V-B) & item C-1 closed before quoting T1 values & \textbf{may proceed} \\
+Thermoelastic solver (V-C) & unit-test expectations of V-C1a/b, V-C2 as corrected here (D-2, D-12) and the beam--column target of V-C3 & \textbf{may proceed, conditional} \\
+Coupled production computations & all of: V-D evidence obtained (C-2); V-E data set constructed (C-3); buoyancy check B-1 executed and accepted; property freeze C-6; regime guards implemented as runtime assertions & \textbf{deferred (HOLD)} \\
+Positioning statements in any manuscript & full-document novelty search completed (C-7) & \textbf{deferred (HOLD)} \\
+\bottomrule
+\end{tabular}
+\end{center}
+The composite gates that release the HOLD state, with their exact acceptance conditions, are
+preserved verbatim in the audit archive (\texttt{audit/HFF\_pre\_coding\_checklist.md}) and
+summarised in Appendix~B. Proceedings under ``may proceed'' are solver-verification exercises only
+and do not authorise coupled computations.
+
+\section{Independent replication}
+\label{sec:replication}
+The cross-component item C-4 above is restated here as methodology rather than gate: a second,
+independently implemented model of one anchor operating point, comparing interface deflection,
+mean Nusselt number, and pressure drop field-wise rather than by verbal agreement. Discrepancies
+are reported quantitatively and resolved to identifiable causes before production runs begin.

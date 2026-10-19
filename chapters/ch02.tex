@@ -1,0 +1,191 @@
+\chapter{Mathematical model and modelling assumptions}
+\label{ch:model}
+
+\section{Geometry and reference configuration}
+\label{sec:domains}
+
+The configuration is two-dimensional. Reference coordinates $X=(X,Y)$ label material points of the
+solid and the undeformed fluid domain. The fluid reference domain,
+$\Om_f^0=\{(X,Y):-L_e\le X\le L+L_o,\;0\le Y\le H_0\}$,
+consists of a rigid entrance section $\Om_e=(X\in[-L_e,0])$, a section $\Om_d=(X\in[0,L])$ facing
+the deformable wall, and a rigid exit section $\Om_o=(X\in[L,L+L_o])$, all of undeformed height
+$H_0$. The only deformable body is the solid strip
+$\Om_s^0=[0,L]\times[H_0,H_0+d]$
+of thickness $d$ spanning the full out-of-plane depth. Its lower face $Y=H_0$ shares the fluid
+boundary; its upper face $Y=H_0+d$ receives the imposed thermal load. The strip is embedded in a
+rigid casing and is pinned at both ends, $X=0$ and $X=L$: the displacement vanishes there while the
+bending moment vanishes (Assumption~A9). Figure~\ref{fig:geometry} shows the configuration,
+Table~\ref{tab:geometry} records the design point.
+
+\begin{figure}[t]
+\centering
+\input{figures/fig_geometry.tex}
+\caption{Configuration of the coupled problem (schematic, not to scale). Rigid entrance and exit
+sections of the channel; a thermoelastic segment of length $L$ and thickness $d$, pinned at its
+ends and heated on its outer face $\Ga_h^0$; the conjugate interface $\Ga_{\mathrm{if}}$ between
+fluid and solid; a rigid, adiabatic lower wall. The interface deflection $w$ is measured positive
+into the channel (Figure~\ref{fig:signs}).}
+\label{fig:geometry}
+\end{figure}
+
+\begin{table}[t]
+\centering\small
+\caption{Geometry and operating point used as the baseline design. Values marked \emph{design} are
+free choices of the study; the derived hydraulic diameter uses the slit value $D_h=2H_0$.}
+\label{tab:geometry}
+\begin{tabular}{p{4.0cm}p{1.7cm}p{4.2cm}p{2.6cm}}
+\toprule
+Quantity & Symbol & Value & Basis \\
+\midrule
+Channel height & $H_0$ & \SI{5.0e-4}{\metre} & design \\
+Hydraulic diameter & $D_h=2H_0$ & \SI{1.0e-3}{\metre} & derived \\
+Heated, deformable length & $L$ & \SI{3.0e-2}{\metre} & design \\
+Entrance / exit lengths & $L_e,L_o$ & \SI{1.0e-2}{\metre}; \SI{2.0e-2}{\metre} & design \\
+Wall thickness & $d$ & \SI{3.0e-3}{\metre} & design \\
+Mean inlet velocity & $U$ & \SI{5.0e-2}{\metre\per\second} & design \\
+Imposed heat flux (baseline regime) & $q^{''}$ & \SI{5.0e3}{\watt\per\square\metre} & design \\
+Inlet and reference temperatures & $T_{\mathrm{in}},T_{\mathrm{ref}}$ & to be fixed at data freeze & temperature differences only enter \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The deformed interface is defined by the solid displacement field $\bd$ on the reference interface,
+\begin{equation}
+\Ga_{\mathrm{if}}=\{x=X+\bd(X):\;X\in[0,L]\times\{H_0\}\},
+\end{equation}
+and the steady fluid domain $\Om_f$ is obtained by extending the interface displacement into
+$\Om_f^0$ through a mesh-extension map $\widehat{\mathbf w}$ specified in
+Section~\ref{sec:ale}. The fluid equations are posed on $\Om_f$; the solid equations on the
+reference configuration, consistent with small strains (Assumption~A4).
+
+\section{Modelling assumptions}
+\label{sec:assumptions}
+Each assumption is stated with its justification and its range of validity; the quantitative checks
+supporting the numerical bounds are carried out in Chapter~\ref{ch:baseline}.
+
+\begin{itemize}\itemsep2pt
+\item[\textbf{A1}] \emph{Two-dimensional geometry and plane strain.} The out-of-plane dimension is
+large compared with $H_0$ and $d$, and loading is uniform along it, so the flow and temperature
+fields are two-dimensional and the solid is in plane strain, $\eps_{zz}=0$. Plane strain, rather
+than plane stress, is the closure appropriate to a wide bonded wall
+\cite{boley1960theory,timoshenko1970elasticity}; its consequences for the constitutive reduction
+are derived in Chapter~\ref{ch:derivations}.
+\item[\textbf{A2}] \emph{Newtonian, constant-property fluid.} The working fluid is water at near-ambient
+temperature, with constant density $\rho$, viscosity $\mu$, specific heat $c_p$, and conductivity
+$k_f$. The self-consistency of constant properties is established a posteriori: the computed
+fluid-side temperature excursions at baseline are of order $1$--$3$ K
+(Section~\ref{sec:baselinecalc}), over which the property variation remains below a few per cent.
+The influence of buoyancy is examined separately through the Richardson number
+(Sections~\ref{sec:buoyancy-baseline}, \ref{sec:limitations}).
+\item[\textbf{A3}] \emph{Homogeneous isotropic linear thermoelastic solid.} The wall is a PEEK-class
+polymer with constant $E$, $\nu$, $\alpha$, $k_s$, $\rho_s$, $c_s$. Deviations (grade-to-grade
+variability, mild anisotropy of extruded stock) are treated by the sensitivity requirements of
+Chapter~\ref{ch:validation}; the numerical values used below are datasheet-representative and are
+to be frozen against a specific datasheet before implementation (Appendix~B, item C-6).
+\item[\textbf{A4}] \emph{Small strains, moderate rotations.} The strain measures must remain small:
+the bending fibre strain, the arc-stretching membrane strain, and the total mechanical surface
+strain. Linear kinematics alone is \emph{not} sufficient for the pinned, axially constrained strip,
+because the thermal membrane force interacts with the transverse deflection at leading order; the
+adopted kinematics is therefore the reduced (frozen-force) von K\'arm\'an beam--column level of
+Section~\ref{sec:deriv:beamcolumn}, which reduces to the linear relation when the membrane force
+is negligible. At the baseline the bending fibre strain is $9.9\times10^{-4}$, the
+maximum total mechanical surface strain is $\approx5.4\times10^{-3}$, the arc-stretching term is
+$\approx1.8\times10^{-4}$, and the maximum slope is $0.03$~rad
+(Section~\ref{sec:baselinecalc}); all are far below the order-one failure limits of the
+hypothesis. Geometric admissibility is expressed through these strain and slope measures together
+with a mesh bound $|w|/H_0\le0.5$ with positive element Jacobians, rather than through a purely
+geometric deflection ratio alone (Appendix~B, register D-11, D-15).
+\item[\textbf{A5}] \emph{Steady flow and energy; quasi-static solid mechanics.} The structural wave
+time across the wall is seven orders of magnitude shorter than the slowest transport time
+(Section~\ref{sec:steadytimes}), so the mechanical problem is quasi-static and inertia is omitted
+from \eqref{eq:equilibrium}.
+\item[\textbf{A6}] \emph{Laminar flow.} The design keeps $\mathrm{Re}_{D_h}\le100$ (baseline value $50$),
+well below the transition range for plane channels, which justifies \eqref{eq:momentum}.
+\item[\textbf{A7}] \emph{Negligible viscous dissipation.} The Brinkman number at baseline is of order
+$10^{-6}$ (Chapter~\ref{ch:baseline}); the dissipation term is retained as a re-inclusion option
+with the rule stated at \eqref{eq:fluidenergy}.
+\item[\textbf{A8}] \emph{Perfect thermal contact at the interface.} No contact resistance is included at
+$\Ga_{\mathrm{if}}$; temperature and heat flux are continuous
+(\eqref{eq:iftemp}--\eqref{eq:ifflux}).
+\item[\textbf{A9}] \emph{Ideal pinned supports and rigid casing.} The strip ends have zero displacement,
+zero applied moment, and zero heat flux; the surrounding casing is taken rigid and adiabatic, and
+its interior pressure equals the outlet datum of condition~B2, which fixes the load reference of
+Section~\ref{sec:deriv:pressure}. Implementation note: the pins are imposed on the full end edge
+($X=0,L$), which differs from ideal point pins by Saint-Venant end layers of width $O(d)$; at the
+baseline aspect ratio $L/d=10$ this contributes a few per cent of global stiffening, and a
+one-time numerical check (full-edge versus corner pins) is part of the verification programme
+(Chapter~\ref{ch:validation}).
+\item[\textbf{A10}] \emph{Uniform imposed flux as the baseline thermal load (regime N).} A uniform
+$q^{''}$ models a film heater and fixes the total heat input per unit depth, $Q'=q^{''}L$, which is
+the quantity entering the global enthalpy balance (Section~\ref{sec:quality}). A second regime
+(regime D, imposed outer-face temperature $T_h$) is retained as a separately labelled study;
+comparisons across regimes are meaningful only at matched total heat input.
+\end{itemize}
+
+\section{Sign and traction conventions}
+\label{sec:signs}
+A single interface normal $\bn$ is used throughout, directed from the fluid into the solid.
+Pressure on the wall is positive in compression; Cauchy stress in the solid is positive in tension.
+The interface deflection is denoted $w$ and is measured \emph{from the reference interface into the
+channel} (hence $w=-d_2$ in terms of the upward-positive solid displacement $d_2$). Wall curvature
+is taken positive when the wall bows into the channel; within the small-slope assumption this gives
+the design relation $\kappa=-w^{''}$, and a constant eigen-curvature $\kappa_{\mathrm{th}}>0$
+produces $w=\kappa_{\mathrm{th}}x(L-x)/2\ge0$ (Section~\ref{sec:deriv:deflection}).
+Fluid heat flux along $+\bn$ carries heat out of the fluid. Using one normal on both sides of the
+traction equality is what renders the interface boundary terms in the weak statement of
+Section~\ref{sec:coupling} exactly antisymmetric, so that they cancel in a monolithic assembly
+without modelling error.
+
+\begin{figure}[t]
+\centering
+\input{figures/fig_signs.tex}
+\caption{Interface conventions. A single unit normal $\bn$ (fluid $\to$ solid) is used in the
+traction equality \eqref{eq:iftraction}, in the flux equality \eqref{eq:ifflux}, and in all
+variational boundary terms of Section~\ref{sec:coupling}.}
+\label{fig:signs}
+\end{figure}
+
+\section{Material data}
+\label{sec:props}
+Table~\ref{tab:props} lists the property values used in all calculations. Fluid values are standard
+near-ambient water data. Solid values are representative of unfilled PEEK; they are marked
+accordingly, because they must be frozen against a chosen datasheet before the numerical
+implementation (Appendix~B, item C-6), and the derived baseline quantities that depend on them are
+reported with that dependency stated.
+
+\begin{longtable}{lllll}
+\caption{Material properties used in the calculations. ``freeze pending'' = datasheet value to be
+fixed before implementation (Appendix~B, item C-6).}\label{tab:props}\\
+\toprule
+Property & Symbol & Value & Units & Remark \\
+\midrule
+\endfirsthead
+\toprule
+Property & Symbol & Value & Units & Remark \\
+\midrule
+\endhead
+Water density & $\rho$ & $1.0\times10^{3}$ & \si{\kilogram\per\cubic\metre} & standard value \\
+Water dynamic viscosity & $\mu$ & $1.0\times10^{-3}$ & \si{\pascal\second} & standard value \\
+Water specific heat & $c_p$ & $4.18\times10^{3}$ & \si{\joule\per\kilogram\per\kelvin} & standard value \\
+Water conductivity & $k_f$ & $0.60$ & \si{\watt\per\metre\per\kelvin} & standard value \\
+Water expansion coefficient & $\beta_f$ & $2.1\times10^{-4}$ & \si{\per\kelvin} & freeze pending \\
+Water kinematic viscosity & $\nu_{\mathrm{kin}}=\mu/\rho$ & $1.0\times10^{-6}$ & \si{\square\metre\per\second} & derived \\
+PEEK Young's modulus & $E$ & $3.6\times10^{9}$ & \si{\pascal} & freeze pending \\
+PEEK Poisson ratio & $\nu$ & $0.40$ & -- & freeze pending \\
+PEEK expansion coefficient & $\alpha$ & $5.0\times10^{-5}$ & \si{\per\kelvin} & freeze pending \\
+PEEK conductivity & $k_s$ & $0.25$ & \si{\watt\per\metre\per\kelvin} & freeze pending \\
+PEEK density & $\rho_s$ & $1.3\times10^{3}$ & \si{\kilogram\per\cubic\metre} & freeze pending \\
+PEEK specific heat & $c_s$ & $1.1\times10^{3}$ & \si{\joule\per\kilogram\per\kelvin} & freeze pending \\
+\bottomrule
+\end{longtable}
+
+\section{Notation}
+Current and reference coordinates are $x=(x,y)$ and $X=(X,Y)$. Fluid unknowns are the velocity
+$\bu=(u,v)$, pressure $p$, and temperature $T_f$; solid unknowns are displacement
+$\bd=(d_1,d_2)$, temperature $T_s$, stress $\bsig$, and strain $\beps$;
+$\theta=T_s-T_{\mathrm{ref}}$ denotes the temperature rise in the solid. The Lam\'e parameters are
+written $\lambda$ and $\mu_L$, where $\mu_L=G$ is the shear modulus (the subscript distinguishes it
+from the fluid viscosity). The bulk modulus is $K=\lambda+\tfrac23\mu_L=E/[3(1-2\nu)]$, and the
+thermoelastic pressure coefficient is
+$\beta=(3\lambda+2\mu_L)\alpha=3K\alpha=E\alpha/(1-2\nu)$
+\cite{boley1960theory}. A complete symbol table with units is given in Appendix~\ref{app:symbols}.

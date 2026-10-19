@@ -1,0 +1,325 @@
+\chapter{Derivation of the plane-strain thermoelastic formulation}
+\label{ch:derivations}
+
+The relations used for design estimates and for the solid-solver sanity checks are derived here
+from the constitutive law \eqref{eq:constitutive}. Where a simpler expression circulating in the
+working notes during preparation was found to be in error, the corrected expression is derived and
+the correction is indexed in the discrepancy register (Appendix~B, Table~\ref{tab:register}). The
+underlying constitutive theory is classical \cite{boley1960theory,timoshenko1970elasticity}; the
+specific reductions for the present geometry are derived here and are not attributed to the
+literature.
+
+\section{Plane-strain reduction of the constitutive law}
+\label{sec:deriv:planestrain}
+Write \eqref{eq:constitutive} componentwise with $e=\tr\beps=\eps_{xx}+\eps_{yy}$ (plane strain).
+In compliance form, $\eps_{zz}=[\sigma_{zz}-\nu(\sigma_{xx}+\sigma_{yy})]/E+\alpha\theta=0$ gives
+\eqref{eq:sigmazz} directly. In stiffness form, $\sigma_{zz}=\lambda e-\beta\theta$; substitution
+of $\lambda=E\nu/[(1+\nu)(1-2\nu)]$, $\mu_L=E/[2(1+\nu)]$, and the in-plane stress--strain relations
+confirms that the two expressions coincide identically (algebra in Appendix~\ref{app:arith}, cell
+A2).
+
+For a strip with traction-free faces ($\sigma_{yy}=0$ locally at each $x$), elimination of
+$\eps_{yy}$ through $\sigma_{yy}=2\mu_L\eps_{yy}+\lambda e-\beta\theta=0$ yields
+$e=(2\mu_L\eps_{xx}+\beta\theta)/(\lambda+2\mu_L)$; back-substitution into
+$\sigma_{xx}=2\mu_L\eps_{xx}+\lambda e-\beta\theta$, using
+$\lambda+2\mu_L=E(1-\nu)/[(1+\nu)(1-2\nu)]$, produces the one-dimensional wide-beam law
+\begin{equation}
+\sigma_{xx}=\frac{E}{1-\nu^2}\Big[\eps_{xx}-(1+\nu)\,\alpha\theta\Big].
+\label{eq:widebeam}
+\end{equation}
+Form \eqref{eq:widebeam} makes effective constants $E/(1-\nu^2)$ and $(1+\nu)\alpha$ explicit; both
+appear in the curvature and buckling relations below and distinguish the plane-strain strip from a
+narrow beam \cite{boley1960theory}. Dimensions: $E\,[\mathrm{Pa}]$ multiplies a dimensionless
+strain; $(1+\nu)\alpha\theta$ is dimensionless.
+
+\section{Mean-stress identity}
+\label{sec:deriv:meanstress}
+From \eqref{eq:meanstress} and \eqref{eq:sigmazz},
+$\sigma_m=(\sigma_{xx}+\sigma_{yy}+\sigma_{zz})/3$ takes the stress form
+\begin{equation}
+\sigma_m=\frac{1+\nu}{3}\big(\sigma_{xx}+\sigma_{yy}\big)-\frac{E\alpha}{3}\,\theta .
+\tag{\ref{eq:meanstress}a}
+\end{equation}
+Summing the in-plane constitutive relations gives
+$\sigma_{xx}+\sigma_{yy}=2(\lambda+\mu_L)e-2\beta\theta$; inserting this in (\ref{eq:meanstress}a)
+and using $2(1+\nu)(\lambda+\mu_L)=E/(1-2\nu)=3K$ and $2(1+\nu)\beta+E\alpha=3\beta$
+(Appendix~\ref{app:arith}) yields the strain form
+\begin{equation}
+\sigma_m=K\big(e-3\alpha\theta\big),
+\tag{\ref{eq:meanstress}b}
+\end{equation}
+i.e.\ mean stress equals bulk modulus $\times$ mechanical volumetric strain. The two forms are
+algebraically identical and serve as mutual checks in post-processing: the first requires complete
+Cauchy components (never the mechanical part alone), the second requires only
+$\tr\beps$ and $\theta$.
+
+\section{Reference equilibrium states (sanity checks)}
+\label{sec:deriv:sanity}
+Three elementary states are used to test the constitutive implementation.
+\textbf{(a) Fully constrained body, uniform rise $\theta$ ($\beps\equiv0$).} Then
+$\bsig=-\beta\theta\bI$, so $\sigma_{xx}=\sigma_{yy}=\sigma_{zz}=-\beta\theta$ and
+\begin{equation}
+\sigma_m=-3K\alpha\theta=-\beta\theta .
+\label{eq:vca1}
+\end{equation}
+\textbf{(b) Axially restrained plane-strain strip with traction-free faces, uniform $\theta$.}
+Constraints $\eps_{xx}=0$, $\sigma_{yy}=0$, $\eps_{zz}=0$ give, from \eqref{eq:widebeam} and
+\eqref{eq:sigmazz},
+\begin{equation}
+\sigma_{xx}=\sigma_{zz}=-\frac{E\alpha\theta}{1-\nu},\qquad
+\eps_{yy}=\frac{1+\nu}{1-\nu}\,\alpha\theta,\qquad
+\sigma_m=-\frac{2E\alpha\theta}{3(1-\nu)} .
+\label{eq:vcb1}
+\end{equation}
+The mean stress of case (b), $-2E\alpha\theta/[3(1-\nu)]$, differs from $-3K\alpha\theta$: the two
+values belong to different restraint conditions and were conflated in an earlier draft (Appendix~B,
+register D-12); both are retained, correctly paired, as unit-test expectations in
+Chapter~\ref{ch:validation}.
+\textbf{(c) Free plane-strain strip, uniform $\theta$.} With
+$\sigma_{xx}=\sigma_{yy}=0$, equation \eqref{eq:sigmazz} forces $\sigma_{zz}=-E\alpha\theta$, and
+\begin{equation}
+\sigma_m=-\frac{E\alpha\theta}{3}\neq0 .
+\label{eq:freemean}
+\end{equation}
+Consistency with (\ref{eq:meanstress}b) follows from
+$e=\eps_{xx}+\eps_{yy}=2(1+\nu)\alpha\theta$, which gives
+$K\,[2(1+\nu)-3]\alpha\theta=E(2\nu-1)\alpha\theta/[3(1-2\nu)]=-E\alpha\theta/3$.
+This value is the plane-strain analogue of the stress-free three-dimensional expansion and is the
+correct expectation for the strip test (register D-2).
+
+\section{Free thermal curvature of the strip}
+\label{sec:deriv:curvature}
+Let the through-thickness temperature be linear,
+$\theta(y)=\bar\theta+\Gamma y$ measured from the mid-plane with $\Gamma=\Delta T_t/d$, and the
+strip be free of external loads with traction-free faces. With
+$\eps_{xx}=\eps_0+\kappa y$ in \eqref{eq:widebeam}, zero axial force resultant gives
+$\eps_0=(1+\nu)\alpha\bar\theta$, and zero moment resultant,
+$\int_{-d/2}^{d/2}\sigma_{xx}\,y\,\mathrm dy=0$, gives the free thermal eigen-curvature
+\begin{equation}
+\kappa_{\mathrm{th}}=(1+\nu)\,\alpha\,\frac{\Delta T_t}{d}
+=(1+\nu)\,\alpha\,\frac{q^{''}}{k_s},
+\label{eq:kappa}
+\end{equation}
+where the second form follows from one-dimensional steady conduction, $\Delta T_t=q^{''}d/k_s$
+\cite{carslaw1947conduction}; \eqref{eq:kappa} is the plane-strain specialisation of the classical
+thermal-curvature result \cite{boley1960theory}. At $\nu=0$ the narrow-beam value
+$\kappa=\alpha\Delta T_t/d$ is recovered; a factor $(1+\nu)/(1-\nu)$ would pertain to biaxially
+constrained curvature, not to the present free bending, and its appearance in an earlier draft is
+recorded in register D-1. Two consequences matter for the design. First,
+$\kappa_{\mathrm{th}}$ is independent of $d$: the through-wall gradient adjusts exactly to cancel
+the thickness. Second, a clamped--clamped strip at uniform $\kappa_{\mathrm{th}}$ carries a
+constant corrective moment $M_0=D_s\kappa_{\mathrm{th}}$ and does not bow at all
+($w\equiv0$); pinned supports, or axial non-uniformity of $\kappa_{\mathrm{th}}(x)$, are required
+for the bowing mechanism to exist, which fixes the support choice of Assumption~A9.
+
+\section{Pinned--pinned thermal bowing}
+\label{sec:deriv:deflection}
+For the reduced wall equation \eqref{eq:beam} with no mechanical load, the curvature relation is
+$w^{''}(x)=-\kappa_{\mathrm{th}}(x)$, with $w$ positive into the channel
+(Section~\ref{sec:signs}). For constant $\kappa_{\mathrm{th}}$ and $w(0)=w(L)=0$,
+integration gives
+\begin{equation}
+w(x)=\frac{\kappa_{\mathrm{th}}}{2}\,x(L-x),\qquad
+w_{\max}=\frac{\kappa_{\mathrm{th}}L^2}{8} .
+\label{eq:wmax}
+\end{equation}
+Dimensions: $\si{\per\metre}\times\si{\square\metre}=\si{\metre}$. Relation \eqref{eq:wmax} is
+exact within the thin-plate framework \emph{at negligible axial force}, which is the state of the
+free-ended strip and of the zero-membrane benchmark specimen of Chapter~\ref{ch:validation}
+($L/d=25$, keeping shear-deformation corrections below $1\%$
+\cite{timoshenko1961stability}). For the axially constrained strip the thermal membrane force of
+Section~\ref{sec:deriv:buckling} is not negligible at the baseline, and the bowing relation must be
+replaced by the beam--column form of Section~\ref{sec:deriv:beamcolumn}.%
+
+\section{Thermal membrane force and pinned--pinned buckling}
+\label{sec:deriv:buckling}
+With the axial displacement blocked at both ends (A9), the mean axial strain vanishes and
+integration of \eqref{eq:widebeam} over the thickness yields the compressive membrane force per
+unit depth
+\begin{equation}
+N_\theta=-\frac{Ed\,\alpha\bar\theta}{1-\nu} .
+\label{eq:ntheta}
+\end{equation}
+A sign convention is fixed here and used throughout: $N_\theta$ is the \emph{signed} axial
+resultant (tension positive, so thermal compression gives $N_\theta<0$), while the
+beam--column parameter and every force ratio use the \emph{positive compressive magnitude}
+$N_\theta^c=|N_\theta|$, so that $N_\theta^c/N_{\mathrm{cr}}\in(0,1)$ is sub-critical and
+$\mu^2=N_\theta^c/D_s>0$. The compatibility statement of
+Section~\ref{sec:deriv:beamcolumn} acts on the signed resultant; its correction term is
+positive and therefore reduces the compression.
+The pinned--pinned Euler threshold for the strip, using the wide-plate flexural rigidity of
+\eqref{eq:beam}, is $N_{\mathrm{cr}}=\pi^2D_s/L^2$ \cite{timoshenko1961stability}; the wide-plate
+value is the consistent one here \emph{because plane strain suppresses the antielastic
+(out-of-plane) curvature mode}, so the strip cannot shed bending stiffness into the out-of-plane
+direction --- a strip free to anticlastically buckle would carry the reduced rigidity
+$(1-\nu^2)\,Ed^3/12$. Equating
+$|N_\theta|=N_{\mathrm{cr}}$ gives the critical mean temperature rise
+\begin{equation}
+\bar T_{\mathrm{cr}}=\frac{\pi^2d^2}{12\,\alpha(1+\nu)L^2} .
+\label{eq:tcr}
+\end{equation}
+The clamped--clamped eigenvalue $4\pi^2D_s/L^2$ would give a threshold four times higher; the
+pinned value \eqref{eq:tcr} is the one consistent with the adopted supports and replaces the
+clamped-based estimate used in an early design note (Appendix~B, register D-4). The admissibility
+rule is $\bar\theta_{\max}\le\bar T_{\mathrm{cr}}/M$, with margin $M=2$ used in
+Chapter~\ref{ch:baseline}. The full-edge pin idealization of Assumption~A9 stiffens the ends by
+$O(d/L)$ relative to ideal point pins; the catalogue is therefore read as accurate to a few per
+cent at the baseline aspect ratio, with the one-time numerical check of
+Chapter~\ref{ch:validation} closing the residual.
+
+\section{Beam--column bowing at finite membrane force}
+\label{sec:deriv:beamcolumn}
+The linear bowing of Section~\ref{sec:deriv:deflection} and the membrane force of
+Section~\ref{sec:deriv:buckling} are not independent: a pinned strip bearing a compressive
+force $N_\theta^c=|N_\theta|$ couples its transverse deflection to that force at leading order,
+which is precisely the mechanism behind the threshold \eqref{eq:tcr}. The small-strain,
+moderate-rotation (von K\'arm\'an) wall model for this strip consists of the transverse
+equilibrium equation \emph{together with} an axial compatibility condition that links the
+membrane force to the deflection. What is adopted here is the \emph{reduced (frozen-force)
+beam--column equation}: the transverse member alone, retaining the full geometric-stiffness
+contribution of the compressive membrane force but freezing that force at its blocked-state
+value $N_\theta^c$:
+\begin{equation}
+D_s\,w^{''''}(x)+N_\theta^c\,w^{''}(x)=0,
+\qquad
+w(0)=w(L)=0,\qquad
+w^{''}(0)=w^{''}(L)=-\kappa_{\mathrm{th}},
+\label{eq:beamcol}
+\end{equation}
+where the end condition on $w^{''}$ states that the \emph{total} bending moment
+$M=D_s\,(w^{''}+\kappa_{\mathrm{th}})$ vanishes at the pins. With $\mu^2=N_\theta^c/D_s$ the
+exact solution is
+\begin{equation}
+w(x)=\frac{\kappa_{\mathrm{th}}}{\mu^2}
+\left[\frac{1-\cos\mu L}{\sin\mu L}\,\sin\mu x+\cos\mu x-1\right],
+\label{eq:beamcolsol}
+\end{equation}
+which recovers the parabola \eqref{eq:wmax} as $\mu L\to0$ and diverges at $\mu L=\pi$, i.e.\
+exactly at the Euler threshold \eqref{eq:tcr}; the buckling limit and the deflection law are
+therefore two limits of one relation, as they must be. The fully consistent von K\'arm\'an
+formulation would additionally update the force through axial compatibility: with both end
+edges blocked, $\langle u'\rangle=0$ in the mean strain
+$\langle\eps_x\rangle=\langle u'\rangle+\tfrac12\langle w^{'}{}^2\rangle-(1+\nu)\alpha\bar\theta$,
+so the signed resultant acquires the arc-stretching correction
+\begin{equation}
+N_\theta(w)\;=\;N_\theta\;+\;\frac{Ed}{2(1-\nu^2)}\,\langle w^{'}{}^2\rangle ,
+\label{eq:nupdate}
+\end{equation}
+and the deflection problem becomes nonlinear. Equation \eqref{eq:beamcol} is the first iterate
+of that system --- the force frozen at $N_\theta^c=|N_\theta|$ --- and its accuracy against the
+consistent solution is quantified below rather than assumed. At the baseline parameters
+($N_\theta^c/N_{\mathrm{cr}}=0.275$, $\mu L=1.65$):
+\begin{equation}
+w_{\max}=2.19\times10^{-4}\,\mathrm{m}=0.438\,H_0
+\quad\text{(frozen force, adopted)},\qquad
+\frac{w_{\max}^{\mathrm{lin}}}{H_0}=0.315
+\quad\text{(linear, Eq.~\eqref{eq:wmax})},
+\label{eq:beamcolbase}
+\end{equation}
+an amplification by the factor $1.39$, consistent at leading order with the beam--column
+factor $1/(1-N_\theta^c/N_{\mathrm{cr}})=1.38$. The maximum slope is $w'_{\max}=0.027$~rad, the
+bending fibre strain is $(\kappa_{\mathrm{geo}}-\kappa_{\mathrm{th}})d/2=9.9\times10^{-4}$ with
+$\kappa_{\mathrm{geo}}=-w^{''}$, and the maximum total mechanical surface strain is
+$\approx5.4\times10^{-3}$; the von K\'arm\'an hypotheses (strains $\ll1$, rotations $\ll1$~rad)
+are comfortably satisfied, so \eqref{eq:beamcol} is an appropriate model level --- not a
+large-deformation extension, but a reduction of the von K\'arm\'an system whose error must be
+stated. Freezing the force is an approximation, not an identity: the deflection relaxes the
+blocked-end mechanical strain $e_0=(1+\nu)\alpha\bar\theta=2.26\times10^{-3}$ by the
+arc-stretching term $\tfrac12\langle w^{'}{}^2\rangle=1.8\times10^{-4}$ (circular-arc estimate
+$1.6\times10^{-4}$), i.e.\ a first-iterate force relaxation of $6.1\%$. Solving the
+compatibility relation \eqref{eq:nupdate} self-consistently (a scalar fixed point, since the
+solution family \eqref{eq:beamcolsol} holds for every fixed force) gives a relaxation of
+$5.9\%$ and lowers the baseline deflection to
+$w_{\max}=2.14\times10^{-4}\,\mathrm{m}=0.428\,H_0$: the frozen-force value
+\eqref{eq:beamcolbase} \emph{over}predicts the consistent deflection by $2.3\%$, a one-sided
+(conservative) error that never changes sign. Within the admissible envelope the error remains
+below $\approx4\%$ (the deformation and stress ceilings of Chapter~\ref{ch:baseline} bind at
+$N_\theta^c/N_{\mathrm{cr}}=0.30$ and $0.33$), the mid-span moment and bending stress shift by
+under $8\%$ in the same safe direction, and the buckling margin is exact --- the relaxation
+term vanishes as the deflection vanishes, so the onset threshold is governed by the blocked
+force and $\bar T_{\mathrm{cr}}$ is unaffected. The error grows rapidly only beyond
+$N_\theta^c/N_{\mathrm{cr}}\approx0.5$ (it reaches $\approx17\%$ at the $M_b=2$ ceiling), which
+is precisely where the escalation criterion of Chapter~\ref{ch:numerics} moves the computation
+off the frozen-force form.
+
+Three consequences fix the model specification. First, the solid model of the coupled problem is
+specified at the reduced (frozen-force) von K\'arm\'an level --- the geometric-stiffness
+contribution of the prescribed membrane state, of which the linear model is the small-force
+limit (at $N_\theta^c/N_{\mathrm{cr}}\lesssim0.1$ the two differ by $\lesssim10\%$) --- while
+the implementation re-evaluates the membrane state across coupled iterations
+(Chapter~\ref{ch:numerics}), so the frozen-force form applies within each solve and the
+consistency update \eqref{eq:nupdate} is recovered at the fixed point. Second, the earlier
+design relation \eqref{eq:wmax} is retained for the free and zero-membrane states only, and the
+baseline bowing is quoted from \eqref{eq:beamcolbase}. Third, the bending stress follows from
+the beam--column moment: at mid-span $M=-6.4$~N\,m per unit depth, giving
+$\sigma_{\mathrm{bend}}=6|M|/d^2=4.2$~MPa (the unreleased-moment scale $E\kappa_{\mathrm{th}}d/2
+/(1-\nu^2)=9.0$~MPa quoted previously belongs to a fully restrained-curvature state and does not
+occur in the pinned strip; Appendix~B, register D-17).
+
+\section{Hydraulic loading and the deformation ratio}
+\label{sec:deriv:pressure}
+\textbf{Pressure drop.} Integrating the plane-Poiseuille profile
+$u(y)=6U(y/H_0)(1-y/H_0)$ \cite{bird1960transport,shah1978laminar} through the momentum balance,
+$\mathrm dp/\mathrm dx=\mu u^{''}=-12\mu U/H_0^2$, gives the slit pressure drop
+\begin{equation}
+\Delta p=\frac{12\mu UL}{H_0^2}
+\qquad
+\Big[\frac{(\mathrm{Pa\,s})(\mathrm{m/s})(\mathrm m)}{\mathrm{m^2}}=\mathrm{Pa}\Big] .
+\label{eq:dp}
+\end{equation}
+A predecessor note carried the same expression with $H_0^3$ in the denominator, which is
+dimensionally not a pressure (Pa/m) and produced an estimate three orders of magnitude too large;
+the corrected value is computed in Chapter~\ref{ch:baseline} (register D-5).
+
+\textbf{Pressure deflection.} For a \emph{pinned--pinned} strip under uniform transverse load
+$\bar p$ opposing the bowing, the standard bending solution
+\cite{timoshenko1961stability,timoshenko1970elasticity} gives
+\begin{equation}
+w_p=\frac{5\,\bar p L^4}{384D_s}.
+\label{eq:wpdef}
+\end{equation}
+(The coefficient $5/384$ belongs to pinned supports; the value $1/384$ used in an earlier estimate
+is the \emph{clamped--clamped} coefficient. See register D-13.) The load level requires a datum
+statement, because the incompressible pressure \emph{level} on the wall is fixed by the outlet
+datum of condition~B2 and by the casing environment of Assumption~A9, not by $\Delta p$ alone:
+with the datum $p=0$ at the outlet and the casing at the same reference pressure, the gauge
+pressure on the strip rises linearly from $p(L)=48$~Pa to $p(0)=120$~Pa (gradient
+$12\mu U/H_0^2$ over the strip and the exit length), so the strip carries a linearly varying load
+with mean
+\begin{equation}
+\bar p=\tfrac{1}{2}\,[p(0)+p(L)] = 84~\mathrm{Pa}
+\label{eq:pbar}
+\end{equation}
+rather than the value $\Delta p/2=36$~Pa quoted in earlier drafts (register D-16); the
+uniform-load formula \eqref{eq:wpdef} is then read as a design estimate for this mildly varying
+load. With $\bar p$ of \eqref{eq:pbar}, $w_p=9.2\times10^{-8}$~m, and with $w_{\mathrm{th}}$ of
+\eqref{eq:beamcolbase}, the deformation ratio
+\begin{equation}
+\Gamma_p=\frac{w_{\mathrm{th}}}{w_p}=\frac{48\,\kappa_{\mathrm{th}}D_s}{5\,\bar p L^2}
+=1.7\times10^{3}\quad\text{at the baseline},
+\label{eq:gammap}
+\end{equation}
+measures how strongly the deformation is thermally, rather than hydraulically, driven; the
+conclusion (thermal dominance, $\Gamma_p\gg5$) is insensitive to the datum choice, since any
+plausible casing pressure shifts $\bar p$ by less than an order of magnitude.
+Because $\kappa_{\mathrm{th}}$ is independent of $d$ while $D_s\propto d^3$ and
+$\bar p\propto UH_0^{-2}$, the ratio grows with thicker walls and decreases with speed and with
+reduced height: these are the control directions examined at the design stage.
+
+\section{Time scales and the steady-state reduction}
+\label{sec:steadytimes}
+Four time scales govern the start-up problem (inputs of Table~\ref{tab:props}; arithmetic in
+Appendix~\ref{app:arith}): the structural wave crossing
+$t_{\mathrm{wave}}=d\sqrt{\rho_s/E}=1.8\times10^{-6}$ s; the fluid advection time
+$t_{\mathrm{adv}}=L/U=0.6$ s; the fluid transverse diffusion time
+$t_{f}=H_0^2/\kappa_f\approx1.8$ s; and the solid conduction time
+$t_{s}=d^2/\kappa_s\approx51$ s. The ordering
+$t_{\mathrm{wave}}\ll\{t_{\mathrm{adv}},t_{f}\}\lesssim t_s$ has three consequences. First,
+mechanical equilibrium is quasi-static on all observable transport times, justifying
+\eqref{eq:equilibrium}. Second, the steady coupled solution targeted by the baseline is the
+$t\to\infty$ asymptote of the start-up dynamics, which is rate-limited by the solid conduction
+time, not by the fluid. Third, in a future start-up computation the fluid transients may be
+neglected at leading order ($t_f/t_s\approx0.04$) provided an a-posteriori check is made; the
+thermoelastic deformation-heating source of Section~\ref{ch:equations} vanishes identically in the
+steady problem, and its transient neglect is controlled by $\xi\approx2\times10^{-2}$
+\cite{boley1960theory}.

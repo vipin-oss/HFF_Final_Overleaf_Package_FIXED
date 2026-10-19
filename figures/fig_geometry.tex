@@ -1,0 +1,45 @@
+% fig_geometry.tex -- body content of Figure 1 (scaled layout, not to absolute scale)
+\begin{tikzpicture}[x=1pt,y=1pt,>=Stealth,font=\small]
+% ---------------- geometry (points as described in caption) ----------------
+\def\Le{36}\def\L{180}\def\Lo{36}          % entry, heated, exit (horizontal pts)
+\def\Hf{22}                                 % channel height (exaggerated for readability)
+\def\ds{16}                                 % wall thickness. origin of fluid at lower-left of entry zone
+\coordinate (O) at (0,0);
+% fluid channel
+\fill[blue!10] (O) rectangle ++(\Le+\L+\Lo,\Hf);
+\draw[thick] (0,0) -- ++(\Le+\L+\Lo,0);
+\draw[thick] (0,\Hf) -- ++(\Le,0) coordinate (L1);
+\draw[thick] (\Le+\L,\Hf) -- ++(\Lo,0);
+% flexible wall strip (heated segment), deformed bow shown by parabola through points
+\coordinate (A) at (\Le,\Hf);
+\coordinate (B) at (\Le+\L,\Hf);
+\coordinate (At) at (\Le,\Hf+\ds);
+\coordinate (Bt) at (\Le+\L,\Hf+\ds);
+\fill[orange!25] (At) -- (Bt) -- (B) .. controls (\Le+\L/2,\Hf-12) .. (A) -- cycle;
+\draw[thick] (A) .. controls (\Le+\L/2,\Hf-12) .. (B);
+\draw[thick] (At) -- (Bt);
+\draw[thick] (A) -- (At); \draw[thick] (B) -- (Bt);
+% heat flux arrows on top of heated wall
+\foreach \x in {0.12,0.30,0.5,0.7,0.88}{
+  \draw[->,red!70!black,thick] (\Le+\x*\L,\Hf+\ds+14) -- (\Le+\x*\L,\Hf+\ds+2);}
+\node[red!70!black] at (\Le+\L/2,\Hf+\ds+20) {$q^{''}$ prescribed, $\Ga_h$};
+% adiabatic labels
+\node[align=center] at (\Le/2,\Hf+9) {adiabatic rigid lid\\(solid extension)};
+\node[align=center] at (\Le+\L+\Lo/2,\Hf+9) {adiabatic};
+% inlet/outlet arrows
+\draw[->,thick] (-16,\Hf/2) -- (0,\Hf/2) node[midway,above left=1pt] {$\bu=(U,0)$,\; $T_\mathrm{in}$};
+\draw[<-,thick] (\Le+\L+\Lo,\Hf/2) -- ++(16,0);
+\node[below] at (\Le+\L+\Lo+8,\Hf/2-4) {outlet, $p=p_\mathrm{out}$};
+% interface and wall-motion annotation
+\draw[<->,blue!60!black] (\Le+\L/2,\Hf-12) -- (\Le+\L/2,\Hf-1);
+\node[blue!60!black,anchor=west] at (\Le+\L/2+4,\Hf-6) {$w(x)$, $\Ga$};
+% dimension lines
+\draw[<->] (\Le,-8) -- ++(\L,0) node[midway,below] {$L$, heated flexible wall};
+\draw[<->] (0,-8) -- ++(\Le,0) node[midway,below] {entrance $L_e$};
+\draw[<->] (\Le+\L,-8) -- ++(\Lo,0) node[midway,below] {exit $L_o$};
+\draw[<->] (-10,0) -- ++(0,\Hf) node[midway,left] {$H_0$};
+\draw[<->] (\Le+\L+6,\Hf) -- ++(0,\ds) node[midway,right] {$d$};
+% pinned supports
+\foreach \p in {(A),(B)}{\draw \p -- ++(-4,-6) -- ++(8,0) -- cycle;}
+\node[anchor=west] at (\Le+\L+4,-6) {pinned ends (parameter-locked, register D-4)};
+\end{tikzpicture}

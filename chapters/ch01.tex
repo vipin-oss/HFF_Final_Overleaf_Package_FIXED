@@ -1,0 +1,87 @@
+\chapter{Introduction and physical motivation}
+\label{ch:intro}
+
+\section{Problem statement}
+Consider steady laminar forced convection in a two-dimensional slit channel. A finite segment of the
+upper wall is not rigid: it consists of a thin thermoelastic layer whose outer face is heated by a
+uniformly applied heat flux, as realised, for example, by a film heater. Conduction across the layer
+produces a through-thickness temperature difference whose magnitude is governed by the wall
+conductivity and thickness. Linear thermoelasticity associates with this gradient a free thermal
+curvature; with the segment ends pinned, the segment bows toward the interior of the passage. The
+resulting displacement redistributes the flow cross-section, alters the near-wall velocity and
+temperature gradients, and therefore changes the interfacial convective heat flux. That flux, in
+turn, is one of the boundary data of the conduction problem in the wall. The wall temperature, the
+deformation, and the fluid thermal field are thus coupled in both directions, and a consistent
+solution requires their simultaneous determination.
+
+The present document formulates this coupled problem mathematically, derives the reduction implied
+by plane strain and by the thin-wall geometry, evaluates a baseline operating point analytically,
+and specifies a numerical formulation and a verification hierarchy for its eventual computation. No
+simulation results are reported; the distinction between established theory, results derived here
+for this configuration, and quantities that remain to be computed is maintained throughout.
+
+\section{Physical motivation}
+Wall-guided micro heat exchangers and microreactors are increasingly fabricated from polymers and
+polymer composites, which combine low thermal conductivity with a comparatively high coefficient of
+thermal expansion. For the same imposed heat flux, such walls sustain through-thickness temperature
+drops orders of magnitude larger than metallic walls of equal thickness, and their free thermal
+curvature is correspondingly larger (the comparison is quantified in
+Chapter~\ref{ch:baseline}). When the wall thickness is comparable to the channel height, the
+associated deformation is not a perturbation of the passage geometry but a modification of it, and
+heat-transfer predictions that assume a fixed geometry become geometry-dependent in a
+thermally self-consistent way.
+
+Deformation of flow passages by thermal loading is well known from thermoelastic-contact and
+regenerative-cooling analyses, in which the deformation is typically computed a posteriori from a
+frozen flow solution, i.e.\ in one direction of coupling. In the configuration considered here, the
+deformation is itself the principal quantity of interest and feeds back on the convective boundary
+condition that produces it. A number of natural modelling questions follow and motivate the present
+work: under which combinations of wall material, geometry, and hydraulic operation is the thermal
+bowing comparable to the channel height; what bounds does thermal buckling of the pinned segment
+impose on admissible heating; how does the interaction behave under imposed flow rate relative to
+imposed pressure drop; and how large are the residual stresses carried by the wall.
+
+\section{Scope of the present study}
+The analysis is confined to a two-dimensional geometry, steady state, laminar incompressible flow,
+and linear isotropic thermoelasticity under plane strain, with the wall equation extended to the
+pinned beam--column form at finite membrane force. The baseline treats imposed heat flux on
+the outer face of the deformable segment; a variant with imposed outer-face temperature is retained
+as a separately documented operating regime. The solid is modelled by two-dimensional elasticity and
+steady conduction; the reduced wall equations are used for design estimates
+and benchmark comparisons. Buoyancy is disposed of at the baseline by a length-consistent
+Richardson-number estimate (three orders of magnitude below the mixed-convection range), with a
+regime guard that re-opens the question should a parameter study drive the number upward, as
+discussed in Chapters~\ref{ch:baseline} and~\ref{ch:limitations}.
+
+Transient coupling, mesh dynamics, and the associated discrete geometric conservation-law
+requirements \cite{lesoinne1996geometric} are outside the present scope and are recorded as the
+conditions of a possible start-up study. Likewise, creep of the polymer wall, manufacturing
+tolerances, and contact resistance at the interface are excluded from the baseline and are listed
+among the model limitations.
+
+\section{Relation to existing work}
+Fluid--structure interaction with heat transfer has been studied for cavity and channel geometries
+in which the deformation is driven by fluid traction \cite{soti2015steady,alsabery2019numerical,%
+saleh2025laminar}, and fully nonlinear thermo-fluid--structure interaction of flexible cantilevers
+in a differentially heated cavity has been computed \cite{kumar2026thermo}.
+In the configuration studied here, the deformation mechanism is instead the wall's own thermal
+eigen-curvature, the flow is a confined forced-convection slit at moderate Reynolds number, and the
+coupling closes through the conjugate thermal boundary condition. A detailed comparison, the
+resulting positioning of the intended contribution, and the limits of that positioning imposed by
+the available literature search are developed in Chapter~\ref{ch:contribution}.
+
+\section{Organisation of the document}
+Chapter~\ref{ch:model} fixes the geometry, assumptions, sign conventions, and material data.
+Chapter~\ref{ch:equations} states the governing equations and the constitutive relations together
+with the principles from which they follow. Chapter~\ref{ch:derivations} derives the plane-strain
+reduction and the analytical relations used for design estimates. Chapter~\ref{ch:interface}
+assembles the boundary and interface conditions. Chapter~\ref{ch:dimensionless} identifies the
+dimensionless groups and the admissibility bounds of the regime. Chapter~\ref{ch:baseline}
+evaluates the baseline operating point in full arithmetic detail. Chapter~\ref{ch:numerics}
+proposes the finite-element formulation and solution procedure. Chapter~\ref{ch:validation}
+specifies the verification and validation methodology. Chapter~\ref{ch:contribution} reviews the
+related literature and states the proposed contribution and its bounds.
+Chapter~\ref{ch:limitations} collects the limitations. Appendices contain the notation, the
+arithmetic calculations in independently checkable cells, a dimensionless dictionary, and the audit
+record (discrepancy register, consolidated evidence status, unresolved source checks, and the
+conditions attached to the staged implementation decisions).

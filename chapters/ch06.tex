@@ -1,0 +1,112 @@
+\chapter{Nondimensionalization and characteristic parameters}
+\label{ch:dimensionless}
+
+The governing groups are obtained by substituting the scales of the problem into the field
+equations of Chapter~\ref{ch:equations}: length $H_0$, velocity $U$, pressure $\mu U/H_0$ (with the
+equivalent inertial statement noted where used), temperature differences $\Delta T^*=q^{''}H_0/k_f$,
+stress $E\alpha\Delta T^*$, displacement $\alpha\Delta T^*H_0$. No group is introduced
+independently of the equations.
+
+\textbf{Length-basis and friction-factor convention.} Two Reynolds numbers appear in the channel
+literature: $\mathrm{Re}_{H_0}=\rho UH_0/\mu$ and $\mathrm{Re}_{D_h}=\rho U(2H_0)/\mu=2\mathrm{Re}_{H_0}$,
+with $D_h=2H_0$ for the slit. The Darcy friction factor is defined by
+$\Delta p=f_D\,(L/D_h)\,\rho U^2/2$, and for the slit $f_D\,\mathrm{Re}_{D_h}=96$
+\cite{shah1978laminar}; the numerator differs by a factor four from the Fanning convention
+($f_F\,\mathrm{Re}_{D_h}=24$). Throughout this document the $D_h$ basis and the Darcy convention
+are used, and the basis is required to be printed on every computed output (Appendix~B, register
+D-6).
+
+\section{Groups from the fluid equations}
+Substituting the scales into \eqref{eq:momentum}: the inertia-to-viscous ratio
+\begin{equation}
+\mathrm{Re}_{D_h}=\frac{\rho U(2H_0)}{\mu}\quad(=50\text{ at baseline}),
+\end{equation}
+and from \eqref{eq:fluidenergy} the advection-to-conduction ratio
+\begin{equation}
+\mathrm{Pr}=\frac{\mu c_p}{k_f}=6.97,\qquad \mathrm{Pe}=\mathrm{Re}_{D_h}\mathrm{Pr}=348 .
+\end{equation}
+Were the Boussinesq term retained, the ratio of buoyant to inertial forcing would be measured by
+the Grashof and Richardson numbers
+\begin{equation}
+\mathrm{Gr}=\frac{g\beta_f\Delta T^*H_0^3}{\nu_{\mathrm{kin}}^2},\qquad
+\mathrm{Ri}=\frac{\mathrm{Gr}}{\mathrm{Re}_{H_0}^2}
+=\frac{g\beta_f\Delta T^*H_0}{U^2},
+\label{eq:grri}
+\end{equation}
+where the second form makes the length basis explicit: both numerator and denominator of Ri must
+carry the \emph{same} length, so with the Grashof number built on $H_0$ and the temperature scale
+$\Delta T^*=q^{''}H_0/k_f$ (itself fixed by $H_0$), the consistent Reynolds number is
+$\mathrm{Re}_{H_0}=\rho UH_0/\mu$, not $\mathrm{Re}_{D_h}$; equivalently, on the $D_h$ basis both
+groups change ($\mathrm{Gr}_{D_h}=8\,\mathrm{Gr}_{H_0}$) and Ri changes by the factor
+$D_h/H_0=2$. The two conventions differ by a factor of two and both are quoted in
+Chapter~\ref{ch:baseline}. Finally, the dissipation group
+\begin{equation}
+\mathrm{Br}=\frac{\mu U^2}{k_f\Delta T^*}
+\end{equation}
+controls Assumption~A7. All four are evaluated in full arithmetic detail in
+Section~\ref{sec:baselinecalc}; an earlier draft divided $\mathrm{Gr}(H_0)$ by
+$\mathrm{Re}_{D_h}^2$ and mis-transcribed the powers of ten, values now corrected
+(Appendix~B, register D-14).
+
+\section{Groups from the solid and interface equations}
+Continuity of the interface flux with the common scale $\Delta T^*$ brings in the conductivity
+ratio and the two geometric ratios
+\begin{equation}
+R_k=\frac{k_s}{k_f}=0.42,\qquad D_r=\frac{d}{H_0}=6,\qquad \Lambda=\frac{L}{H_0}=60 ,
+\end{equation}
+written $R_k$ and $D_r$ to avoid collision with the bulk modulus $K$ and the rate-of-deformation
+tensor $\mathbf D$ (Appendix~B, register D-18). The through-wall temperature drop expressed in
+units of $\Delta T^*$ is
+$\Delta T_t/\Delta T^*=D_r/R_k=14.4$: essentially the entire thermal gradient of the coupled
+problem lives inside the wall, which is the quantitative basis of Assumption~A2's
+self-consistency check and the reason the solid sees a much larger $\theta$ than the fluid ever
+will.
+
+The characteristic result of the model is that the relative thermal bowing of the channel,
+from \eqref{eq:kappa}, \eqref{eq:wmax}, and $\Delta T_t=q^{''}d/k_s$, collapses to
+\begin{equation}
+\frac{w_{\max}^{\mathrm{lin}}}{H_0}=\frac{(1+\nu)\,\Sigma_\kappa\,\Lambda^2}{8},
+\qquad\text{with}\qquad
+\Sigma_\kappa=\alpha\,\frac{q^{''}H_0}{k_s}
+\label{eq:relbow}
+\end{equation}
+a dimensionless curvature-strain number. At baseline $(1+\nu)\Sigma_\kappa=7\times10^{-4}$ and
+$w_{\max}^{\mathrm{lin}}/H_0=0.315$; at the baseline membrane force the frozen-force
+beam--column form of Section~\ref{sec:deriv:beamcolumn} gives the adopted
+$w_{\max}/H_0=0.438$ (self-consistent comparison $0.428$), and \eqref{eq:relbow} is read as
+the linear limit of that relation. Equation \eqref{eq:relbow} assembles geometry, material, and
+load into a single ordinate and is the ordering parameter of the regime analysis in
+Chapter~\ref{ch:baseline} and of any future parameter study.
+
+The ratios governing the mechanical regime are the deformation ratio of
+Section~\ref{sec:deriv:pressure},
+$\Gamma_p=48\kappa_{\mathrm{th}}D_s/(5\bar pL^2)$, and the buckling sub-criticality margin
+\begin{equation}
+M_b=\frac{\bar T_{\mathrm{cr}}}{\bar\theta}\qquad(\text{required } M_b\ge2) ,
+\end{equation}
+with $\bar T_{\mathrm{cr}}$ of \eqref{eq:tcr} and $\bar\theta$ the mean wall temperature rise.
+
+\section{Admissibility bounds on the regime}
+Any reported operating point of the model must lie inside the following bounds, all verified
+arithmetic at the baseline in Chapter~\ref{ch:baseline}:
+\begin{itemize}\itemsep1pt
+\item[A-1] $\mathrm{Re}_{D_h}\le100$ (laminar-design headroom, A6);
+\item[A-2] $M_b\ge2$ (sub-critical pinned supports, Section~\ref{sec:deriv:buckling});
+\item[A-3] kinematics bounds (von K\'arm\'an validity, A4 and
+Section~\ref{sec:deriv:beamcolumn}): bending fibre strain
+$(\kappa_{\mathrm{geo}}-\kappa_{\mathrm{th}})d/2\le5\times10^{-3}$, total mechanical surface
+strain $\le10^{-2}$, arc-stretching strain $\le10^{-3}$, maximum slope $\le0.1$~rad, plus the
+mesh-generation bound $|w|/H_0\le0.5$ with positive element Jacobians;
+\item[A-4] fluid-property drift below $\sim10\%$ over the computed fluid-side temperature range (A2);
+\item[A-5] $\Gamma_p\ge5$ for a case to be classified as thermally driven;
+\item[A-6] computed wall stress $\sigma_{\max}\le0.2\,\sigma_y$, with $\sigma_y$ from the frozen
+datasheet band (design cap with margin $\ge5$; register D-19 restates the earlier ambiguous
+wording).
+\end{itemize}
+
+\section{Dependence on yet-unfrozen data}
+Only temperature differences appear in the equations, so $T_{\mathrm{ref}}$ and $T_{\mathrm{in}}$
+enter the solution exclusively through property values; both are to be fixed at the property-data
+freeze (Appendix~B, C-6), as is the value of $\beta_f$ entering $\mathrm{Gr}$. No dimensionless
+number above depends on an invented constant: groups whose inputs are still datasheet-conditional
+are listed with that dependency in Table~\ref{tab:baseline}.

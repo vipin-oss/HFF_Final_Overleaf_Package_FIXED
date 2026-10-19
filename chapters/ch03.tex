@@ -1,0 +1,168 @@
+\chapter{Governing equations and constitutive relations}
+\label{ch:equations}
+
+This chapter states the field equations of the coupled model, in each case with the conservation
+principle or constitutive theory from which the equation follows, the assumptions of
+Chapter~\ref{ch:model} that make the stated form applicable, and the literature source of the
+general relation. Symbol definitions and units are collected in Chapter~\ref{ch:model} and
+Appendix~\ref{app:symbols}; the boundary and interface conditions are assembled separately in
+Chapter~\ref{ch:interface}.
+
+\section{Mass conservation in the fluid}
+For an incompressible continuum, conservation of mass reduces to the divergence-free condition on
+the velocity field \cite{bird1960transport},
+\begin{equation}
+\nabla\cdot\bu=0 \qquad \text{in } \Om_f .
+\label{eq:continuity}
+\end{equation}
+Under Assumption~A2 the density is constant and \eqref{eq:continuity} holds identically. The domain
+$\Om_f$ is the \emph{deformed} steady domain defined in Section~\ref{sec:ale}; the deformation
+enters the fluid problem only through the domain geometry.
+
+\section{Momentum conservation in the fluid}
+Cauchy's momentum equation with constant density, constant viscosity, and no volume forces reduces
+to the steady Navier--Stokes system \cite{bird1960transport},
+\begin{equation}
+\rho\,(\bu\cdot\nabla)\bu = -\nabla p + \mu\nabla^2\bu \qquad \text{in } \Om_f .
+\label{eq:momentum}
+\end{equation}
+Assumptions A2 and A6 (constant Newtonian properties, laminar regime) make \eqref{eq:momentum}
+well posed together with the boundary conditions of Chapter~\ref{ch:interface}. Every term carries
+units \si{\pascal\per\metre}. Buoyancy would enter through the Boussinesq body force
+$\rho\beta_f\theta_f\mathbf g$, where $\theta_f=T_f-T_{\mathrm{ref}}$ is the fluid temperature rise
+and $\beta_f$ the volumetric expansion coefficient. The Richardson number computed in
+Chapter~\ref{ch:baseline} on a length-consistent basis is $1.7\times10^{-3}$, so the Boussinesq
+buoyancy term is excluded by the standard order-of-magnitude argument: the buoyant forcing is three
+orders of magnitude below the inertial forcing. A Boussinesq body-force option is nevertheless kept
+dormant in the formulation (one weak-form term) so that any future operating point with a
+significantly larger fluid-side temperature excursion can be re-examined; for context on the
+opposite limit, in which stable stratification measurably modifies channel heat transfer at bulk
+Richardson numbers of order $10$ and above, see \cite{draskic2025stability}. The disposition is
+re-examined in the limitations chapter.
+
+\section{Energy conservation in the fluid}
+For a constant-property fluid, the thermal energy equation reduces to the steady
+advection--diffusion form \cite{bird1960transport}
+\begin{equation}
+\rho c_p\,(\bu\cdot\nabla)T_f = k_f\nabla^2 T_f \qquad \text{in } \Om_f .
+\label{eq:fluidenergy}
+\end{equation}
+Viscous dissipation $\mu\Phi$, with $\Phi=2\mathbf D:\mathbf D$ and
+$\mathbf D=\tfrac12(\nabla\bu+\nabla\bu^{\mathsf T})$ the rate-of-deformation tensor, is neglected
+under Assumption~A7: at the baseline the Brinkman number is $1.0\times10^{-6}$
+(Section~\ref{sec:baselinecalc}), and the dissipation term is required to be restored whenever a
+computed case reaches $\mathrm{Br}\ge10^{-2}$. Each term has units \si{\watt\per\cubic\metre}.
+
+\section{Heat conduction in the solid}
+Steady conduction in the wall obeys \cite{carslaw1947conduction}
+\begin{equation}
+\nabla\cdot(k_s\nabla T_s)=0 \qquad \text{in } \Om_s^0 .
+\label{eq:solidenergy}
+\end{equation}
+In the general theory of thermoelasticity the energy equation contains the deformation-heating
+source $-\beta T_0\tr\dot{\beps}$, where $T_0$ is the absolute reference temperature
+\cite{boley1960theory}. This source vanishes identically in any steady state
+($\dot{\beps}\equiv0$), so \eqref{eq:solidenergy} is exact for the baseline. In a transient
+start-up study its omission would be an approximation controlled by the thermoelastic coupling
+number $\xi=\beta^2T_0/[(\lambda+2\mu_L)\rho_sc_s]$, evaluated at the baseline in
+Section~\ref{sec:baselinecalc} ($\xi\approx2\times10^{-2}$).
+
+The solid domain $\Om_s^0$ is the reference configuration: under small strains (A4) the distinction
+between current and reference coordinates is negligible for the conduction problem. The wall thermal
+field feeds the mechanical problem through the constitutive relation \eqref{eq:constitutive}, and
+is closed by the conjugate interface conditions of Chapter~\ref{ch:interface}.
+
+\section{Linear thermoelastic constitutive relations and kinematics}
+The solid follows the Duhamel--Neumann extension of Hooke's law for an isotropic body with linear
+thermal expansion \cite{boley1960theory,timoshenko1970elasticity},
+\begin{equation}
+\beps=\tfrac12\big(\nabla\bd+\nabla\bd^{\mathsf T}\big),\qquad
+\bsig = 2\mu_L\beps + \lambda(\tr\beps)\bI - \beta\theta\bI
+\qquad \text{in } \Om_s^0 .
+\label{eq:constitutive}
+\end{equation}
+The assumptions are small strain (A4) and isotropy (A3). All stress components reported from the
+model are \emph{total} Cauchy stresses, i.e.\ \eqref{eq:constitutive} is never split for reporting
+into a ``mechanical'' and a ``thermal'' part; the trace of \eqref{eq:constitutive} is examined in
+Section~\ref{sec:meanstress} and turns this convention into a checkable identity.
+
+\subsection{Plane-strain closure and out-of-plane stress}
+Under plane strain $\eps_{zz}=0$ (A1). Writing Hooke's law in compliance form with the free thermal
+strain,
+\begin{equation}
+\eps_{zz}=\frac{1}{E}\big[\sigma_{zz}-\nu(\sigma_{xx}+\sigma_{yy})\big]+\alpha\theta=0
+\;\;\Longrightarrow\;\;
+\sigma_{zz}=\nu(\sigma_{xx}+\sigma_{yy})-E\alpha\theta ,
+\label{eq:sigmazz}
+\end{equation}
+which specialises the general plane-strain result \cite{timoshenko1970elasticity,boley1960theory}
+to the present notation. The equivalence of \eqref{eq:sigmazz} with the stiffness-form value
+$\sigma_{zz}=\lambda\tr\beps-\beta\theta$ is verified algebraically in
+Section~\ref{sec:deriv:planestrain}. The out-of-plane stress must be retained in any field
+quantity that involves the stress trace, as the next section makes precise.
+
+\section{Elastic equilibrium}
+Neglecting inertia (A5) and volume forces, linear-momentum balance in the solid reduces to
+\begin{equation}
+\nabla\cdot\bsig=\mathbf{0} \qquad \text{in } \Om_s^0 .
+\label{eq:equilibrium}
+\end{equation}
+Together with \eqref{eq:constitutive} and the stress boundary conditions of
+Chapter~\ref{ch:interface}, \eqref{eq:equilibrium} constitutes the classical displacement
+formulation of isothermal thermoelasticity \cite{boley1960theory}; elimination of stress gives the
+Navier equation with the thermal body-force-equivalent term $-\beta\nabla\theta$.
+
+\section{Mean stress and the spatial mean-stress identity}
+\label{sec:meanstress}
+The mean (hydrostatic) Cauchy stress $\sigma_m=\tr\bsig/3$ is used to characterise the compressive
+membrane state of the wall. Two equivalent expressions follow from \eqref{eq:constitutive} and
+\eqref{eq:sigmazz} and are derived in Section~\ref{sec:deriv:meanstress}:
+\begin{equation}
+\sigma_m=\frac{1+\nu}{3}\big(\sigma_{xx}+\sigma_{yy}\big)-\frac{E\alpha}{3}\,\theta
+=K\big(\tr\beps-3\alpha\theta\big),
+\label{eq:meanstress}
+\end{equation}
+where the second form identifies mean stress with bulk modulus $\times$ mechanical volumetric
+strain. The two forms must agree identically at every point; this identity is used as an algebraic
+consistency check in the post-processing of the future solver, and only complete thermoelastic
+stress components may enter the first form. An immediate consequence for sanity checks
+(Section~\ref{sec:deriv:sanity}) is that under plane strain even a \emph{free} uniformly heated
+strip carries $\sigma_m=-E\alpha\theta/3\neq0$, because $\eps_{zz}=0$ is itself a constraint that
+generates $\sigma_{zz}=-E\alpha\theta$; this corrects the three-dimension-free expectation
+$\sigma_m=0$ recorded in an earlier draft of the formulation (Appendix~B, register D-2).
+
+\section{Reduced wall equation for design estimates}
+\label{sec:beam}
+For design estimates and beam-level benchmarks, the strip is additionally approximated as a thin
+Euler--Bernoulli plate strip of flexural rigidity per unit depth
+$D_s=Ed^3/[12(1-\nu^2)]$ \cite{timoshenko1970elasticity}, governed by
+\begin{equation}
+D_s\,w^{''''}(x)= -\,p(x), \qquad
+w(0)=w(L)=w^{''}(0)=w^{''}(L)=0,
+\label{eq:beam}
+\end{equation}
+with $w$ measured positive into the channel (Section~\ref{sec:signs}) and $p(x)$ the fluid pressure
+acting on the wall, pushing the wall \emph{away} from the channel; the sign convention is fixed so
+that the pinned--pinned thermal bowing of Section~\ref{sec:deriv:deflection} is positive.
+Equation \eqref{eq:beam} is used \emph{only} for design estimates and benchmark construction; the
+production model is the two-dimensional system \eqref{eq:solidenergy}--\eqref{eq:equilibrium}, of
+which \eqref{eq:beam} is the standard leading-order reduction for $d/L\ll1$
+\cite{timoshenko1970elasticity}.
+
+\section{The deformed fluid domain}
+\label{sec:ale}
+The fluid problem is posed on the domain $\Om_f$ occupied by the fluid in the converged steady
+configuration. Given the solid solution on the reference interface, a mesh-displacement field
+$\widehat{\mathbf w}$ is constructed on $\Om_f^0$ by solving a pseudo-elastic extension problem
+(cf.\ Section~\ref{sec:coupling}) with Dirichlet data $\widehat{\mathbf w}=\bd$ on
+$\Ga_{\mathrm{if}}^0$ and $\widehat{\mathbf w}=\mathbf 0$ on rigid boundaries, and
+$\Om_f=\{X+\widehat{\mathbf w}(X):X\in\Om_f^0\}$. Because time does not appear in the baseline
+problem, no mesh velocity enters the fluid equations and no geometric-conservation-law constraint
+arises; such constraints become mandatory only for the transient extension, where the ALE
+formulation must be made GCL-compliant \cite{lesoinne1996geometric}.
+
+\section{Constitutive completeness}
+No strain-gradient, nonlocal, fractional-derivative, memory, or two-temperature terms appear in
+this model, by deliberate restriction (cf.\ Section~\ref{sec:limitations}). Any such addition would
+require its own constitutive evidence, boundary conditions, and validation objects, none of which
+are available in the literature base used here.

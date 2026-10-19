@@ -1,0 +1,90 @@
+\chapter{Boundary and interface conditions}
+\label{ch:interface}
+
+\section{Interface conditions on the fluid--solid boundary}
+\label{sec:interface}
+On the deformed interface $\Ga_{\mathrm{if}}$ the two subsystems exchange kinematics, tractions,
+and heat. With the conventions of Section~\ref{sec:signs} the conditions are
+\begin{align}
+\bu\big(X+\bd(X)\big)&=0 &&\text{no-slip condition}, \label{eq:ifkin}\\
+\bsig\cdot\bn &= \big(-p\,\bI+2\mu\mathbf D(\bu)\big)\cdot\bn &&\text{traction continuity}, \label{eq:iftraction}\\
+T_f &= T_s &&\text{temperature continuity}, \label{eq:iftemp}\\
+-k_f\nabla T_f\cdot\bn &= -k_s\nabla T_s\cdot\bn &&\text{heat-flux continuity}. \label{eq:ifflux}
+\end{align}
+The kinematic condition \eqref{eq:ifkin} is the steady form of the usual
+$\bu=\partial\bd/\partial t$; the traction condition
+\eqref{eq:iftraction} follows from balance of the interface traction vector in the absence of
+interfacial stress, $\bsig^{(s)}\cdot\bn+\bsig^{(f)}\cdot\bn_f=0$ with $\bn_f=-\bn$, where
+$\bsig^{(f)}=-p\bI+2\mu\mathbf D$ is the fluid stress. Evaluating both sides at the same point and
+with the single normal $\bn$ yields \eqref{eq:iftraction}; the viscous part of the traction is
+retained alongside the pressure, although at the baseline the pressure part dominates by about two
+orders of magnitude in magnitude of its bending effect ($\tau_w=0.6$ Pa against
+$\bar p=84$ Pa; Chapter~\ref{ch:baseline}). The conditions \eqref{eq:iftemp}--\eqref{eq:ifflux}
+express perfect thermal contact (A8): continuity of temperature (no contact resistance) and
+continuity of the normal heat flux, with the flux vector $\mathbf q=-k\nabla T$ evaluated with a
+single normal, following the standard conjugate-heat-transfer formulation
+\cite{carslaw1947conduction}.
+
+\section{Exterior boundary conditions}
+\label{sec:bcs}
+Table~\ref{tab:bcs} specifies the remaining boundary data. The inlet profile is the fully developed
+plane-Poiseuille parabola for a rigid entry of equal height, so that the mass flow per unit depth
+is fixed at $\dot m'=\rho UH_0$ at both fixed-$U$ operation and (for the future fixed-$\Delta p$
+variant) through the equivalent boundary data; the entrance length is a design input.
+
+\begin{longtable}{p{1.0cm}p{2.6cm}p{7.2cm}p{3.9cm}}
+\caption{Boundary-condition specification.}\label{tab:bcs}\\
+\toprule
+ID & Boundary & Condition & Remark \\
+\midrule
+\endfirsthead
+\toprule
+ID & Boundary & Condition & Remark \\
+\midrule
+\endhead
+B1 & $x=-L_e$, fluid & $\bu=6U\,\tfrac{y}{H_0}\big(1-\tfrac{y}{H_0}\big)\hat{\mathbf x}$, $T_f=T_{\mathrm{in}}$ & fixed mass flow, rigid entry \\
+B2 & $x=L+L_o$, fluid & traction-free outflow with datum $p=0$; $\partial_nT_f=0$ & exit-length/backflow sensitivity required (App.~B, C-9) \\
+B3 & lower wall $y=0$ & $\bu=0$, $\partial_nT_f=0$ & rigid, adiabatic \\
+B4 & rigid upper sections & $\bu=0$, $\partial_nT_f=0$ & rigid casing \\
+B5 & $\Ga_{\mathrm{if}}$ & \eqref{eq:ifkin}--\eqref{eq:ifflux} & conjugate interface \\
+B6 & outer face $\Ga_h^0$ & $-k_s\nabla T_s\cdot\bn_{\mathrm{out}}=q^{''}$ & baseline regime N \\
+B7 & strip ends $X=0,L$ & $d_1=d_2=0$, zero applied moment; $\partial_nT_s=0$ & pinned, adiabatic (A9) \\
+B8 & remaining solid faces & zero traction, zero flux & insulated casing \\
+B9 & variant of B6 & $T_s=T_h$ on $\Ga_h^0$ & regime D; matched heat-input rule (A10) \\
+\bottomrule
+\end{longtable}
+
+Two conditions deserve comment. The outflow condition B2 is the usual ``do-nothing'' natural
+condition of finite-element practice for \eqref{eq:momentum}; it requires the exit length $L_o$ to
+be sufficient that the flow has re-developed a nearly parallel state, verified a posteriori, and no
+backflow occurs. The datum $p=0$ in B2, together with the casing reference of Assumption~A9,
+fixes the gauge pressure carried by the deformable strip (Section~\ref{sec:deriv:pressure});
+this datum is part of the problem specification and must be reported with every computed case. The outer-face condition B6 fixes the areal heat input and thereby the total heat
+duty per unit depth, $Q'=q^{''}L$, which is the quantity balanced in the global enthalpy check of
+Section~\ref{sec:quality}; regime D (B9) cannot share the heat-duty bookkeeping with regime N and
+is compared only at matched $Q'$.
+
+\section{Interface data flow in the coupled problem}
+\label{sec:datamodel}
+With the thermal load imposed on the solid side, the data flow of the coupled problem is: the fluid
+subproblem receives its domain and the interface temperature from the solid; the solid subproblem
+receives the interface traction (pressure-dominated) and the conjugate flux condition. Because the
+solid problem is linear, the displacement decomposes exactly as
+\begin{equation}
+\bd=\bd_{\mathrm{th}}+\bd_p,
+\label{eq:superposition}
+\end{equation}
+where $\bd_{\mathrm{th}}$ solves the thermoelastic problem with zero interface traction and
+$\bd_p$ solves the isothermal problem under the fluid traction. This superposition is an algebraic
+identity of the \emph{linear} solid model at fixed configuration and fixed loads; it is used as
+the mechanism-attribution device between thermally driven and traction-driven deformation. Two
+scope limits are recorded. First, across the coupled iterations the fluid state and the traction
+distribution depend on $\bd$, so the decomposition is exact only at the converged state and for
+the loads of that state. Second, at the von K\'arm\'an model level of
+Section~\ref{sec:deriv:beamcolumn} the geometric-stiffness term couples the two load systems, so
+the additive identity becomes approximate, with a relative error controlled by
+$N_\theta^c/N_{\mathrm{cr}}$ ($\approx28\%$ in $w_{\max}$ at the baseline, from the
+beam--column amplification); the implementation therefore attributes mechanisms by
+\emph{separate load-case solutions} (thermal only, traction only, both) rather than by adding
+fields, and verifies exact additivity on a detuned case at $N_\theta^c/N_{\mathrm{cr}}\le0.05$
+(Chapter~\ref{ch:validation}).

@@ -1,0 +1,72 @@
+\chapter{Literature review, research gap, and proposed contribution}
+\label{ch:contribution}
+
+\section{Lines of research neighbouring the present model}
+\emph{Flow-load-driven flexible-wall FSI with heat transfer.}
+Soti, Bhardwaj, and Sheridan \cite{soti2015steady} computed two-way coupled interaction of laminar
+channel flow with a flexible thin plate including advection--diffusion heat transfer, showing that
+flow-induced deformation passively raises heat transfer; the deformation is traction-driven and
+the structures thermally passive. The cavity studies of Alsabery et al.\ \cite{alsabery2019numerical}
+and Saleh et al.\ \cite{saleh2025laminar} extended transient FSI with natural convection in heated
+cavities with flexible walls, again with deformation driven by fluid loading.
+
+\emph{Thermo-fluid--structure interaction with heated flexible structures.}
+The recent work of Kumar, Assam, and Prabhakaran \cite{kumar2026thermo} computes nonlinear
+thermo-FSI of two interacting cantilever plates in a differentially heated cavity -- the closest
+relative of the present problem in its closure of the thermal loop, though the configuration is
+an unconfined cavity with beam-like structures.
+
+\emph{Steady compliant-channel theory.}
+Christov and co-workers \cite{christov2018flow} established the relation between flow rate and
+pressure drop in deformable shallow microfluidic channels, providing the analytical class used for
+the steady elastic-coupling benchmark V-E. The channel there is deformed by fluid pressure
+alone; thermal bowing does not appear.
+
+\emph{Adjacent physics.}
+The stability of stably stratified horizontal channel flow, including deteriorated heat transfer
+under stable stratification, has been characterised by direct numerical simulation in
+\cite{draskic2025stability}; that work marks the opposite limit of the buoyancy question --- the
+baseline Richardson number of the present problem lies three orders of magnitude below the
+stratification-relevant range (Chapter~\ref{ch:baseline}) --- and is not itself a
+conjugate-coupling study. The thermoelastic theory
+underlying wall curvature under imposed gradients is classical
+\cite{boley1960theory,timoshenko1970elasticity}, as are the buckling limits
+\cite{timoshenko1961stability} and the rigid-duct thermal entry results \cite{shah1978laminar}.
+
+\section{Research gap and its stated bounds}
+The search underlying this document (Appendix~B, item C-7, with its documented limitations) did not
+identify a study that combines the following elements in one computed model:
+(i) \emph{thermal eigen-curvature of the wall itself} -- the through-thickness gradient of a heated
+channel wall -- as the principal designed deformation mechanism, rather than traction-driven
+flexibility;
+(ii) a \emph{closed two-way steady loop} in which the deformed passage modifies the conjugate heat
+transfer whose boundary condition produces the deformation;
+(iii) an analysis organised in the mechanism parameters \eqref{eq:relbow}, $\Gamma_p$, and $M_b$,
+with explicit hydraulic-driving-condition contrast (fixed flow rate versus fixed pressure drop);
+and (iv) verification structured along analytical limits, rigid-wall conjugate benchmarks, and a
+steady elastic-coupling benchmark of the Christov class, rather than transient FSI suites.
+
+This is a \emph{bounded} positioning, not a claim of priority: thermo-FSI as a class exists
+\cite{kumar2026thermo}; flexible-wall non-isothermal FSI exists
+\cite{soti2015steady,alsabery2019numerical,saleh2025laminar}; and compliance benchmarks of
+deformable channels exist \cite{christov2018flow}. What the present configuration changes is the
+mechanism (thermal bowing in the wall), the flow class (confined forced-convection slit at
+$\mathrm{Re}_{D_h}\le100$), and the steady formulation class. A systematic database pass
+(Scopus/Web of Science) remains open (Appendix~B, C-7), and no wording stronger than the bounded
+statement above is supported until it is completed.
+
+\section{Intended contribution of the proposed work}
+Within those bounds, the proposed study will contribute:
+\begin{enumerate}\itemsep1pt
+\item a verified, monolithic-compatible formulation of a thermally self-deforming conjugate
+channel with exact interface cancellation (Section~\ref{sec:coupling});
+\item an analytical regime description \eqref{eq:relbow} together with design-relevant ceilings
+(wall-stress cap of bound A-6, buckling \eqref{eq:tcr}, deformation ratio \eqref{eq:gammap}),
+which orient any future parameter study before a single simulation is run;
+\item a computed map of the deformation--heat-transfer feedback in the ($\Sigma_\kappa$, $R_k$,
+$D_r$, driving-condition) space, including mechanism attribution between thermal and traction
+contributions by the load-case decomposition of \eqref{eq:superposition} -- all to be obtained
+only after the verification hierarchy of Chapter~\ref{ch:validation} is satisfied.
+\end{enumerate}
+The third item is prospective and is stated as future work: it cannot be reported, characterised,
+or even conjectured quantitatively before the computations exist.

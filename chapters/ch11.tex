@@ -1,0 +1,64 @@
+\chapter{Limitations and concluding remarks on the formulation}
+\label{ch:limitations}
+
+\section{Model limitations}
+\label{sec:limitations}
+The following limitations are inherent to the formulation as posed and accompany any future use of
+the model.
+
+\textbf{(1) Physical modelling limits.} The wall is treated as homogeneous, isotropic, linearly
+thermoelastic (A3); unfilled PEEK is mildly anisotropic and its glass-transition-modified behaviour
+at temperatures approaching or exceeding its operating limits is not captured. Creep and
+stress relaxation are excluded, so the formulation describes the short-time-scale steady state and
+not hours-long drift. Contact resistance at the interface is neglected (A8). Constant fluid
+properties are self-consistent at the baseline but set an upper envelope on thermal load through
+bound A-4.
+
+\textbf{(2) Buoyancy.} As discussed in Section~\ref{sec:buoyancy-baseline}, the corrected
+length-consistent estimate gives $\mathrm{Ri}=1.7\times10^{-3}$ at the baseline, and the
+constant-density closure stands on that estimate. The disposition carries its own guard: the
+question re-opens at any parameter-study point with $\mathrm{Ri}>10^{-2}$, the Boussinesq term
+remains available in the weak form, and the estimate itself is recomputed from computed fields in
+every reported run (regime guard A-1--A-6 audit).
+
+\textbf{(3) Support and geometric ideality.} The pinned supports of A9 are idealizations; any real
+compliance at the supports changes both the thermal bowing and the buckling ceiling, and the
+clamped comparison is recorded in the audit register. The full-edge pin idealization itself
+carries an $O(d/L)$ stiffening relative to ideal point pins --- a few per cent at the baseline
+aspect ratio --- closed by the one-time numerical check of Chapter~\ref{ch:validation}. Entry-length estimates for the hydrodynamic
+and thermal development assume the engineering constants used in
+Table~\ref{tab:baseline} and are replaced by computed developing solutions in the future.
+
+\textbf{(4) Reduced wall equation.} Equation \eqref{eq:beam} and the beam--column extension
+\eqref{eq:beamcol} are design relations at the reduced (frozen-force) von K\'arm\'an level. The
+reduction carries a quantified, one-sided error: at the baseline it overpredicts the
+self-consistent deflection by $2.3\%$ ($0.438$ against $0.428\,H_0$), the error stays below
+$\approx4\%$ inside the admissible envelope ($N_\theta^c/N_{\mathrm{cr}}\le0.33$), and it grows
+rapidly beyond $N_\theta^c/N_{\mathrm{cr}}\approx0.5$, where the escalation criterion of
+Chapter~\ref{ch:numerics} requires the consistent force update \eqref{eq:nupdate}; the buckling
+margin is unaffected. None of the coupled-model conclusions to be obtained computationally
+depend on this accuracy beyond its stated order, and the wall model itself is a verification
+target (test V-C3).
+
+\textbf{(5) Literature coverage.} The positioning of Chapter~\ref{ch:contribution} is conditional
+on completion of the systematic search (Appendix~B, C-7); several bibliographic records used here
+required manual extraction and one, \cite{gupta2024photothermo}, remains bibliographically
+incomplete (Appendix~B).
+
+\textbf{(6) Data freeze.} The numerical values of Table~\ref{tab:baseline} that depend on the solid
+properties or on $\beta_f$ assume datasheet-representative numbers pending a fixed datasheet
+(C-6); only the dimensionless structure, not the point values, is data-independent.
+
+\section{Concluding remarks}
+The formulation presented here is complete as a mathematical statement: field equations,
+constitutive relations, and boundary data are closed; the plane-strain reduction and the associated
+design relations are derived rather than asserted; the dimensionless structure of the regime is
+identified from the equations; and a baseline operating point is established arithmetically. The
+principal open questions are not mathematical but evidentiary: the bibliography items listed in
+Appendix~B, the property freeze, and the construction of the two missing benchmark data sets; the
+buoyancy question is closed at the baseline by estimate and guarded by a regime check
+(Chapter~\ref{ch:baseline}). The coupled computations themselves are deliberately deferred until these
+items close; the isolated solver verifications may proceed under their stated conditions. In that
+sense the present document is a research formulation in the strict meaning of the word: everything
+stated is either established theory with a source, a derivation reproduced in full, or an explicit
+agenda item with named conditions.

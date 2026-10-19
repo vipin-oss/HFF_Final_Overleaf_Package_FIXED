@@ -1,0 +1,146 @@
+\chapter{Proposed numerical formulation and solution procedure}
+\label{ch:numerics}
+
+This chapter specifies the discretization and solution procedure for the model of
+Chapters~\ref{ch:equations} and~\ref{ch:interface} at the level required for an independent
+implementation review. No code is presented and none is yet written (Appendix~B); the specification
+is intended to be realisable with standard finite-element components in a general-purpose
+environment.
+
+\section{Spatial discretization}
+The fluid velocity and pressure are approximated by Taylor--Hood elements (continuous piecewise
+quadratic velocity, continuous piecewise linear pressure), satisfying the discrete inf--sup
+condition for the Stokes limit of \eqref{eq:momentum} \cite{hood1974navier,brezzi1991mixed}; both
+temperature fields and the solid displacement use the same quadratic family. The fluid energy
+equation \eqref{eq:fluidenergy} is strongly advection-dominated: with
+$\mathrm{Pe}=\mathrm{Re}_{D_h}\mathrm{Pr}=348$ the cell P\'eclet number exceeds the Galerkin
+oscillation threshold on any mesh affordable at the required near-wall resolution, so the
+temperature transport is stabilized by a consistent streamline-upwind (SUPG) term with the
+standard residual-based coefficient; oscillation-free behaviour of the computed interface flux is
+part of the acceptance criteria of test V-B (Chapter~\ref{ch:validation}). The meshes of the
+fluid and solid subdomains are constructed \emph{conforming} at the interface: nodes and edges of
+the two meshes coincide on $\Ga_{\mathrm{if}}$. This choice is deliberate: interface quantities are
+then transferred by identical nodal values, the interface quadrature is exact to the geometric
+approximation order, and no mortar or projection operator -- each of which would introduce its own
+consistency error in the conjugate flux condition -- is required. Isoparametric quadratic boundary
+edges are used on the deformable boundary and are updated with the same map as the mesh
+displacement, so that the geometric approximation of $\Om_f$ stays at the approximation order of
+the field variables.
+
+\section{Weak formulation and monolithic interface cancellation}
+\label{sec:coupling}
+Multiplying by test functions and integrating by parts, the coupled steady problem reads: find
+$\bu\in V_g$, $p\in Q$, $T_f\in S_f$, $\bd\in V_s$, $T_s\in S_s$ such that
+\begin{align}
+&\hat a_f(\bu,\mathbf v)+b(\mathbf v,p)+c(\bu;\bu,\mathbf v)
+=\int_{\Ga}\sigma_f(\bu,p)\bn\cdot\mathbf v\,\mathrm ds
++\int_{\Ga_{\mathrm{out}}}\sigma_f\bn\cdot\mathbf v\,\mathrm ds +\langle\text{data}\rangle,
+\qquad b(\bu,q)=0\ \ \forall\,q, \label{eq:weakf}\\
+&\rho c_p\,a_T(T_f,\chi)+a_{kf}(T_f,\chi)
+=-\int_{\Ga}k_f\nabla T_f\cdot\bn\,\chi\,\mathrm ds, \label{eq:weaktf}\\
+&\int_{\Om_s^0}\bsig(\bd,\theta):\beps(\boldsymbol\varphi)\,\mathrm dX
+=\int_{\Ga}\bsig\bn\cdot\boldsymbol\varphi\,\mathrm ds, \label{eq:weaks}\\
+&a_{ks}(T_s,\chi)=\int_{\Ga_h^0}q^{''}\chi\,\mathrm ds
+-\int_{\Ga}k_s\nabla T_s\cdot\bn\,\chi\,\mathrm ds , \label{eq:weakts}
+\end{align}
+for all test functions, with
+$\hat a_f(\bu,\mathbf v)=2\mu\int_{\Om_f}\mathbf D(\bu):\mathbf D(\mathbf v)\,\mathrm dx$,
+$b(\mathbf v,p)=-\int_{\Om_f}p\nabla\cdot\mathbf v\,\mathrm dx$, and
+$\sigma_f=-p\bI+2\mu\mathbf D(\bu)$ the fluid Cauchy stress. The interface mechanism is worth
+stating exactly, because it is the load-bearing sign argument of the coupling. After integration
+by parts, the fluid residual contains the interface term
+$-\int_{\Ga}\sigma_f\bn\cdot\mathbf v\,\mathrm ds$ (with $\bn$ the outward normal of $\Om_f$),
+while the solid residual contains $+\int_{\Ga}\sigma_s\bn\cdot\boldsymbol\varphi\,\mathrm ds$
+(the solid's outward normal on $\Ga$ is $-\bn$). Under the traction equality
+\eqref{eq:iftraction}, $\sigma_s\bn=\sigma_f\bn$, and with identical test functions on a
+conforming interface mesh the two terms enter the assembled residual with opposite signs and
+cancel identically; likewise the flux terms $-\int_{\Ga}k_f\nabla T_f\cdot\bn\,\chi\,\mathrm ds$
+and $+\int_{\Ga}k_s\nabla T_s\cdot\bn\,\chi\,\mathrm ds$ cancel under \eqref{eq:ifflux}. The
+monolithic statement therefore contains \emph{no} modelled interface quantity, which removes one
+class of coupling error by construction. Three conditions are required for the cancellation to
+survive discretization, and all three are part of the specification: (i) the single-normal
+convention of Section~\ref{sec:signs}; (ii) a conforming interface mesh, so that traction and
+temperature transfer without projection; and (iii) identical quadrature and the same
+isoparametric representation of the curved P2 interface on both sides, so that the two boundary
+integrals are evaluated on the same discrete surface --- this quadrature-consistency audit is
+part of tests V-B and V-D. The outflow term in \eqref{eq:weakf} is the do-nothing natural
+condition of Section~\ref{sec:bcs} and does not cancel.
+
+\section{Solution procedure for the steady problem}
+The domain map $\widehat{\mathbf w}$ is defined as the solution of a pseudo-elastic problem on
+$\Om_f^0$ with coefficient graded to stiffen small elements near the interface, Dirichlet data
+$\widehat{\mathbf w}=\bd$ on $\Ga_{\mathrm{if}}^0$ and $\widehat{\mathbf w}=\mathbf 0$ on rigid
+boundaries -- the standard solid-based mesh-motion device of deformable-domain computations
+\cite{lesoinne1996geometric}. The steady coupled state is obtained by the following fixed-point
+iteration on the geometry:
+\begin{enumerate}\itemsep1pt
+\item solve the fluid subproblem on the current $\Om_f$ by exact Newton linearization of
+\eqref{eq:weakf} (the advection derivative is linearized analytically);
+\item transfer pressure-dominated traction and interface temperature requirements to the solid;
+\item solve the thermoelastic subproblem \eqref{eq:weaks}--\eqref{eq:weakts} at the reduced
+(frozen-force) von K\'arm\'an level specified by Section~\ref{sec:deriv:beamcolumn} (linear
+thermoelasticity augmented by the geometric-stiffness contribution of the current membrane
+state; the membrane force is re-evaluated from the computed state after each solve, so the
+consistency update \eqref{eq:nupdate} is recovered at the fixed point; one direct solve per
+iteration);
+\item solve the mesh-extension problem, update $\Om_f$, and recompute all geometry-dependent
+data (normals, Jacobians, quadrature);
+\item under-relax the interface displacement with a documented factor $\omega$
+(tuned once and reported per run);
+\item iterate to a smallness of the interface displacement increment,
+$\|\bd^{(k+1)}-\bd^{(k)}\|_\infty\le10^{-6}\,w_{\max}$
+(achieved values reported per run; the earlier figure $10^{-8}H_0$ sat below achievable
+fixed-point accuracy and is superseded), together with residual smallness of all four
+subproblem statements.
+\end{enumerate}
+The escalation trigger to the monolithic path is numeric: escalation occurs when
+$N_\theta^c/N_{\mathrm{cr}}>0.5$ at any iterate, or when the geometry increment stagnates
+(four consecutive iterations with reduction of the increment by less than a factor of two). At
+the baseline ($N_\theta^c/N_{\mathrm{cr}}=0.275$) the fixed point remains the specified path.
+If it nevertheless stagnates or shows loss of convergence near the buckling margin,
+the recorded escalation is a monolithic Newton solve including consistent shape-derivative terms;
+pseudo-transient continuation is the fallback. Linear systems are factorized directly (the
+two-dimensional problem size at the target meshes is of order $10^4$--$10^5$ degrees of freedom);
+iterative solvers are a scaling option, not a baseline assumption.
+
+\section{Mesh convergence and quality controls}
+\label{sec:quality}
+Three nested uniformly refined meshes are used per configuration; observed orders of convergence
+and grid-convergence indices are reported for the monitored quantities mean Nusselt number, maximum
+interface deflection, and pressure drop. A configuration enters the reported set only if the
+fine-to-medium difference is within a pre-registered tolerance ($1\%$, tightened to $0.5\%$ for any
+headline figure). In addition to the residuals, every computed run must satisfy, and tabulate, the
+following conservation and consistency checks, which follow directly from the formulation:
+(i) \emph{global enthalpy balance},
+$|\int_{\Ga_h}q^{''}\mathrm ds-\dot m'c_p(T_{b,\mathrm{out}}-T_{b,\mathrm{in}})|\le10^{-3}Q'$,
+evaluated on the deformed geometry;
+(ii) \emph{interface flux-jump norm}, $\|[k\partial_nT]\|_{L^2(\Ga)}/\|q^{''}\|\le10^{-3}$;
+(iii) \emph{load-case consistency}: mechanism attribution is performed by separate solutions
+(thermal only, traction only, both) rather than by adding fields; exact additivity of the linear
+model is verified on a detuned case with $N_\theta^c/N_{\mathrm{cr}}\le0.05$
+(Section~\ref{sec:coupling}, Chapter~\ref{ch:validation});
+(iv) \emph{mean-stress identity} (\ref{eq:meanstress}a,b) pointwise within interpolation accuracy;
+(v) \emph{regime guards} A-1--A-6 of Chapter~\ref{ch:dimensionless} recomputed from the computed
+fields.
+
+\section{Post-processing definitions}
+The bulk temperature $T_b(x)$ is mass-flux-weighted; the wall heat flux is
+$q_w(x)=-k_f\nabla T_f\cdot\bn|_\Ga$; the local heat-transfer coefficient and Nusselt number are
+\begin{equation}
+h(x)=\frac{q_w(x)}{T_w(x)-T_b(x)},\qquad \mathrm{Nu}(x)=\frac{2H_0h(x)}{k_f},
+\end{equation}
+with $\mathrm{Nu}$ singular where $T_w\to T_b$ near the start of the heated segment; that singular
+behaviour is documented and plotted rather than suppressed. The areal mean is taken over the heated
+length. Pressure drop is measured between area-averaged pressures on the two rigid end sections.
+Solid post-processing exports complete Cauchy components (never the mechanical part alone) and
+forms $\sigma_m$ from (\ref{eq:meanstress}a) with the identity (\ref{eq:meanstress}b) exercised as
+a runtime assertion.
+
+\section{Computational feasibility note}
+All prescribed components (Taylor--Hood assembly, conforming interface mesh, direct sparse
+factorization, mesh-extension mapping, fixed-point loop) are standard and require no specialised
+CFD infrastructure; the dominant implementation risk is not algorithmic but metrological: whether
+the checks (i)--(v) are exercised, reported, and used as exclusions, as required in
+Chapter~\ref{ch:validation}. The verification of the baseline formulation against an independently
+implemented model (an open-source finite-element platform) is part of the validation methodology
+(Section~\ref{sec:replication}).
