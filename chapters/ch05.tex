@@ -44,12 +44,12 @@ ID & Boundary & Condition & Remark \\
 \midrule
 \endhead
 B1 & $x=-L_e$, fluid & $\bu=6U\,\tfrac{y}{H_0}\big(1-\tfrac{y}{H_0}\big)\hat{\mathbf x}$, $T_f=T_{\mathrm{in}}$ & fixed mass flow, rigid entry \\
-B2 & $x=L+L_o$, fluid & traction-free outflow with datum $p=0$; $\partial_nT_f=0$ & exit-length/backflow sensitivity required (App.~B, C-9) \\
+B2 & $x=L+L_o$, fluid & traction-free (``do-nothing'') outflow; the level $p\to0$ there is an output, not an imposed datum; $\partial_nT_f=0$ & exit-length/backflow sensitivity required (App.~B, C-9) \\
 B3 & lower wall $y=0$ & $\bu=0$, $\partial_nT_f=0$ & rigid, adiabatic \\
 B4 & rigid upper sections & $\bu=0$, $\partial_nT_f=0$ & rigid casing \\
 B5 & $\Ga_{\mathrm{if}}$ & \eqref{eq:ifkin}--\eqref{eq:ifflux} & conjugate interface \\
 B6 & outer face $\Ga_h^0$ & $+k_s\nabla T_s\cdot\bn_{\mathrm{out}}=q^{''}$ & baseline regime N; $q^{''}>0$ is heat supplied to the solid \\
-B7 & strip ends $X=0,L$ & $d_1=d_2=0$, zero applied moment; $\partial_nT_s=0$ & pinned, adiabatic (A9) \\
+B7 & strip ends $X=0,L$ & $d_2=0$, $\langle d_1\rangle=0$ (edge mean), zero applied moment; $\partial_nT_s=0$ & pin, not a clamp (A9, register D-26) \\
 B8 & remaining solid faces & zero traction, zero flux & insulated casing \\
 B9 & variant of B6 & $T_s=T_h$ on $\Ga_h^0$ & regime D; matched heat-input rule (A10) \\
 \bottomrule
@@ -58,9 +58,11 @@ B9 & variant of B6 & $T_s=T_h$ on $\Ga_h^0$ & regime D; matched heat-input rule 
 Two conditions deserve comment. The outflow condition B2 is the usual ``do-nothing'' natural
 condition of finite-element practice for \eqref{eq:momentum}; it requires the exit length $L_o$ to
 be sufficient that the flow has re-developed a nearly parallel state, verified a posteriori, and no
-backflow occurs. The datum $p=0$ in B2, together with the casing reference of Assumption~A9,
-fixes the gauge pressure carried by the deformable strip (Section~\ref{sec:deriv:pressure});
-this datum is part of the problem specification and must be reported with every computed case. The outer-face condition B6 fixes the areal heat input and thereby the total heat
+backflow occurs. The pressure \emph{level} on the strip is not a free constant: the inflow mass
+flux and the natural outflow condition determine $p$ absolutely, and the resulting level at the
+strip --- not the pressure drop alone --- is the load datum of
+Section~\ref{sec:deriv:pressure}. Because no gauge freedom exists, nothing is imposed to fix it; the
+level is an output and is reported with every computed case. The outer-face condition B6 fixes the areal heat input and thereby the total heat
 duty per unit depth, $Q'=q^{''}L$, which is the quantity balanced in the global enthalpy check of
 Section~\ref{sec:quality}; regime D (B9) cannot share the heat-duty bookkeeping with regime N and
 is compared only at matched $Q'$.

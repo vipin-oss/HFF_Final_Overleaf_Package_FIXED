@@ -17,16 +17,36 @@ HFF_Final_Overleaf_Package.zip
 ├── references.bib           <- 18 verified BibTeX entries (no duplicates; see note below)
 ├── chapters/                <- ch01...ch11, appendix.tex, audit_appendix.tex
 ├── figures/                 <- fig_geometry.tex, fig_signs.tex (TikZ; no external graphics)
-├── main.pdf                 <- freshly compiled from exactly these sources (49 pages)
+├── main.pdf                 <- last successful build, 49 pages (see build note below)
 ├── README.md                <- this file
 ├── HFF_final_pre_coding_checklist.md
 ├── HFF_final_reference_status.csv (+ ..._notes.txt)
 ├── HFF_source_pdf_consistency_report.md
 ├── HFF_revision_summary.md
 ├── HFF_final_packaging_report.md
+├── audit_stage15/           <- regression suite, mutation suite, package manifest,
+│                               numerical register and correction log (Stage 15/16 evidence)
 └── project_archive/         <- full audit trail (audit/, HFF_Independent_Audit_2/,
                                 HFF_Reconciliation_2/, REVISION_SUMMARY.md) — preserved verbatim
 ```
+
+**Build note (read before submission).** The bundled `main.pdf` is the last *successful*
+compilation and predates the Stage 16 source corrections (D-26 to D-31: pin-vs-clamp boundary
+condition, the `1/d` factor in the geometric-stiffness term, removal of the pressure gauge,
+the staggered thermal data flow, the SUPG stabilised weak form, and the corrected stress/strain
+values). **The PDF therefore does not yet reflect the current sources.** Recompiling requires a
+LaTeX toolchain, which was not available in the environment where the Stage 16 corrections were
+made, so no rebuild is claimed. Run the four passes above (or upload to Overleaf) before
+circulating the PDF or citing its page count.
+
+### Package integrity
+
+The ZIP's own SHA-256 (and its size, member count and the SHA-256 of every member) is recorded in
+`audit_stage15/package_manifest.txt` in this repository, regenerated together with the ZIP by
+`python3 audit_stage15/build_package.py`. The manifest sits *beside* the archive rather than inside
+it: a file cannot contain the hash of the archive that contains it. The hash is deliberately *not* embedded here: this file
+is itself a ZIP member, so a literal hash in it could never match. Rebuild the ZIP after any source
+edit; the manifest is the record of exactly what was shipped.
 
 ## Overleaf upload
 

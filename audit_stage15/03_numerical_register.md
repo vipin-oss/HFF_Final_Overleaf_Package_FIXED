@@ -48,3 +48,34 @@ Regenerate with `python3 calc_register.py`. All inputs are the printed design po
 - `(1+cos(u/2))/(1-cos(u/2))` = 5.247516878033; `cot^2(muL/4)` = 5.247516878033
 - closed form x amplification = 2382.263649; `w_max/w_p` = 2382.263649
 - analytic arc integral = closed form (see sign-convention doc)
+
+---
+
+# Stage 16 numerical register (supersedes the rows above where they conflict)
+
+| Quantity | Value | Definition | Source |
+|---|---|---|---|
+| `θ̄` | 32.27 K | `ΔT_t/2 + q/h + ΔT_b/2`; components recompute to 32.2652 | `ch04` |
+| `D_s` | 9.6429 N·m | `E d³/12(1−ν²)` | derived |
+| `κ_th` | 1.400 1/m | `(1+ν)αq/k_s` | `ch04` |
+| `N₀` (frozen) | 2.9039×10⁴ N/m | `E d α θ̄/(1−ν)` | derived |
+| `N_θ^c` (converged) | 2.7330×10⁴ N/m | fixed point of the arc relaxation | `ch04` |
+| `μL` (frozen) | 1.6463 | `√(N₀/D_s)·L` | derived |
+| `w_max` frozen | 2.1886×10⁻⁴ m = 0.4377 `H₀` | `eq:beamcolsol` | `ch04`, `ch07` |
+| `w_max` self-consistent | 2.1399×10⁻⁴ m = 0.4280 `H₀` | fixed point | `ch04` |
+| linear (no membrane) | 1.5750×10⁻⁴ m | `κ_th L²/8` | `ch04` |
+| amplification | 1.3896 | `w_max / w_lin` | `ch04`, `ch09` |
+| `κ_geo` | 2.0591 1/m | `−w″(L/2)` | derived |
+| `κ_geo/κ_th` | 1.4708 | `sec(μL/2)` (identity, machine precision) | §5 of the suite |
+| `½⟨w′²⟩` exact | 1.3879×10⁻⁴ | quadrature, 200 001 points | `ch04` |
+| circular-arc estimate | 1.5899×10⁻⁴ | `κ_geo²L²/24`, 14.6 % high | `ch04` |
+| force relaxation (1st iterate) | 6.145 % (printed 6.1 %) | `½⟨w′²⟩/ε₀`, `ε₀=(1+ν)αθ̄` | `ch04` |
+| fibre strain | 9.886×10⁻⁴ | `(κ_geo−κ_th)d/2` | `ch04` |
+| `σ_max` frozen | 13.9165 MPa = 0.155 `σ_y` | `N₀/d + 6M/d²` | appendix |
+| `σ_max` self-consistent | 13.0091 MPa = 0.145 `σ_y` | `N_θ^c/d + 6M/d²` | appendix |
+| `w_p` | 9.1875×10⁻⁸ m | `5p̄L⁴/(384D_s)` | `ch04` |
+| `Γ_p` mixed | 2.38×10³ | `w_max/w_p(p̄)` | `ch04` |
+| `Γ_p` like-for-like | 1.71×10³ | `48κ_thD_s/(5p̄L²)` | `ch04` |
+
+Note on the relaxation figure: `ε₀ = (1+ν)αθ̄ = 2.2586×10⁻³` and `½⟨w′²⟩ = 1.3879×10⁻⁴`, so the first-iterate relaxation is 6.14 %, printed as 6.1 %. The suite recomputes both factors
+from the parsed table, so a drift in either is caught.

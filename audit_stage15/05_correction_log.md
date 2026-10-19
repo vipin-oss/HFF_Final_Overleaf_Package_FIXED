@@ -129,3 +129,127 @@ Stage 11–14 reports (which remain outside the tree and are cited as external).
     commit e8ef0d78443bef7e35408671983ce2b57af83eba
     parent 9066c3b
     13 files changed, 108 insertions(+), 41 deletions(-)
+
+---
+
+# Stage 16 correction log — Claude audit responses
+
+Format: original claim (preserved), why it had to change, old → new, downstream dependencies,
+recalculated results, regression check, commit. Commit hashes are recorded in
+`10_final_readiness_report.md` once the Stage 16 commit exists.
+
+## D-26 — the pin was specified as a clamp (I-01, the highest-priority defect)
+
+- **Original claim (preserved verbatim in `ch02` A9):** the support was described as a "pinned"
+  end; the constraint set actually imposed both `d_1 = 0` and `d_2 = 0` on the whole end edge,
+  i.e. a **clamp**.
+- **Why it had to change:** a clamp suppresses the thermal bow entirely (`w ≡ 0`), which is the
+  mechanism the whole document analyses. The stated physics and the stated boundary condition were
+  mutually exclusive, so every downstream deflection number was attached to the wrong idealisation.
+- **Old → new:**
+  - old: `d_1 = d_2 = 0` on `X = 0, L`;
+  - new: `d_2 = 0` on the **full** end edge and the **edge mean** `⟨d_1⟩ = 0`, with zero applied
+    moment left as a natural condition. Mean-preserving (not pointwise) suppression of `d_1` is what
+    lets the strip bend while blocking mean axial expansion.
+- **Downstream dependencies:** `eq:weaks` (`V_s`), `ch05` B7, the Q8 benchmark, and the
+  interpretation of `w_max` in `ch04`/`ch07`.
+- **Recalculated evidence (self-checking Q8 program, `/tmp/v16/fe5.py`):** pin 1.0000, full-edge
+  roller 0.9980, full-edge clamp −0.0199 / −0.0184. The earlier "few per cent" claim for the clamp
+  is withdrawn; the clamp does not reduce the bow by a few per cent, it reverses and nearly
+  annihilates it.
+- **Residual author decision:** point pin vs rigid end face (≈0.5 % difference). Both are now
+  described; the document uses the edge-mean form and says so.
+- **Regression check:** `B7 is not a full-edge clamp`, `B7 imposes d_2=0`, `B7 blocks mean axial
+  displacement`, `V_s is not a clamp`. Mutation `m6` (replacing the pin by `d_1=d_2=0`) is caught.
+
+## D-27 — missing `1/d` in the geometric-stiffness term (I-03)
+
+- **Original claim:** `−∫ N_θ^c ∂_X d_2` in the weak form.
+- **Why:** `N_θ^c` is a membrane **force per unit length** (N/m); `N_θ^c ∂_X d_2` has units N/m, not
+  N, so the term does not balance `∫ σ:ε dX` (N). The stress resultant must be divided by the
+  thickness to become a stress, which is what the moment-curvature derivation produces.
+- **Old → new:** `−∫ N_θ^c ∂_X d_2 dX` → `−∫ (N_θ^c/d) ∂_X d_2 dX`. The accompanying text now
+  states the units of every factor and why the `1/d` appears; the geometric stiffness in SI per
+  unit width is `3×10⁻³` of the elastic one at the baseline.
+- **Downstream:** the beam–column coefficient `μ`, hence `w_max`, `κ_geo`, `σ_max`, `Γ_p`.
+  Numerically the change is absorbed by the definition of `N_θ^c` (see D-28 note), so the printed
+  values are unchanged — this is a *dimensional* correction, not a numerical one, and is stated as
+  such rather than presented as a change in results.
+- **Regression check:** `geometric term present, negative, with N/d`, `old no-1/d geometric form
+  removed`, `geometric term sign not flipped`. Mutations `m2` (sign flip) and `m5` (drop `1/d`) are
+  both caught.
+
+## D-28 — two stress values that contradicted each other (I-08)
+
+- **Original claim (preserved):** `σ_max = 13.9 MPa` and, elsewhere, `σ_max = 13.6 MPa`, with the
+  same input data.
+- **Why:** the two came from different iterations of the membrane-force update (frozen `N` vs the
+  converged `N`), but the text presented them as one number used in two places. Keeping both without
+  labels made the document self-contradictory.
+- **Resolution (two valid columns, not a contradiction):**
+  - **self-consistent** `σ_max = 13.0 MPa = 0.145 σ_y` (`σ_bend 3.9`, `|σ_memb| 9.11`,
+    `N_θ^c = 2.733×10⁴ N/m`);
+  - **frozen-force** `σ_max = 13.9 MPa`, which is *higher* and therefore conservative; it is the
+    value used wherever a design margin is being enforced.
+  - the mixed `13.6 MPa` figure is **withdrawn**, with the reason stated in the appendix (it belonged
+    to neither column).
+- **Downstream:** the `0.2 σ_y` cap statement, the strain envelope, and `Γ_p`.
+- **Regression check:** `appendix self-consistent sigma_max matches D-28`, `frozen stress exceeds
+  self-consistent (conservative)`, `frozen stress below 0.2 sigma_y cap`, and the identity
+  `E/(1−ν²)·max|ε_mech| = σ_max,frozen`.
+
+## D-29 — `Γ_p` compared unlike with like (I-11)
+
+- **Original claim:** `Γ_p = 2.4×10³`.
+- **Why:** the numerator was the thermal bow under the thermal membrane force while the denominator
+  was the hydraulic deflection under the *pressure* resultant; the two use different `N`.
+- **Change:** `Γ_p` is now labelled a **mixed** ratio, and a like-for-like value is added:
+  `w_p(N_θ^c) = 1.27×10⁻⁷ m`, giving `Γ_p = 1.7×10³`. Both are printed, each with its definition.
+- **Downstream:** the statement that hydraulic deflection is negligible relative to thermal bowing —
+  true for both definitions, so the conclusion is unaffected; the *strength* of the statement is.
+- **Regression check:** `ch04 Gamma_p = w_max/w_p matches`, `ch04 linear-limit closed form
+  matches`, `ch04 like-for-like w_p matches beam-column pressure solution` and
+  `ch04 like-for-like Gamma_p matches`. The second pair is new: `w_p` is recomputed from the
+  beam-column pressure solution (not from the linear formula times an amplification), giving
+  `1.2678×10⁻⁷ m` against the printed `1.27×10⁻⁷ m` and `1726` against the printed `1.73×10³`,
+  so the like-for-like pair cannot drift.
+- **Residual author decision:** which definition is headline.
+
+## D-30 — the pressure gauge constraint did not exist (I-04)
+
+- **Original claim:** the pressure was fixed by imposing `∫_{Γ_out} p ds = 0`.
+- **Why it had to change:** the gauge freedom does not exist here, because the bilinear form
+  `b(v,1) = −∫_{Γ_out} v·n ds ≠ 0` — the incompressibility constraint is already non-singular. The
+  constraint was removing nothing, and imposing it would *over-determine* the discrete system.
+- **Change:** the constraint is **deleted**, not reworded; the paragraph states why no gauge is
+  required and what would create one. The `ch05` sentence that referenced a prescribed pressure
+  level was rewritten: the level is an **output** of the flow solve.
+- **Downstream:** none in the pressure chain, which stays exact: `p(L) = 48 Pa`, `p(0) = 120 Pa`,
+  `p̄ = 84 Pa` for `L_o = 20 mm`, `U = 0.05 m/s`, `H₀ = 0.5 mm`.
+- **Regression check:** `gauge constraint removed`, `no-gauge argument stated`, and
+  `B2 does not impose a pressure datum`. The last one was added after this batch: B2 still read
+  "traction-free outflow with datum `p=0`", which reads as an imposed Dirichlet datum and
+  contradicts "nothing is imposed". B2 now says the level at the outflow section is an
+  **output** of the solve. Caught on the separate Stage 16 consistency pass, not by the batch.
+
+## D-31 — SUPG and the thermal stagger (I-05, I-06)
+
+- **Original claim:** the stabilisation was named but not written down; the thermal exchange was
+  described in a way that left the solid problem pure-Neumann.
+- **Change:**
+  - the stabilised weak form is now printed as `eq:supgwf`, with the `h_K → h_K/p` caveat for `P2`
+    elements stated explicitly (using `h_K` for `p = 2` over-stabilises);
+  - the stagger is written as two distinct steps: (i) the fluid sees a **Dirichlet** datum `T_Γ` and
+    the flux `q_Γ` is extracted as an output; (ii) the solid sees a **Neumann** datum `q_Γ`; (iii)
+    the loop closes when the solid returns `T_Γ^{k+1}`.
+- **Why:** naming a method is not a specification, and the earlier wording implied a flux datum on
+  the interface, which is ill-posed for the solid.
+- **Regression check:** `SUPG stabilised weak form written`, `SUPG P2 length scale addressed`,
+  `staggered thermal partition stated`.
+
+## Regression and mutation evidence (I-07)
+
+`audit_stage15/regression.py` v2 runs 56 checks in six functional sections plus a reported
+(not asserted) build-freshness section; `audit_stage15/mutation_test.py` clones the repository six
+times into `/tmp/hff_mut`, applies one mutation per clone, and requires the baseline to pass and
+every mutant to fail. Results are in `06_regression_results.md`.

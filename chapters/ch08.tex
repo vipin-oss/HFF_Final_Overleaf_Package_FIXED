@@ -26,8 +26,24 @@ residual-based coefficient
 \label{eq:supg}
 \end{equation}
 with $h_K$ the element length in the mean-flow direction and $|\bu|_K$ the element mean speed; $\tau_K$
-has units of time, tends to $h_K/(2|\bu|_K)$ for $\mathrm{Pe}_K\gg1$, and is the exact one-dimensional
-optimal value for steady advection--diffusion. Oscillation-free behaviour of the computed interface flux is
+has units of time and tends to $h_K/(2|\bu|_K)$ for $\mathrm{Pe}_K\gg1$. The temperature field is
+quadratic, so the length scale in \eqref{eq:supg} is the \emph{effective} one $h_K\to h_K/p$ with
+$p=2$, and the bracket is the classical optimal value for \emph{linear} elements only: for $p=2$ it
+is retained as a robust choice, not as an optimum, and the acceptance test is the flux-jump norm
+rather than any claim of optimality. The stabilised statement replaces the Galerkin energy equation
+\eqref{eq:weaktf} by
+\begin{equation}
+\rho c_p\,a_T(\bu;T_f,\chi)+a_{kf}(T_f,\chi)
++\sum_{K}\int_{K}\tau_K\big(\bu\cdot\nabla\chi\big)\,
+\mathcal R(T_f)\,\mathrm dx
+=+\int_{\Ga}k_f\nabla T_f\cdot\bn\,\chi\,\mathrm ds,
+\qquad
+\mathcal R(T_f)=\rho c_p\,\bu\cdot\nabla T_f-k_f\nabla^2T_f,
+\label{eq:supgwf}
+\end{equation}
+the residual $\mathcal R$ being evaluated element-wise on the discrete solution; the additional term
+is consistent (it vanishes for the exact solution) and is applied to the energy equation only, so the
+interface cancellation of Section~\ref{sec:coupling} is unaffected. Oscillation-free behaviour of the computed interface flux is
 part of the acceptance criteria of test V-B (Chapter~\ref{ch:validation}). The meshes of the
 fluid and solid subdomains are constructed \emph{conforming} at the interface: nodes and edges of
 the two meshes coincide on $\Ga_{\mathrm{if}}$. This choice is deliberate: interface quantities are
@@ -50,7 +66,7 @@ $\bu\in V_g$, $p\in Q$, $T_f\in S_f$, $\bd\in V_s$, $T_s\in S_s$ such that
 &\rho c_p\,a_T(\bu;T_f,\chi)+a_{kf}(T_f,\chi)
 =+\int_{\Ga}k_f\nabla T_f\cdot\bn\,\chi\,\mathrm ds, \label{eq:weaktf}\\
 &\int_{\Om_s^0}\bsig(\bd,\theta):\beps(\boldsymbol\varphi)\,\mathrm dX
--\int_{\Om_s^0}N_\theta^c\,\partial_X d_2\,\partial_X\varphi_2\,\mathrm dX
+-\int_{\Om_s^0}\frac{N_\theta^c}{d}\,\partial_X d_2\,\partial_X\varphi_2\,\mathrm dX
 =-\int_{\Ga}\bsig\bn\cdot\boldsymbol\varphi\,\mathrm ds, \label{eq:weaks}\\
 &a_{ks}(T_s,\chi)=\int_{\Ga_h^0}q^{''}\chi\,\mathrm ds
 -\int_{\Ga}k_s\nabla T_s\cdot\bn\,\chi\,\mathrm ds , \label{eq:weakts}
@@ -62,18 +78,32 @@ V_g=\{\mathbf v\in[H^1(\Om_f)]^2:\ \mathbf v=\mathbf 0\ \text{on the Dirichlet p
 \end{equation*}
 \begin{equation*}
 S_f=\{\chi\in H^1(\Om_f):\ \chi=0\ \text{at the inflow }x=-L_e\},\qquad
-V_s=\{\boldsymbol\varphi\in[H^1(\Om_s^0)]^2:\ \boldsymbol\varphi=\mathbf 0\ \text{on the pinned ends}\},
+V_s=\Big\{\boldsymbol\varphi\in[H^1(\Om_s^0)]^2:\ \varphi_2=0\ \text{on the end edges},\
+\int_{\Ga_{\mathrm{end}}}\varphi_1\,\mathrm dY=0\Big\},
 \qquad S_s=H^1(\Om_s^0),
 \end{equation*}
 with the traces of these spaces on $\Ga_{\mathrm{if}}$ in $H^{1/2}(\Ga_{\mathrm{if}})$, the space in
-which the shared interface unknowns live. The one-parameter freedom of $Q=L^2(\Om_f)$ is removed by
-the datum of condition B2: the mean pressure over the outflow section is constrained to zero,
-$\int_{\Ga_{\mathrm{out}}}p\,\mathrm ds=0$, imposed as a single scalar constraint on the algebraic
-system (register D-25).
-The second integral of \eqref{eq:weaks} is the geometric-stiffness
-contribution of the frozen membrane state: with $N_\theta^c=|N_\theta|>0$ in compression it enters
-with a minus sign, and one-dimensional reduction of \eqref{eq:weaks} reproduces \eqref{eq:beamcol}
-when the transverse load is removed and \eqref{eq:beam} when the membrane force is.
+which the shared interface unknowns live. \emph{No pressure gauge is required.} The additive
+constant that afflicts a velocity-prescribed Stokes problem is removed here by the outflow condition
+B2: because $\mathbf v$ is not divergence-free, $b(\mathbf v,1)=-\int_{\Om_f}\nabla\cdot\mathbf v
+\,\mathrm dx=-\int_{\Ga_{\mathrm{out}}}\mathbf v\cdot\bn\,\mathrm ds$ is not zero for every
+admissible test function, so constants are \emph{not} in the kernel of $b(\cdot,1)$ and $p$ is
+determined absolutely. The natural condition at $\Ga_{\mathrm{out}}$ together with a developed exit
+profile then leaves $p\to0$ across that section. Constraining, say, $\int_{\Ga_{\mathrm{out}}}p\,
+\mathrm ds=0$ as an extra equation would over-determine the system and, with a Lagrange multiplier,
+inject a spurious outlet mass source (register D-25). The level that results is reported with every
+computed case and is what fixes $\bar p=84$~Pa of Section~\ref{sec:deriv:pressure}.
+The second integral of \eqref{eq:weaks} is the geometric-stiffness contribution of the frozen
+membrane state, written as a \emph{stress} $N_\theta^c/d$ (force per unit depth divided by thickness,
+\si{\pascal}) because \eqref{eq:weaks} is an integral over a two-dimensional domain of unit depth;
+equivalently it is a uniform pre-stress $\sigma_0=-N_\theta^c/d$ acting on the reference
+configuration. With $N_\theta^c=|N_\theta|>0$ in compression it enters with a minus sign; integrating
+across the thickness reproduces the one-dimensional term $N_\theta^c\int_0^L w'\varphi'\,\mathrm dx$
+of \eqref{eq:beamcol}, and one-dimensional reduction of \eqref{eq:weaks} gives \eqref{eq:beamcol}
+when the transverse load is removed and \eqref{eq:beam} when the membrane force is. The $1/d$ is not
+cosmetic: without it the 2-D term would equal $d$ times the intended one, which in SI units is a
+factor $3\times10^{-3}$ --- the geometric stiffness would be dropped and the model would fall back
+to the linear solid (register D-27).
 The bilinear and trilinear forms are
 \begin{align*}
 \hat a_f(\bu,\mathbf v)&=2\mu\int_{\Om_f}\mathbf D(\bu):\mathbf D(\mathbf v)\,\mathrm dx,
@@ -120,7 +150,8 @@ cancel and the flux condition would have to be enforced explicitly.
 Both statements are exact for a common interface surface. The solid is posed on the reference
 configuration and the fluid on the deformed one, so the two boundary integrals are taken over
 $\Ga_{\mathrm{if}}^0$ and $\Ga_{\mathrm{if}}$ respectively; these coincide only to $O(\varepsilon)$
-in the strain, $5.4\times10^{-3}$ at the baseline (Assumption~A4). The cancellation is accordingly
+in the largest surface strain, $3.25\times10^{-3}$ at the baseline (Appendix~B, cell A9;
+Assumption~A4). The cancellation is accordingly
 exact at the level of the model on a common surface, and accurate to that order in the adopted
 reference-configuration solid --- it is not an identity of the discrete system. Three conditions are
 required for it to survive discretization, and all three are part of the specification: (i) the
@@ -140,14 +171,22 @@ boundaries -- the standard solid-based mesh-motion device of deformable-domain c
 iteration on the geometry:
 \begin{enumerate}\itemsep1pt
 \item solve the fluid subproblem on the current $\Om_f$ by exact Newton linearization of
-\eqref{eq:weakf} (the advection derivative is linearized analytically);
-\item transfer pressure-dominated traction and interface temperature requirements to the solid;
+\eqref{eq:weakf} and \eqref{eq:supgwf} (the advection derivative is linearized analytically). At
+this stage the interface temperature $T_\Gamma^{(k)}$ is a \emph{Dirichlet datum} on
+$\Ga_{\mathrm{if}}$, and the resulting interface flux is extracted as
+$q_\Gamma^{(k)}=-k_f\nabla T_f^{(k)}\cdot\bn$;
+\item transfer to the solid (i) the pressure-dominated traction $\bsig_f^{(k)}\bn$ as a computed
+load and (ii) the interface flux $q_\Gamma^{(k)}$ as a \emph{Neumann datum} on $\Ga_{\mathrm{if}}$.
+Neither side is ever left with Neumann data on its whole boundary: the solid additionally carries
+the prescribed flux $q^{''}$ on $\Ga_h^0$, so its temperature level is fixed;
 \item solve the thermoelastic subproblem \eqref{eq:weaks}--\eqref{eq:weakts} at the reduced
 (frozen-force) von K\'arm\'an level specified by Section~\ref{sec:deriv:beamcolumn} (linear
 thermoelasticity augmented by the geometric-stiffness contribution of the current membrane
 state; the membrane force is re-evaluated from the computed state after each solve, so the
 consistency update \eqref{eq:nupdate} is recovered at the fixed point; one direct solve per
-iteration);
+iteration). The solid solve returns the interface temperature $T_s|_{\Ga_{\mathrm{if}}}$, which is
+taken as $T_\Gamma^{(k+1)}$ and closes the thermal loop for the next fluid solve; the flux balance
+is thus enforced by alternation, not exactly at any iterate;
 \item solve the mesh-extension problem, update $\Om_f$, and recompute all geometry-dependent
 data (normals, Jacobians, quadrature);
 \item under-relax the interface displacement with a documented factor $\omega$

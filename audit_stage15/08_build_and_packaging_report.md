@@ -129,3 +129,49 @@ document.** This is stated plainly because the distinction is the whole point of
 **NOT VERIFIED.** The source is consistent and structurally sound; the PDF and the ZIP are both
 stale relative to it; no build is possible in this environment. This is a toolchain/access blocker,
 independent of the mathematical state of the manuscript.
+
+---
+
+# Stage 16 packaging
+
+## 1. What was rebuilt
+
+`HFF_Final_Overleaf_Package.zip` was regenerated from exactly the tracked sources by
+`python3 audit_stage15/build_package.py`, which is deterministic: fixed member order, fixed
+timestamps (2026-10-19), deflate level 9, sorted directory walks. The member count, byte size and
+hash are not restated here — `package_manifest.txt` is the record, and the ZIP contains this file,
+so any literal figure printed here would be stale the moment the archive is rebuilt.
+
+The ZIP now contains, at its root: `main.tex`, `references.bib`, `main.pdf`, `README.md`,
+`chapters/`, `figures/`, `audit_stage15/` (suite, mutation harness, manifest, correction log),
+the supporting reports and `project_archive/`. This matches the tree printed in `README.md`.
+
+## 2. Integrity record
+
+`audit_stage15/package_manifest.txt` holds the ZIP's SHA-256, its size, its member count, and the
+SHA-256 of every member. The hash is deliberately kept **out of** `README.md`: that file is itself a
+ZIP member, so a literal hash inside it could never match the archive containing it. The manifest is
+the record.
+
+## 3. Build status — NOT EXECUTED, and not claimed
+
+There is no TeX engine in this environment (`pdflatex`, `latex`, `tectonic` and `lualatex` are all
+absent). Therefore:
+
+- **no rebuild of `main.pdf` was performed**;
+- the bundled `main.pdf` is the last successful build (49 pages) from the **pre-Stage-16** sources;
+- the bundled PDF does **not** contain D-26 … D-31, and its page count will change once recompiled
+  (the register grew by six rows and chapter 8 by two displayed equations);
+- `README.md` now states this explicitly, and §7 of `regression.py` prints a staleness warning
+  naming every source file newer than the PDF. That section **asserts nothing** — it cannot, because
+  the toolchain is missing; it reports.
+
+The consequence is honest rather than convenient: a reader who compiles the ZIP gets the corrected
+document, while a reader who opens the bundled PDF gets the previous text. The README says so in the
+first paragraph that mentions the PDF.
+
+## 4. Reproducing
+
+    python3 audit_stage15/build_package.py     # writes the ZIP and the manifest
+    python3 audit_stage15/regression.py        # 56 checks, exit 0
+    python3 audit_stage15/mutation_test.py     # 6 mutants, all must be caught

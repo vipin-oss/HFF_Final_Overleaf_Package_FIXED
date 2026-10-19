@@ -112,3 +112,30 @@ These are **recorded, not repaired**, because repairing them would require inven
 rather than contradictions inside it: the casing standoff (RU-01) and the passage-height statement
 (RU-03) are unstated physical configuration. No sentence in the tree contradicts another sentence
 in the tree after `e8ef0d7`.
+
+---
+
+# Stage 16 consistency re-audit (separate pass, after the edits)
+
+Checked after all six correction batches, not during them — the point of a separate pass is to catch
+what a batch broke.
+
+| Cross-check | Result |
+|---|---|
+| the pin description in `ch02` A9, `ch05` B7 and `ch08` `V_s` agree | yes, all three now `d₂=0` + `⟨d₁⟩=0` |
+| no remaining claim that `Γ_p` "exceeds" without saying which ratio | yes, both labelled |
+| no remaining `13.6 MPa` outside the withdrawal note | yes |
+| `13.9` and `13.0` never presented as the same quantity | yes, frozen vs self-consistent columns |
+| every `N_θ^c` occurrence that should carry `/d` does | checked in `eq:weaks` and its explanation |
+| no `∫p ds=0` left anywhere | yes |
+| SUPG label `eq:supgwf` referenced, not orphaned | yes |
+| register D-25 annotated as partly superseded | yes (D-26, D-27, D-30) |
+| 31 register rows, 88 unique labels, no dangling refs | yes |
+| README names exactly the files the ZIP contains | yes (69 members, all files, no directory entries) |
+
+Defects introduced by the batches themselves, caught on this pass and fixed:
+
+- an accidental `\Nth` macro (a "nicer" name for `N_θ`) appeared during the batch and was replaced
+  with `|N_θ|` after a macro sweep — recorded because it is exactly the failure mode a batch creates;
+- the first attempt to append D-26 … D-29 used a stale anchor and asserted on a row that no longer
+  existed; the retry targeted the real D-25 row and the count was verified (31 rows, not 30).

@@ -98,3 +98,29 @@ with a number in the same paragraph. B-11 is therefore **CLOSED**, not merely di
 Two open items are **not** technical defects: RU-01/B-7 and RU-03 are unstated physical
 configuration, and B-8 is the absence of a compiler. No item was closed by moving it into a report;
 each `CLOSED` above was rechecked against the tree at `e8ef0d7`.
+
+---
+
+# Stage 16 status update (Claude audit I-01 … I-15)
+
+Status vocabulary used below: **IMPLEMENTED** = the source now contains the correction and a
+regression check would fail if it were reverted; **PARTIAL** = the implementable part is done and
+something remains for the author; **OPEN (author decision)** = not implementable without inventing
+physics. Nothing here is marked "verified closed" by me: closure requires a fresh independent audit.
+
+| ID | Status after Stage 16 | Where it now lives | What the regression suite checks |
+|---|---|---|---|
+| I-01 pin treated as clamp | **IMPLEMENTED** | `ch02` A9, `ch05` B7, `ch08` `V_s` | B7 must contain `d_2=0` and `⟨d_1⟩=0` and must **not** contain `d_1=d_2=0`; `V_s` must contain `φ₂=0` and must not be the `φ=0` clamp |
+| I-02 casing clearance / RU-01 | **OPEN (author decision)** | `ch07` RU-01 | not testable — the parameter does not exist in the source |
+| I-03 missing `1/d` in geometric term | **IMPLEMENTED** | `ch08` `eq:weaks` | the term must be present as `−(N_θ^c/d)∂_X d_2`; the old dimensionless-less form must be absent; a flipped sign must be absent |
+| I-04 pressure gauge | **IMPLEMENTED** | `ch08` spaces paragraph | the constraint `∫p ds = 0` must be absent; the no-gauge argument must be present |
+| I-05/I-06 SUPG + stagger | **IMPLEMENTED** | `ch08` `eq:supgwf`, `ch05` | `eq:supgwf` must exist; `h_K → h_K/p` must be addressed; the Dirichlet/Neumann split must be stated |
+| I-07 vacuous mutation tests | **IMPLEMENTED** | `audit_stage15/regression.py`, `mutation_test.py` | six mutations, each in an isolated copy; baseline must pass, every mutant must fail |
+| I-08 stress inconsistency | **IMPLEMENTED** | `ch04`, `ch07`, appendix | self-consistent `σ_max` must match recomputation; frozen must exceed it; frozen must stay under the `0.2σ_y` cap |
+| I-09 strain envelope | **IMPLEMENTED** | `ch02`, `ch04`, `ch07`, `ch08`, appendix | printed `3.25e-3` must match `max|ε_mech|` recomputed from the inputs |
+| I-10 θ̄ rounding | **IMPLEMENTED** | `ch04` | θ̄ recomputed from its own components must agree with the printed 32.27 K to 0.05 K |
+| I-11 Γ_p like-for-like | **PARTIAL** | `ch04` D-29 | both ratios checked (`2.4e3` mixed, `1.7e3` like-for-like); which one the author *intends* to headline is still open |
+| I-12 stale package | **IMPLEMENTED** | `README.md`, ZIP, manifest | every `.zip` named in `README.md` must exist; per-member hashes recorded |
+| I-13 provenance | **IMPLEMENTED** | `README.md` build note | `main.pdf` staleness is *reported* (see §7 of the suite); a rebuild is still required |
+| I-15 figure collisions | **IMPLEMENTED** | `figures/fig_geometry.tex` | brace/label structure only — rendering is a visual judgement, not a test |
+| I-14 (report-only items) | **n/a** | — | no source change required |

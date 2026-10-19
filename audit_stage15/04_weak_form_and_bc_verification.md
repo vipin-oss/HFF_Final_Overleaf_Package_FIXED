@@ -219,3 +219,58 @@ a peak-curvature estimate.
 - The `O(ε)` reference/deformed interface mismatch is disclosed with its magnitude.
 - The frozen-force reduction is a model level with a quantified, one-sided `2.3 %` error, not an
   approximation silently used.
+
+---
+
+# Stage 16 addendum — weak form and boundary conditions
+
+## 1. `V_s` is now a pin, and the space says so
+
+    V_s = { φ ∈ [H¹(Ω_s⁰)]² : φ₂ = 0 on the end edges, ∫_{Γ_end} φ₁ dY = 0 }
+
+Two things to verify, and both are asserted in the suite:
+
+- `φ₂ = 0` kills the transverse displacement on the end edges — the "pin" of the physical picture;
+- the integral condition kills the *mean* axial displacement while leaving `φ₁` free pointwise, which
+  is what permits bending. The clamp (`φ = 0` pointwise) must **not** appear; `m6` reintroduces it
+  and is caught.
+
+Because the integral condition is a single scalar functional, it removes the rigid axial mode
+without over-constraining the strip. Zero applied moment is natural in this space — no extra
+condition is imposed, and none is needed.
+
+## 2. The geometric term, with its physical units
+
+    −∫_{Ω_s⁰} (N_θ^c / d) ∂_X d₂ dX
+
+`N_θ^c` is a hoop force per unit length (N/m); dividing by the thickness `d` gives a stress (N/m²),
+and `∂_X d₂` is dimensionless, so the integrand is a stress — consistent with `∫ σ:ε dX` in N (per
+unit width the thickness cancels). The pre-Stage-16 form omitted `/d` and was dimensionally
+inconsistent; the number was absorbed elsewhere, which is exactly why it survived earlier audits.
+
+## 3. Pressure: no gauge condition
+
+`b(v,1) = −∫_{Γ_out} v·n ds`. For any `v` with a nonzero normal component on `Γ_out` this is
+nonzero, so `b(·,1)` is not the zero functional and the pressure is determined up to nothing: the
+pressure space need not be quotient-ed. The former constraint `∫ p ds = 0` was therefore not merely
+redundant but harmful — it over-determines the system. The suite asserts its **absence** and the
+presence of the argument.
+
+The pressure chain is unaffected and exact:
+`p(L) = 48 Pa`, `p(0) = 120 Pa`, `p̄ = 84 Pa` for `L_o = 20 mm`, `U = 0.05 m/s`, `H₀ = 0.5 mm`.
+
+## 4. Thermal exchange: the stagger, written out
+
+1. Fluid: Dirichlet datum `T_Γ` on `Γ_if`; solve; extract `q_Γ = −k_f ∂_n T_f`.
+2. Solid: Neumann datum `q_Γ` on `Γ_if`; solve; extract `T_Γ^{k+1}`.
+3. Return to 1 with `T_Γ^{k+1}`; the loop closes when `‖T_Γ^{k+1} − T_Γ^{k}‖` falls below tolerance.
+
+The order matters: a flux datum on the solid alone would leave it pure-Neumann, and a Dirichlet datum
+on the solid alone would hide the conjugate coupling. The split is asymmetric by design, and the
+solid step is the one that must see a Neumann condition.
+
+## 5. SUPG, written down
+
+`eq:supgwf` now carries the stabilised test function `v + τ_K (u·∇)v`. For `P2` elements the
+stabilisation length must be `h_K/p`, not `h_K`; using `h_K` over-stabilises by a factor of two and
+biases the thermal boundary layer. The caveat is stated in the text and asserted in the suite.

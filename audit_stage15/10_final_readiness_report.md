@@ -120,3 +120,69 @@ No result in this report was produced by editing a number to match an expectatio
 `03_numerical_register.md` is computed by `calc_register.py` from the printed primary inputs, and
 every claim about the source was re-checked against the tree at `e8ef0d7`, not against an earlier
 stage's summary.
+
+---
+
+# Stage 16 readiness
+
+## Verdict
+
+**Coupled production solver: NOT READY.** A fresh independent audit is now required; nothing in this
+section is a self-certification.
+
+The document-level corrections requested by the Claude audit have been implemented and are guarded
+by a suite that demonstrably fails when they are reverted. The solver remains NOT READY for two
+independent reasons, neither of which is a document defect:
+
+1. **Unresolved physical assumptions that only the author can settle** (below). These change the
+   numbers, not the text.
+2. **The bundled PDF is stale**: the Stage 16 corrections were made without a LaTeX toolchain, so no
+   rebuild was performed or claimed (`08_…` §3).
+
+## What changed since the Stage 15 report
+
+| Area | Stage 15 | Stage 16 |
+|---|---|---|
+| Support idealisation | described as a pin, implemented as a clamp | pin specified as `d₂=0` on the end edge + `⟨d₁⟩=0`, Q8 ratios measured (1.0000 / 0.998 / −0.02 … −0.06) |
+| Geometric term | `−∫ N_θ^c ∂_X d₂` | `−∫ (N_θ^c/d) ∂_X d₂`, units stated |
+| Pressure gauge | constraint `∫ p ds = 0` imposed | constraint deleted; non-singularity argued from `b(v,1) ≠ 0` |
+| Thermal exchange | named, not specified | Dirichlet-`T_Γ` / Neumann-`q_Γ` stagger written out, loop closure stated |
+| SUPG | mentioned | `eq:supgwf` printed, `h_K → h_K/p` caveat stated |
+| Stress | `13.9` and `13.6` MPa in different places | `13.0` self-consistent and `13.9` frozen as two declared columns; `13.6` withdrawn |
+| Strain | single number | `3.25×10⁻³` mechanical, `5.35×10⁻³` envelope |
+| `Γ_p` | `2.4×10³` | mixed `2.4×10³` **and** like-for-like `1.7×10³`, each defined |
+| Tests | 44 checks, vacuous mutants | 56 checks, 6 mutants, all caught, isolated copies |
+| Package | stale ZIP, README named a non-existent file | regenerated ZIP + manifest + explicit build note |
+
+## Author decisions still open (each changes results, none is a text defect)
+
+1. **Pin idealisation** — point pin vs rigid end face, ≈0.5 % on `w_max`. The document uses the
+   edge-mean form and says so. Minimum decision: which one is the reported baseline.
+2. **Casing clearance / RU-01 (I-02)** — the radial gap is not specified anywhere in the source.
+   Three interpretations exist (no contact, contact at the crown only, distributed contact); they
+   differ by an order of magnitude in the effective support stiffness. Not implementable without
+   picking one, and picking one to preserve the numbers is exactly what the protocol forbids.
+3. **Vent vs sealed cavity** — changes the gas pressure load on the wall by an order of magnitude.
+4. **Heater mounting** — which wall face sees `q`; the bow direction follows from it and is currently
+   justified kinematically, not from the hardware description.
+5. **Contact law** — needed only if RU-01 resolves to contact.
+6. **`Γ_p` headline definition** — mixed or like-for-like.
+7. **Mid-span `1.4377 H₀` (RU-03)** — retained as an open check.
+
+## Honest status of the checks
+
+| Check | Executed? | Result |
+|---|---|---|
+| Regression suite v2 | yes | 56/56 pass |
+| Mutation adequacy (6 mutants) | yes | baseline passes, all 6 caught |
+| Independent numeric re-derivation | yes | agrees with every printed value to ≤1 % |
+| LaTeX compile | **no** — no TeX engine | not claimed; PDF reported stale |
+| Figure rendering | **no** — no rendering backend | structure only |
+| Package integrity | yes | ZIP rebuilt, 69 members, per-member hashes recorded |
+| Fresh independent audit | **no** | this is the next step, requested from Claude |
+
+## Next action
+
+Push the Stage 16 commit to `arena/c875f9b3-hff-final-overleaf-package-fix` and request a fresh
+independent audit of the **corrected sources**, explicitly asking whether I-01, I-03, I-04, I-05/I-06,
+I-08, I-09, I-11, I-13 and I-15 are now closed, and whether the new tests are non-vacuous.

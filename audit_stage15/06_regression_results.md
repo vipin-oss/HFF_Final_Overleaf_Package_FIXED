@@ -117,3 +117,80 @@ Recorded because a regression suite that never fails anything is not evidence:
 | ch05 thermal rewrite initially contradicted `ch08:108` (Dirichlet datum vs shared unknown) | cross-check of the edited paragraph against the chapter it must agree with | rewritten to the shared-unknown formulation |
 | ch08 claimed the reduction "recovers `eq:beamcol`" although `eq:beamcol` is the zero-load problem | re-derivation of the reduction | qualified: `eq:beamcol` with no transverse load, `eq:beam` with no membrane force |
 | Formatter precedence bug in the register generator (`"%.9e"%-D_s*(...)`) | generator crash | parenthesised |
+
+---
+
+# Stage 16 regression results
+
+## 1. Suite v2 — what changed and why
+
+The Stage 15 suite proved structure and consistency but, as the Claude audit correctly found
+(I-07), its mutation tests were largely vacuous: mutants that corrupted printed values or material
+parameters still reported "ALL CHECKS PASSED". Version 2 is built on a different principle:
+
+> every numeric assertion parses the **input** from the manuscript table and the **printed result**
+> from the manuscript text, recomputes the result *from those parsed inputs*, and compares.
+
+Consequences:
+- corrupting a printed number breaks recompute-vs-printed;
+- corrupting a material input moves the recompute, so every dependent printed value breaks;
+- sign, boundary-condition and units claims are checked structurally against the source strings;
+- exact analytic identities (BCs, the ODE residual, `κ_geo/κ_th = sec(μL/2)`,
+  `(κ_geo+κ_th)/(κ_geo−κ_th) = cot²(μL/4)`) are checked to machine precision.
+
+## 2. Baseline
+
+    $ python3 audit_stage15/regression.py
+    ...
+    ALL 56 CHECKS PASSED
+
+Sections: (1) LaTeX structural integrity, 7 checks; (2) sign/BC/units claims, 19 checks;
+(3) input parsing, 3 checks; (4) printed-vs-recomputed numbers, 19 checks; (5) exact identities,
+4 checks; (6) package provenance, 3 checks. Section 7 reports build freshness and asserts nothing.
+
+Agreement of the independent recomputation with the printed values (relative error):
+
+| Quantity | Printed | Recomputed | rel. |
+|---|---|---|---|
+| `w_max` (frozen) | 2.19×10⁻⁴ m | 2.1886×10⁻⁴ | 6.5×10⁻⁴ |
+| `w_max/H₀` | 0.438 | 0.4377 | 6.6×10⁻⁴ |
+| `w_max` (self-consistent) | 2.14×10⁻⁴ m | 2.1399×10⁻⁴ | 5.8×10⁻⁵ |
+| amplification | 1.39 | 1.38957 | 3.1×10⁻⁴ |
+| arc term `½⟨w′²⟩` | 1.39×10⁻⁴ | 1.3879×10⁻⁴ | 1.0×10⁻⁴ |
+| circular-arc estimate | 1.6×10⁻⁴ | 1.590×10⁻⁴ (14.6 % above exact) | checked as 1.10–1.20× |
+| `σ_max` self-consistent | 13.0 MPa | 13.0091 | 7.0×10⁻⁴ |
+| `σ_max` frozen | 13.9 MPa | 13.9165 | 1.2×10⁻³ |
+| `max|ε_mech|` | 3.25×10⁻³ | 3.2472×10⁻³ | 8.7×10⁻⁴ |
+| `Γ_p` (mixed) | 2.4×10³ | 2382.1 | 7.5×10⁻³ |
+| `Γ_p` (like-for-like) | 1.7×10³ | 1714.3 | 8.4×10⁻³ |
+| θ̄ from components | 32.27 K | 32.2652 | 1.5×10⁻⁴ |
+
+Two of these are worth naming because the suite now *forces* the honest statement:
+- the circular-arc estimate is a 14.6 % **upper** bound, not "within a few per cent"; the check was
+  corrected from an equality-style tolerance to a one-sided bound;
+- `σ_max,frozen > σ_max,self-consistent` is asserted, not merely claimed, so the "conservative
+  column" wording cannot silently drift.
+
+## 3. Mutation adequacy (I-07)
+
+    $ python3 audit_stage15/mutation_test.py
+    BASELINE (must pass)                    exit=0  PASS
+    m1 corrupt printed w_max                exit=1  CAUGHT  ch04 printed w_max matches recomputation
+    m2 flip geometric-stiffness sign        exit=1  CAUGHT  geometric term present, negative, with N/d
+    m3 reverse the bow direction            exit=1  CAUGHT  no reversed-bow phrasing in body text
+    m4 nu 0.40 -> 0.30                      exit=1  CAUGHT  ch04 printed w_max matches recomputation
+    m5 drop the 1/d factor                  exit=1  CAUGHT  geometric term present, negative, with N/d
+    m6 pin -> full-edge clamp               exit=1  CAUGHT  B7 is not a full-edge clamp
+    MUTATION ADEQUACY: ALL MUTANTS CAUGHT
+
+Each mutation is applied to an **isolated copy** under `/tmp/hff_mut/`; the repository itself is
+never modified, and the harness fails if a mutation anchor is missing (so a renamed construct cannot
+silently make a mutant vacuous). `m4` is caught through *four* independent printed values, not just
+one, because the recompute is chained from the parsed material data.
+
+## 4. What the suite still cannot do
+
+1. It cannot compile LaTeX (no TeX engine in this environment); §7 reports the PDF as stale.
+2. It cannot render the figure; the `fig_geometry` rewrite is checked for structure only.
+3. It cannot validate the physics — the pin idealisation, the casing clearance and the vent
+   question remain author decisions (see `01_…`, `10_…`).

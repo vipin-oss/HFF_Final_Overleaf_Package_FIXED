@@ -172,3 +172,26 @@ depend on RU-01.
 
 **Coding must not begin on:** the coupled production runs, mesh convergence at the baseline, or any
 `Γ_p`/stress headline figure — all of which inherit the RU-01 conditional.
+
+---
+
+# Stage 16 changes to the solver-ready specification
+
+The specification below is amended in four places. Nothing else in the solver design moves.
+
+1. **Solid boundary condition (§ BC).** Replace the clamp by: `d₂ = 0` on `X ∈ {0, L}` for **all**
+   nodes of the end edge, plus the single scalar constraint `∫_{Γ_end} d₁ dY = 0` (edge mean).
+   Implementation note: the scalar constraint is a Lagrange multiplier or a mean-zero projection;
+   do **not** impose `d₁ = 0` node-wise — that is the clamp and it removes the solution.
+2. **Geometric stiffness (§ assembly).** Assemble `−∫ (N_θ^c/d) ∂_X d₂` with `N_θ^c` a hoop force
+   per unit length. Unit test: the assembled vector must have units of force per unit width, and the
+   resulting `μ² = N/(D_s)` must be `1/m²`.
+3. **Pressure space (§ flow).** No gauge constraint. The discrete system is non-singular because
+   `b(v,1) ≠ 0`. If a gauge is nonetheless desired for conditioning, it must be **reported as a
+   numerical device**, not presented as removing a null space that does not exist.
+4. **Thermal coupling (§ FSI loop).** Fluid with Dirichlet `T_Γ` → extract `q_Γ` → solid with Neumann
+   `q_Γ` → extract `T_Γ^{k+1}` → repeat. SUPG with `τ` built from `h_K/p` for `P2`.
+
+Still open before a production run (unchanged, and they are physics not code): casing clearance
+(RU-01), vent vs sealed cavity, heater mounting, contact law, pin idealisation, `Γ_p` headline
+definition, and the `1.4377 H₀` mid-span check (RU-03).

@@ -10,6 +10,13 @@
 \draw[thick] (0,0) -- ++(\Le+\L+\Lo,0);
 \draw[thick] (0,\Hf) -- ++(\Le,0) coordinate (L1);
 \draw[thick] (\Le+\L,\Hf) -- ++(\Lo,0);
+% rigid upper sections (solid) above entry and exit: shaded blocks, labelled outside the channel
+\fill[gray!18] (-\Le,\Hf) rectangle (\Le,\Hf+\ds);
+\fill[gray!18] (\Le+\L,\Hf) rectangle (\Le+\L+\Lo,\Hf+\ds);
+\draw[thick] (-\Le,\Hf+\ds) -- (\Le,\Hf+\ds);
+\draw[thick] (\Le+\L,\Hf+\ds) -- (\Le+\L+\Lo,\Hf+\ds);
+\draw[thick] (-\Le,\Hf) -- (-\Le,\Hf+\ds);
+\draw[thick] (\Le+\L+\Lo,\Hf) -- (\Le+\L+\Lo,\Hf+\ds);
 % flexible wall strip (heated segment), deformed bow shown by parabola through points
 \coordinate (A) at (\Le,\Hf);
 \coordinate (B) at (\Le+\L,\Hf);
@@ -21,27 +28,27 @@
 \draw[thick] (A) .. controls (\Le+\L/2,\Hf+12) .. (B);
 \draw[thick] (At) .. controls (\Le+\L/2,\Hf+\ds+12) .. (Bt);
 \draw[thick] (A) -- (At); \draw[thick] (B) -- (Bt);
-% heat flux arrows on top of heated wall
+% heat flux arrows on top of heated wall, above the bow
 \foreach \x in {0.12,0.30,0.5,0.7,0.88}{
-  \draw[->,red!70!black,thick] (\Le+\x*\L,\Hf+\ds+24) -- (\Le+\x*\L,\Hf+\ds+12);}
-\node[red!70!black] at (\Le+\L/2,\Hf+\ds+29) {$q^{''}$ prescribed, $\Ga_h$};
-% adiabatic labels
-\node[align=center] at (\Le/2,\Hf+9) {adiabatic rigid lid\\(solid extension)};
-\node[align=center] at (\Le+\L+\Lo/2,\Hf+9) {adiabatic};
+  \draw[->,red!70!black,thick] (\Le+\x*\L,\Hf+\ds+26) -- (\Le+\x*\L,\Hf+\ds+14);}
+\node[red!70!black] at (\Le+\L/2,\Hf+\ds+31) {$q^{''}$ prescribed, $\Ga_h$};
+% adiabatic labels: placed clear of the strip and of each other
+\node[anchor=east,align=right] at (-6,\Hf+8) {adiabatic rigid lid\\(solid extension)};
+\node[anchor=west] at (\Le+\L+\Lo+6,\Hf+8) {adiabatic};
 % inlet/outlet arrows
-\draw[->,thick] (-16,\Hf/2) -- (0,\Hf/2) node[midway,above left=1pt] {$\bu=(U,0)$,\; $T_\mathrm{in}$};
+\draw[->,thick] (-\Le-14,\Hf/2) -- (-\Le,\Hf/2) node[midway,above=1pt] {$\bu=(U,0)$,\; $T_\mathrm{in}$};
 \draw[<-,thick] (\Le+\L+\Lo,\Hf/2) -- ++(16,0);
-\node[below] at (\Le+\L+\Lo+8,\Hf/2-4) {outlet, $p=p_\mathrm{out}$};
+\node[anchor=west] at (\Le+\L+\Lo+18,\Hf/2) {outlet, $p=p_\mathrm{out}$};
 % interface and wall-motion annotation
 \draw[<->,blue!60!black] (\Le+\L/2,\Hf) -- (\Le+\L/2,\Hf+6);
 \node[blue!60!black,anchor=west] at (\Le+\L/2+4,\Hf+3) {$w(x)$, $\Ga$};
 % dimension lines
 \draw[<->] (\Le,-8) -- ++(\L,0) node[midway,below] {$L$, heated flexible wall};
-\draw[<->] (0,-8) -- ++(\Le,0) node[midway,below] {entrance $L_e$};
+\draw[<->] (-\Le,-8) -- ++(\Le,0) node[midway,below] {entrance $L_e$};
 \draw[<->] (\Le+\L,-8) -- ++(\Lo,0) node[midway,below] {exit $L_o$};
-\draw[<->] (-10,0) -- ++(0,\Hf) node[midway,left] {$H_0$};
+\draw[<->] (-\Le-6,0) -- ++(0,\Hf) node[midway,left] {$H_0$};
 \draw[<->] (\Le+\L+6,\Hf) -- ++(0,\ds) node[midway,right] {$d$};
-% pinned supports
-\foreach \p in {(A),(B)}{\draw \p -- ++(-4,-6) -- ++(8,0) -- cycle;}
-\node[anchor=west] at (\Le+\L+4,-6) {pinned ends (parameter-locked, register D-4)};
+% pinned ends: small filled pivots at the strip ends, drawn on the interface, label below the figure
+\foreach \p in {(A),(B)}{\fill[black] \p circle (2.2pt);}
+\node[anchor=north] at (\Le+\L/2,-14) {pinned ends (pin, not clamp: register D-26)};
 \end{tikzpicture}

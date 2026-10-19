@@ -88,8 +88,9 @@ strain. Linear kinematics alone is \emph{not} sufficient for the pinned, axially
 because the thermal membrane force interacts with the transverse deflection at leading order; the
 adopted kinematics is therefore the reduced (frozen-force) von K\'arm\'an beam--column level of
 Section~\ref{sec:deriv:beamcolumn}, which reduces to the linear relation when the membrane force
-is negligible. At the baseline the bending fibre strain is $9.9\times10^{-4}$, the
-maximum total mechanical surface strain is $\approx5.4\times10^{-3}$, the arc-stretching term is
+is negligible. At the baseline the bending fibre strain is $9.9\times10^{-4}$, the stress-producing
+surface strain is at most $3.25\times10^{-3}$ and the kinematic envelope $e_0+\kappa_{\mathrm{geo}}
+d/2$ is $5.35\times10^{-3}$, the arc-stretching term is
 $\approx1.39\times10^{-4}$, and the maximum slope is $0.027$~rad
 (Section~\ref{sec:baselinecalc}); all are far below the order-one failure limits of the
 hypothesis. Geometric admissibility is expressed through these strain and slope measures together
@@ -107,14 +108,21 @@ with the rule stated at \eqref{eq:fluidenergy}.
 \item[\textbf{A8}] \emph{Perfect thermal contact at the interface.} No contact resistance is included at
 $\Ga_{\mathrm{if}}$; temperature and heat flux are continuous
 (\eqref{eq:iftemp}--\eqref{eq:ifflux}).
-\item[\textbf{A9}] \emph{Ideal pinned supports and rigid casing.} The strip ends have zero displacement,
-zero applied moment, and zero heat flux; the surrounding casing is taken rigid and adiabatic, and
-its interior pressure equals the outlet datum of condition~B2, which fixes the load reference of
-Section~\ref{sec:deriv:pressure}. Implementation note: the pins are imposed on the full end edge
-($X=0,L$), which differs from ideal point pins by Saint-Venant end layers of width $O(d)$; at the
-baseline aspect ratio $L/d=10$ this contributes a few per cent of global stiffening, and a
-one-time numerical check (full-edge versus corner pins) is part of the verification programme
-(Chapter~\ref{ch:validation}).
+\item[\textbf{A9}] \emph{Pinned supports and rigid casing.} Each strip end is a \emph{pin} in the
+structural sense: the end section may rotate about the transverse axis, carries no applied moment,
+and does not translate axially on average, so the mean axial expansion of the strip is blocked.
+On each end edge ($X=0,L$) the conditions are therefore $d_2=0$, $\langle d_1\rangle=0$ taken as the
+mean over the edge, zero applied moment (a natural condition), and zero heat flux. They are
+\emph{not} $d_1=d_2=0$ pointwise: prescribing both displacement components on the whole edge is a
+\emph{clamp}, which forbids end rotation, contradicts the moment-free condition and suppresses the
+bowing altogether, since a clamped strip at uniform $\kappa_{\mathrm{th}}$ has $w\equiv0$
+(Section~\ref{sec:deriv:curvature}). An independent plane-strain Q8 computation, reported in
+Appendix~B (register D-26), gives $1.0000$ of the beam value $\kappa_{\mathrm{th}}L^2/8$ for point
+pins, $0.998$ for a full-edge vertical support with a free axial mean, and $-0.02$ to $-0.06$ for
+$d_1=d_2=0$ on the whole edge --- so the full-edge vertical support costs $0.2\%$, while the axial
+restraint of a clamp destroys the mechanism.
+The surrounding casing is taken rigid and adiabatic, and its interior pressure equals the outlet
+datum of condition~B2, which fixes the load reference of Section~\ref{sec:deriv:pressure}.
 \item[\textbf{A10}] \emph{Uniform imposed flux as the baseline thermal load (regime N).} A uniform
 $q^{''}$ models a film heater and fixes the total heat input per unit depth, $Q'=q^{''}L$, which is
 the quantity entering the global enthalpy balance (Section~\ref{sec:quality}). A second regime

@@ -221,8 +221,13 @@ w_{\max}=2.19\times10^{-4}\,\mathrm{m}=0.438\,H_0
 an amplification by the factor $1.39$, consistent at leading order with the beam--column
 factor $1/(1-N_\theta^c/N_{\mathrm{cr}})=1.38$. The maximum slope is $w'_{\max}=0.027$~rad, the
 bending fibre strain is $(\kappa_{\mathrm{geo}}-\kappa_{\mathrm{th}})d/2=9.9\times10^{-4}$ with
-$\kappa_{\mathrm{geo}}=-w^{''}$, and the maximum total mechanical surface strain is
-$\approx5.4\times10^{-3}$; the von K\'arm\'an hypotheses (strains $\ll1$, rotations $\ll1$~rad)
+$\kappa_{\mathrm{geo}}=-w^{''}$. The stress-producing surface strain, $\varepsilon_{\mathrm{mech}}
+=\varepsilon-\alpha_{\mathrm{eff}}\theta$ at $y=\pm d/2$, reaches $|\varepsilon_{\mathrm{mech}}|
+=3.25\times10^{-3}$ on the fluid-side fibre (this is the fibre that carries $\sigma_{\max}$); the
+kinematic measures are the blocked thermal strain $e_0=(1+\nu)\alpha\bar\theta=2.26\times10^{-3}$ and
+the bending strain $\kappa_{\mathrm{geo}}d/2=3.09\times10^{-3}$, whose sum $e_0+\kappa_{\mathrm{geo}}
+d/2=5.35\times10^{-3}$ is used below as a conservative upper bound on any surface strain. The
+von K\'arm\'an hypotheses (strains $\ll1$, rotations $\ll1$~rad)
 are comfortably satisfied, so \eqref{eq:beamcol} is an appropriate model level --- not a
 large-deformation extension, but a reduction of the von K\'arm\'an system whose error must be
 stated. Freezing the force is an approximation, not an identity: the deflection relaxes the
@@ -307,9 +312,17 @@ $w_{\max}/w_{\max}^{\mathrm{lin}}=1.39$ is the beam--column amplification of
 \eqref{eq:beamcolbase}. The linear-limit ratio is
 $48\kappa_{\mathrm{th}}D_s/(5\bar pL^2)=1.7\times10^{3}$, which the amplification converts to the
 quoted value (register D-22). The ratio measures the thermal against the hydraulic contribution to a
-co-directional deflection; the
-conclusion (thermal dominance, $\Gamma_p\gg5$) is insensitive to the datum choice, since any
-plausible casing pressure shifts $\bar p$ by less than an order of magnitude.
+co-directional deflection. The numerator carries the beam--column amplification of the strip's own
+membrane force while the denominator \eqref{eq:wpdef} does not, so $\Gamma_p$ of
+\eqref{eq:gammap} is a \emph{mixed} ratio. It is retained because it answers the design question
+asked --- how large is the thermal bow compared with the hydraulic deflection of the unstressed
+strip --- but it is not a ratio of two responses of the same structure. The like-for-like
+alternative, in which the same compressive force amplifies the pressure response, is
+$w_p(N_\theta^c)=1.27\times10^{-7}$~m and gives $w_{\max}/w_p(N_\theta^c)=1.73\times10^{3}$,
+essentially the linear-limit value, because the two deflections then share a common amplification.
+Both ratios are $\gg5$, so the conclusion (thermal dominance) is unchanged, and it is insensitive
+to the datum choice, since any plausible casing pressure shifts $\bar p$ by less than an order of
+magnitude (register D-29).
 Because $\kappa_{\mathrm{th}}$ is independent of $d$ while $D_s\propto d^3$ and
 $\bar p\propto UH_0^{-2}$, the ratio grows with thicker walls and decreases with speed and with
 reduced height: these are the control directions examined at the design stage.

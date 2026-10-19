@@ -171,3 +171,20 @@ Verified by inspection of every occurrence, not assumed:
 | Thermal data flow | D-24 |
 | Weak form, gauge, geometric stiffness, SUPG, solver split | D-25 |
 | Casing standoff (open) | RU-01, §4 above |
+
+---
+
+# Stage 16 addendum — sign conventions after D-26 … D-31
+
+1. **Deflection sign unchanged.** `w = +d₂`, curvature positive when the wall bows *away* from the
+   channel. The regression suite now asserts the absence of the reversed phrase, and mutation `m3`
+   ("bows into the channel") is caught.
+2. **Geometric term sign unchanged, dimensional factor added.** The term is `−(N_θ^c/d) ∂_X d₂` with
+   `N_θ^c > 0` in compression. The sign is asserted structurally and by mutation `m2`; the `1/d` is
+   asserted by mutation `m5`.
+3. **Units of the beam–column coefficient.** `μ² = N/(D_s)` is `(N/m)/(N·m) = 1/m²`, so `μL` is
+   dimensionless — this is the check that exposes a missing `1/d`, since `N_θ^c ∂_X d₂` alone does
+   not cancel.
+4. **Support sign consequence.** With a clamp (`d₁ = d₂ = 0`) the thermal bow is annihilated, so the
+   sign of `w` would be undefined; the corrected pin (`d₂ = 0`, `⟨d₁⟩ = 0`) is what makes `w > 0`
+   meaningful. This is the sharpest argument that I-01 was not cosmetic.
