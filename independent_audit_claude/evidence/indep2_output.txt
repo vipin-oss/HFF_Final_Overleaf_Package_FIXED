@@ -1,0 +1,10 @@
+params mu=55 k=1.4 L=0.03 : w(L)=9.63e-20  w''(L)+k=-2.22e-16  w''(0)+k=0.00e+00
+params mu=30 k=0.7 L=0.05 : w(L)=-1.08e-20  w''(L)+k=0.00e+00  w''(0)+k=0.00e+00
+params mu=80 k=2 L=0.02 : w(L)=1.41e-20  w''(L)+k=0.00e+00  w''(0)+k=0.00e+00
+thbar=32.265: M_frozen=-6.35529  M_selfcons=-5.84836 N m ; sigma_sc(consistent N)=13.0091 MPa
+thbar=32.27: M_frozen=-6.35666  M_selfcons=-5.84961 N m ; sigma_sc(consistent N)=13.0113 MPa
+thbar=32.3: M_frozen=-6.36485  M_selfcons=-5.85713 N m ; sigma_sc(consistent N)=13.025 MPa
+w_p(N=0)=9.187500e-08  w_p(N)=1.267779e-07  amplification of pressure deflection=1.37990
+w_th(N=0)=1.575000e-04  w_th(N)=2.188574e-04  amplification of thermal deflection=1.38957
+Gamma_p printed definition  w_th(N)/w_p(N=0) = 2382.1
+Gamma_p like-for-like       w_th(N)/w_p(N)   = 1726.3

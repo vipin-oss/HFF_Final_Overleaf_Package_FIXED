@@ -1,0 +1,50 @@
+==============================================================================
+S1  SYMBOLIC DERIVATION OF THE PHYSICAL FIRST MOMENT (from source eq:widebeam)
+  axial resultant  N  = E*d*(alpha*nu*theta0 + alpha*theta0 - epsilon0)/(nu**2 - 1)
+  first moment  int(sigma_xx*y) = E*d**3*(Gamma*alpha*nu + Gamma*alpha - kappa)/(12*(nu - 1)*(nu + 1))
+  zero-moment curvature  kappa_th = Gamma*alpha*(nu + 1)  (Gamma=Delta T_t/d >0 for heated TOP face)
+  M1 = -D_s (w'' + kappa_th) [w=+d2]  check: True
+  D_s = 9.64285714286 N m ;  kappa_th = 1.4 1/m ;  Delta T_t = 60.0 K
+  physical first moment at pin, selected convention (w=+d2): 0.0 N m
+  physical first moment at pin, OLD convention   (w=-d2): -27.0 N m   (-2*Ds*kth)
+
+S2  DIRECTION CHECK: hot face = outer top face; hot fibre elongates -> hot face convex -> mid-span moves toward heater
+    heater side = away from channel  =>  w_max > 0 (away).  Selected convention agrees; old prose ('into the channel') does not.
+
+S3  theta_bar = dT_t/2 + q/h + dT_b/2 = 30.0 + 1.54751 + 0.717703 = 32.265212 K
+  N_c = 29038.691 N/m ; N_cr = 105745.76 N/m ; N_c/N_cr = 0.274609 ; Tcr = 117.495 K ; M_b = 3.6415
+  mu L = 1.646292136 ;  1/(1-N/Ncr) = 1.37857
+
+S4  BEAM-COLUMN (frozen force)
+  closed form  w_max = 0.000218857910488 m = 0.437715821 H0 ; linear = 0.0001575 m ; amplification = 1.389574035
+  independent BVP  w'' + mu^2 w = -kth,  w(0)=w(L)=0:  w_max = 2.188579104875e-04   (rel. diff to closed form 1.11e-15)
+  sympy (exact): ODE  w'''' + mu^2 w'' == 0  -> True
+  BC residuals (numeric substitution): w(0)=0.0e+00  w(L)=9.6e-20  w''(0)+k=0.0e+00  w''(L)+k=-2.2e-16
+  kappa_geo = 2.059073039 ;  kth*sec(uL/2) = 2.059073039
+  M_mid = -6.35534716 N m ; sigma_bend = 4.2368981 MPa ; fibre strain (kgeo-kth)d/2 = 0.000988609559 ; max|w'| = 0.0275145 rad
+  factor (kgeo+kth)/(kgeo-kth) = 5.248391048 ; cot^2(uL/4) = 5.248391048
+
+S5  ARC TERM   quadrature = 0.0001387854948415 ;  sympy closed-form integral = 0.00013878549484149754553
+    circular-arc estimate kgeo^2 L^2/24 = 0.0001589918168 ;  e0 = 0.0022585648 ; relaxation arc/e0 = 6.14485 % ; with 1.8e-4: 7.96966 %
+
+S6  SELF-CONSISTENT FIXED POINT:  N_c(sc) = 27330.621  ->  relaxation = 5.882 % ; w_max(sc) = 0.00021398759 m (= 0.427975 H0); frozen overpredicts by 2.276 %
+    M_mid(sc) = -5.84841 N m
+    FROZEN       : membrane 9.679564 + bending 4.236898 = 13.91646 MPa
+    SELF-CONSIST.: membrane 9.110207 + bending 3.898942 = 13.00915 MPa   <-- relaxed N used for BOTH terms
+    MIXED (frozen membrane + sc bending, i.e. the manuscript's '13.6'): 13.57851 MPa
+
+S7  STRAIN MEASURES at mid-span (y measured from mid-plane, top = heated face)
+    kinematic strain  top = 0.0032274 ; bottom = -0.00294982
+    mechanical strain top = -0.00113117 ; bottom = -0.00310839   (max |.| = 0.00310839)
+    stress check bottom fibre = E/(1-nu^2)*eps_mech = -13.3217 MPa
+    printed 'total mechanical surface strain' e0 + kgeo*d/2 = 0.00534717
+
+S8  PRESSURE: dp = 72.0 Pa ; p(L)=48.0 ; p(0)=120.0 ; pbar = 84.0 Pa ; w_p = 9.1875e-8 m
+    48 kth Ds/(5 pbar L^2) = 1714.285714 ;  w_lin/w_p = 1714.285714 ;  w_max/w_p = 2382.126917 ; cf*amplification = 2382.126917
+    Gamma_p (self-consistent w) = 2329.1166
+
+S9  PASSAGE HEIGHT AT MID-SPAN
+    corrected (away): H = H0 + w_max = 0.00071885791 m = 1.43772 H0  (+43.77 %)
+    old (into)      : H = H0 - w_max = 0.562284 H0
+
+S10 SENSITIVITY  w_max(theta_bar=32.0) = 0.00021816429 ; (32.27) = 0.00021885791 ; rel diff -0.317 %

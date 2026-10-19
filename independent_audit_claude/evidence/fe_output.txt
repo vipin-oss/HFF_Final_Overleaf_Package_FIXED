@@ -1,0 +1,8 @@
+beam benchmark (pinned-pinned, zero membrane force): kappa_th = 1.400000 1/m, w_max = kappa L^2/8 = 1.575000e-04 m
+end condition      mesh      w_mid-plane    w_interface    ratio to beam
+pin_midpoint        60x4     +1.575000e-04   +1.590750e-04   1.0000   (interface = bottom/fluid face; +y = away from channel)
+roller_edge_uy      60x4     +1.571844e-04   +1.587594e-04   0.9980   (interface = bottom/fluid face; +y = away from channel)
+clamp_full_edge     60x4     -3.129711e-06   -4.885635e-07   -0.0199   (interface = bottom/fluid face; +y = away from channel)
+pin_midpoint        90x6     +1.575000e-04   +1.590750e-04   1.0000   (interface = bottom/fluid face; +y = away from channel)
+roller_edge_uy      90x6     +1.571849e-04   +1.587599e-04   0.9980   (interface = bottom/fluid face; +y = away from channel)
+clamp_full_edge     90x6     -2.901972e-06   -2.621881e-07   -0.0184   (interface = bottom/fluid face; +y = away from channel)

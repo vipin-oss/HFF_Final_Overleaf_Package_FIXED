@@ -1,0 +1,23 @@
+[C1] CONTROL  ch03: pressure term +p -> -p (expected: caught)
+      FAIL  superseded absent: wrong pressure sign  | ['chapters/ch03.tex']
+      FAIL  pressure term is +p
+      2 CHECK(S) FAILED:
+[C2] CONTROL  ch02 caption: 'away from the channel' -> 'positive into the channel' (expected: caught)
+      FAIL  superseded absent: Package A direction phrase  | ['chapters/ch02.tex']
+      1 CHECK(S) FAILED:
+[M1] ch04: printed w_max 2.19e-4 -> 7.77e-4
+      ALL CHECKS PASSED
+[M2] ch08: flip sign of geometric-stiffness term (- to +)
+      ALL CHECKS PASSED
+[M3] ch01: 'bows away from the interior' -> 'bows toward the interior'
+      ALL CHECKS PASSED
+[M4] ch02 Table: PEEK Poisson ratio 0.40 -> 0.30 (a primary input)
+      mutation applied: 1
+      ALL CHECKS PASSED
+[M5] ch08: pressure-gauge constraint changed to a different integral
+      FAIL  pressure gauge stated
+      1 CHECK(S) FAILED:
+[V1] vacuous arc-estimate assertion, evaluated exactly as written in regression.py with a deliberately wrong curvature:
+      kgeo=0.000 -> assertion `abs(-w2)**2*L*L/24/1e-4 - 1.59 < 0.005` is True
+      kgeo=1.000 -> assertion `abs(-w2)**2*L*L/24/1e-4 - 1.59 < 0.005` is True
+      kgeo=2.059 -> assertion `abs(-w2)**2*L*L/24/1e-4 - 1.59 < 0.005` is True
