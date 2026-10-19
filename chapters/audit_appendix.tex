@@ -71,8 +71,11 @@ as fact in any manuscript derived from this document.
 
 \section{Open checks (with named action items)}
 \begin{itemize}\itemsep1pt
-\item \textbf{C-1} Digit-level extraction of the T1 Nusselt value from the primary table of
-\cite{shah1978laminar}. Only H1 and T/H2 values are anchored at source level.
+\item \textbf{C-1} (closed at table level, Stage 5) T1 Nusselt value of \cite{shah1978laminar}.
+$\mathrm{Nu}_{T1}=4.861$ is confirmed against Table~43 of the source (Chapter~VII, fully developed
+flow, one wall transferring heat; the parallel-plate row), with $\mathrm{Nu}$ based on the
+wetted-perimeter $D_h$ and on the heated-wall flux. Residual, non-blocking: a printed copy should be
+inspected once to fix the page number of Table~43, which the accessible records do not give.
 \item \textbf{C-2} Extraction and geometry matching ($R_k$, $D_r$, $\mathrm{Pe}$) of a published
 conjugate thick-wall channel Nusselt series for V-D. The flattened thick-wall channel series of
 \cite{rahimi2024conjugate} (steady laminar water, constant outer wall temperature, Re 50--1250,
@@ -94,10 +97,13 @@ Section~\ref{sec:replication}.
 \section{Bibliographic integrity statement}
 Every entry in \texttt{references.bib} was verified at assembly against Crossref metadata or a
 publisher record; DOI, volume, pages, and authorship were confirmed at source level for all
-journal articles and for the book chapters cited. Two records are intentionally incomplete:
-\cite{gupta2024photothermo} (title and DOI not retrievable at assembly; indexing facts verified
-from the publication record) and the T1 digit of \cite{shah1978laminar} pending C-1. No entry
-contains invented fields; fields not verified are either absent or marked in \texttt{note}.
+journal articles and for the book chapters cited. The record \cite{gupta2024photothermo} was
+completed at the second audit pass (full title, volume, pages and DOI verified at the Emerald
+record). At Stage 5 the page range of \cite{hood1974navier} was confirmed as 121--132 from multiple
+independent citing records, and the T1 value of \cite{shah1978laminar} was confirmed against
+Table~43 of the source; the only residual bibliographic item is the printed page number of that
+table. No entry contains invented fields; fields not verified are either absent or marked in
+\texttt{note}.
 
 \section{Staged decisions carried from the audit}
 Isolated solver verifications may proceed as specified in Chapter~\ref{ch:validation} (V-A without

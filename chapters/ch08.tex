@@ -9,8 +9,9 @@ environment.
 
 \section{Spatial discretization}
 The fluid velocity and pressure are approximated by Taylor--Hood elements (continuous piecewise
-quadratic velocity, continuous piecewise linear pressure), satisfying the discrete inf--sup
-condition for the Stokes limit of \eqref{eq:momentum} \cite{hood1974navier,brezzi1991mixed}; both
+quadratic velocity, continuous piecewise linear pressure); the P2--P1 pair originates with Hood and
+Taylor \cite{hood1974navier}, and its discrete inf--sup stability for the Stokes limit of
+\eqref{eq:momentum} is established in \cite{brezzi1991mixed}; both
 temperature fields and the solid displacement use the same quadratic family. The fluid energy
 equation \eqref{eq:fluidenergy} is strongly advection-dominated: with
 $\mathrm{Pe}=\mathrm{Re}_{D_h}\mathrm{Pr}=348$ the cell P\'eclet number exceeds the Galerkin
@@ -37,17 +38,20 @@ $\bu\in V_g$, $p\in Q$, $T_f\in S_f$, $\bd\in V_s$, $T_s\in S_s$ such that
 +\int_{\Ga_{\mathrm{out}}}\sigma_f\bn\cdot\mathbf v\,\mathrm ds +\langle\text{data}\rangle,
 \qquad b(\bu,q)=0\ \ \forall\,q, \label{eq:weakf}\\
 &\rho c_p\,a_T(T_f,\chi)+a_{kf}(T_f,\chi)
-=-\int_{\Ga}k_f\nabla T_f\cdot\bn\,\chi\,\mathrm ds, \label{eq:weaktf}\\
+=+\int_{\Ga}k_f\nabla T_f\cdot\bn\,\chi\,\mathrm ds, \label{eq:weaktf}\\
 &\int_{\Om_s^0}\bsig(\bd,\theta):\beps(\boldsymbol\varphi)\,\mathrm dX
-=\int_{\Ga}\bsig\bn\cdot\boldsymbol\varphi\,\mathrm ds, \label{eq:weaks}\\
+=-\int_{\Ga}\bsig\bn\cdot\boldsymbol\varphi\,\mathrm ds, \label{eq:weaks}\\
 &a_{ks}(T_s,\chi)=\int_{\Ga_h^0}q^{''}\chi\,\mathrm ds
 -\int_{\Ga}k_s\nabla T_s\cdot\bn\,\chi\,\mathrm ds , \label{eq:weakts}
 \end{align}
 for all test functions, with
 $\hat a_f(\bu,\mathbf v)=2\mu\int_{\Om_f}\mathbf D(\bu):\mathbf D(\mathbf v)\,\mathrm dx$,
 $b(\mathbf v,p)=-\int_{\Om_f}p\nabla\cdot\mathbf v\,\mathrm dx$, and
-$\sigma_f=-p\bI+2\mu\mathbf D(\bu)$ the fluid Cauchy stress. The interface mechanism is worth
-stating exactly, because it is the load-bearing sign argument of the coupling. After integration
+$\sigma_f=-p\bI+2\mu\mathbf D(\bu)$ the fluid Cauchy stress. The sign of each boundary term is fixed
+by the outward normal of the subdomain concerned: with $\bn_f=\bn$ and $\bn_s=-\bn$, the two
+subdomains acquire opposite signs, which is precisely what permits the cancellation below. The
+interface mechanism is worth stating exactly, because it is the load-bearing sign argument of the
+coupling. After integration
 by parts, the fluid residual contains the interface term
 $-\int_{\Ga}\sigma_f\bn\cdot\mathbf v\,\mathrm ds$ (with $\bn$ the outward normal of $\Om_f$),
 while the solid residual contains $+\int_{\Ga}\sigma_s\bn\cdot\boldsymbol\varphi\,\mathrm ds$
@@ -124,8 +128,9 @@ model is verified on a detuned case with $N_\theta^c/N_{\mathrm{cr}}\le0.05$
 fields.
 
 \section{Post-processing definitions}
-The bulk temperature $T_b(x)$ is mass-flux-weighted; the wall heat flux is
-$q_w(x)=-k_f\nabla T_f\cdot\bn|_\Ga$; the local heat-transfer coefficient and Nusselt number are
+The bulk temperature $T_b(x)$ is mass-flux-weighted; the wall heat flux \emph{into the fluid} is
+$q_w(x)=+k_f\nabla T_f\cdot\bn|_\Ga$ (with $\bn$ the outward normal of $\Om_f$, so that $q_w>0$ on
+the heated wall); the local heat-transfer coefficient and Nusselt number are
 \begin{equation}
 h(x)=\frac{q_w(x)}{T_w(x)-T_b(x)},\qquad \mathrm{Nu}(x)=\frac{2H_0h(x)}{k_f},
 \end{equation}

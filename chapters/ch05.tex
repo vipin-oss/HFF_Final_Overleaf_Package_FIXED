@@ -14,9 +14,10 @@ T_f &= T_s &&\text{temperature continuity}, \label{eq:iftemp}\\
 The kinematic condition \eqref{eq:ifkin} is the steady form of the usual
 $\bu=\partial\bd/\partial t$; the traction condition
 \eqref{eq:iftraction} follows from balance of the interface traction vector in the absence of
-interfacial stress, $\bsig^{(s)}\cdot\bn+\bsig^{(f)}\cdot\bn_f=0$ with $\bn_f=-\bn$, where
+interfacial stress, $\bsig^{(s)}\cdot\bn_s+\bsig^{(f)}\cdot\bn_f=0$ with $\bn_s=-\bn$ (the
+solid's outward normal) and $\bn_f=\bn$ (the fluid's outward normal), where
 $\bsig^{(f)}=-p\bI+2\mu\mathbf D$ is the fluid stress. Evaluating both sides at the same point and
-with the single normal $\bn$ yields \eqref{eq:iftraction}; the viscous part of the traction is
+writing both tractions with the single normal $\bn$ yields \eqref{eq:iftraction}; the viscous part of the traction is
 retained alongside the pressure, although at the baseline the pressure part dominates by about two
 orders of magnitude in magnitude of its bending effect ($\tau_w=0.6$ Pa against
 $\bar p=84$ Pa; Chapter~\ref{ch:baseline}). The conditions \eqref{eq:iftemp}--\eqref{eq:ifflux}
@@ -47,7 +48,7 @@ B2 & $x=L+L_o$, fluid & traction-free outflow with datum $p=0$; $\partial_nT_f=0
 B3 & lower wall $y=0$ & $\bu=0$, $\partial_nT_f=0$ & rigid, adiabatic \\
 B4 & rigid upper sections & $\bu=0$, $\partial_nT_f=0$ & rigid casing \\
 B5 & $\Ga_{\mathrm{if}}$ & \eqref{eq:ifkin}--\eqref{eq:ifflux} & conjugate interface \\
-B6 & outer face $\Ga_h^0$ & $-k_s\nabla T_s\cdot\bn_{\mathrm{out}}=q^{''}$ & baseline regime N \\
+B6 & outer face $\Ga_h^0$ & $+k_s\nabla T_s\cdot\bn_{\mathrm{out}}=q^{''}$ & baseline regime N; $q^{''}>0$ is heat supplied to the solid \\
 B7 & strip ends $X=0,L$ & $d_1=d_2=0$, zero applied moment; $\partial_nT_s=0$ & pinned, adiabatic (A9) \\
 B8 & remaining solid faces & zero traction, zero flux & insulated casing \\
 B9 & variant of B6 & $T_s=T_h$ on $\Ga_h^0$ & regime D; matched heat-input rule (A10) \\
