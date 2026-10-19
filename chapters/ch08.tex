@@ -44,10 +44,18 @@ $\bu\in V_g$, $p\in Q$, $T_f\in S_f$, $\bd\in V_s$, $T_s\in S_s$ such that
 &a_{ks}(T_s,\chi)=\int_{\Ga_h^0}q^{''}\chi\,\mathrm ds
 -\int_{\Ga}k_s\nabla T_s\cdot\bn\,\chi\,\mathrm ds , \label{eq:weakts}
 \end{align}
-for all test functions, with
-$\hat a_f(\bu,\mathbf v)=2\mu\int_{\Om_f}\mathbf D(\bu):\mathbf D(\mathbf v)\,\mathrm dx$,
-$b(\mathbf v,p)=-\int_{\Om_f}p\nabla\cdot\mathbf v\,\mathrm dx$, and
-$\sigma_f=-p\bI+2\mu\mathbf D(\bu)$ the fluid Cauchy stress. The sign of each boundary term is fixed
+for all test functions, where the bilinear and trilinear forms are
+\begin{align*}
+\hat a_f(\bu,\mathbf v)&=2\mu\int_{\Om_f}\mathbf D(\bu):\mathbf D(\mathbf v)\,\mathrm dx,
+& b(\mathbf v,p)&=-\int_{\Om_f}p\nabla\cdot\mathbf v\,\mathrm dx,\\
+c(\bu;\bu,\mathbf v)&=\rho\int_{\Om_f}(\bu\cdot\nabla\bu)\cdot\mathbf v\,\mathrm dx,
+& a_T(T,\chi)&=\int_{\Om_f}(\bu\cdot\nabla T)\,\chi\,\mathrm dx,\\
+a_{kf}(T,\chi)&=k_f\int_{\Om_f}\nabla T\cdot\nabla\chi\,\mathrm dx,
+& a_{ks}(T,\chi)&=k_s\int_{\Om_s^0}\nabla T\cdot\nabla\chi\,\mathrm dX,
+\end{align*}
+and $\sigma_f=-p\bI+2\mu\mathbf D(\bu)$ is the fluid Cauchy stress. In $a_T$ the advecting velocity
+is the current state, so that the Newton linearization of the solution procedure below applies to
+$c$ and $a_T$ together. The sign of each boundary term is fixed
 by the outward normal of the subdomain concerned: with $\bn_f=\bn$ and $\bn_s=-\bn$, the two
 subdomains acquire opposite signs, which is precisely what permits the cancellation below. The
 interface mechanism is worth stating exactly, because it is the load-bearing sign argument of the
