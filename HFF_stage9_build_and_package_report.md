@@ -15,7 +15,7 @@
 | Deliverable | Path | Size | SHA-256 |
 |---|---|---:|---|
 | Overleaf package | `/home/user/HFF_Final_Overleaf_Package_FIXED/HFF_Stage9_Overleaf_Source.zip` | **103,062 bytes** | `cbed50183679c48f7cef679ca5df2cb1c6c61a75f3c29880e7358e7fae396953` |
-| This report | `/home/user/HFF_Final_Overleaf_Package_FIXED/HFF_stage9_build_and_package_report.md` | see §7 | see §7 |
+| This report | `/home/user/HFF_Final_Overleaf_Package_FIXED/HFF_stage9_build_and_package_report.md` | 11,964 B at the packaging commit | `44c83537efd59959bd3b3ae7184bac61b4d62c018e5b66b836f492a3d7cac3f0` (that commit; this closing revision adds §7 only) |
 
 **File count:** 24 entries, 0 directory entries, 244,992 bytes uncompressed.
 Deterministic build: fixed 2026-10-19 timestamps, sorted entry names, mode 0644, deflate level 9.
@@ -168,11 +168,11 @@ Extraction: `unzip -q HFF_Stage9_Overleaf_Source.zip -d /tmp/stage9`. Every chec
 | Commit | Contents |
 |---|---|
 | `e76cc6043c22759a8cc5cdf05ae0199ba0b3ab36` | `references.bib` underscore fix + `HFF_stage9_package_README.md` |
-| `packaging commit` | `HFF_Stage9_Overleaf_Source.zip` + this report — hash recorded below after the commit was created |
+| `d449bc7485092ff337772f0b726b827b6fcf16a2` | `HFF_Stage9_Overleaf_Source.zip` (103,062 B, SHA-256 `cbed5018…396953`) + this report |
 
-Packaging commit hash and final file statistics of this report: recorded in the closing commit of
-this stage and in the accompanying chat summary. `main` was not touched and the branch was not
-merged.
+This closing commit adjusts §1 and §7 only; the ZIP and every packaged source file are unchanged by it.
+
+`main` was not touched, and the branch was not merged.
 
 ---
 
