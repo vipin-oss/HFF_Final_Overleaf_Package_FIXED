@@ -24,7 +24,7 @@ Table~\ref{tab:geometry} records the design point.
 sections of the channel; a thermoelastic segment of length $L$ and thickness $d$, pinned at its
 ends and heated on its outer face $\Ga_h^0$; the conjugate interface $\Ga_{\mathrm{if}}$ between
 fluid and solid; a rigid, adiabatic lower wall. The interface deflection $w$ is measured positive
-into the channel (Figure~\ref{fig:signs}).}
+away from the channel (Figure~\ref{fig:signs}).}
 \label{fig:geometry}
 \end{figure}
 
@@ -90,7 +90,7 @@ adopted kinematics is therefore the reduced (frozen-force) von K\'arm\'an beam--
 Section~\ref{sec:deriv:beamcolumn}, which reduces to the linear relation when the membrane force
 is negligible. At the baseline the bending fibre strain is $9.9\times10^{-4}$, the
 maximum total mechanical surface strain is $\approx5.4\times10^{-3}$, the arc-stretching term is
-$\approx1.8\times10^{-4}$, and the maximum slope is $0.03$~rad
+$\approx1.39\times10^{-4}$, and the maximum slope is $0.027$~rad
 (Section~\ref{sec:baselinecalc}); all are far below the order-one failure limits of the
 hypothesis. Geometric admissibility is expressed through these strain and slope measures together
 with a mesh bound $|w|/H_0\le0.5$ with positive element Jacobians, rather than through a purely
@@ -126,11 +126,15 @@ comparisons across regimes are meaningful only at matched total heat input.
 \label{sec:signs}
 A single interface normal $\bn$ is used throughout, directed from the fluid into the solid.
 Pressure on the wall is positive in compression; Cauchy stress in the solid is positive in tension.
-The interface deflection is denoted $w$ and is measured \emph{from the reference interface into the
-channel} (hence $w=-d_2$ in terms of the upward-positive solid displacement $d_2$). Wall curvature
-is taken positive when the wall bows into the channel; within the small-slope assumption this gives
+The interface deflection is denoted $w$ and is measured \emph{from the reference interface away from
+the channel} (hence $w=+d_2$ in terms of the upward-positive solid displacement $d_2$). Wall curvature
+is taken positive when the wall bows away from the channel; within the small-slope assumption this gives
 the design relation $\kappa=-w^{''}$, and a constant eigen-curvature $\kappa_{\mathrm{th}}>0$
 produces $w=\kappa_{\mathrm{th}}x(L-x)/2\ge0$ (Section~\ref{sec:deriv:deflection}).
+The pairing is not a matter of taste. A pinned end requires the physical first moment
+$\int\sigma_{xx}y\,\mathrm dy$ to vanish there; with the opposite curvature pairing that residual is
+$-27$~N\,m at $x=0$ --- some four times the $6.4$~N\,m the strip actually carries at mid-span --- so
+only the pairing stated above is compatible with the pinned end (Appendix~B, register D-21).
 Fluid heat flux along $+\bn$ carries heat out of the fluid, so the flux \emph{into} the fluid is
 $+k_f\nabla T_f\cdot\bn$ and is positive on the heated wall. Using one normal throughout makes the
 traction equality \eqref{eq:iftraction} and the flux equality \eqref{eq:ifflux} single-valued and

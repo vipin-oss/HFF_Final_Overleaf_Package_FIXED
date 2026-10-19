@@ -67,9 +67,18 @@ is compared only at matched $Q'$.
 
 \section{Interface data flow in the coupled problem}
 \label{sec:datamodel}
-With the thermal load imposed on the solid side, the data flow of the coupled problem is: the fluid
-subproblem receives its domain and the interface temperature from the solid; the solid subproblem
-receives the interface traction (pressure-dominated) and the conjugate flux condition. Because the
+With the thermal load imposed on the solid side, the coupled problem exchanges two different kinds
+of data, and they must not be conflated. Mechanically the exchange is Dirichlet--Neumann: the fluid
+subproblem receives its domain from the solid displacement through the no-slip condition
+\eqref{eq:ifkin}, and the solid receives the fluid traction \eqref{eq:iftraction} as a computed load.
+Thermally it is neither: the interface temperature is a single unknown shared by the two subdomains,
+neither prescribed as data nor eliminated, and the flux equality \eqref{eq:ifflux} is the equation
+that determines it (\S\ref{sec:coupling}). Prescribing that temperature as data, or prescribing a
+conjugate flux on the solid side in place of it, would be inadmissible: the solid carries the
+prescribed flux on the whole outer face $\Ga_h^0$ and zero flux on its remaining faces, so a flux
+datum on $\Ga_{\mathrm{if}}$ would leave the solid subproblem pure-Neumann, its temperature level
+undetermined up to an additive constant, and that constant would propagate into the membrane force
+$N_\theta$ (register D-24). Because the
 solid problem is linear, the displacement decomposes exactly as
 \begin{equation}
 \bd=\bd_{\mathrm{th}}+\bd_p,

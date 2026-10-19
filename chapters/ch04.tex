@@ -115,7 +115,7 @@ for the bowing mechanism to exist, which fixes the support choice of Assumption~
 \section{Pinned--pinned thermal bowing}
 \label{sec:deriv:deflection}
 For the reduced wall equation \eqref{eq:beam} with no mechanical load, the curvature relation is
-$w^{''}(x)=-\kappa_{\mathrm{th}}(x)$, with $w$ positive into the channel
+$w^{''}(x)=-\kappa_{\mathrm{th}}(x)$, with $w$ positive away from the channel
 (Section~\ref{sec:signs}). For constant $\kappa_{\mathrm{th}}$ and $w(0)=w(L)=0$,
 integration gives
 \begin{equation}
@@ -187,7 +187,9 @@ w^{''}(0)=w^{''}(L)=-\kappa_{\mathrm{th}},
 \label{eq:beamcol}
 \end{equation}
 where the end condition on $w^{''}$ states that the \emph{total} bending moment
-$M=D_s\,(w^{''}+\kappa_{\mathrm{th}})$ vanishes at the pins. With $\mu^2=N_\theta^c/D_s$ the
+$M=D_s\,(w^{''}+\kappa_{\mathrm{th}})$ vanishes at the pins. $M$ is taken positive when it produces
+sagging, $M=-\int_{-d/2}^{d/2}\sigma_{xx}\,y\,\mathrm dy$, so the physical first moment of the stress
+is $-M$; the vanishing condition itself is unchanged (register D-21). With $\mu^2=N_\theta^c/D_s$ the
 exact solution is
 \begin{equation}
 w(x)=\frac{\kappa_{\mathrm{th}}}{\mu^2}
@@ -225,8 +227,8 @@ are comfortably satisfied, so \eqref{eq:beamcol} is an appropriate model level -
 large-deformation extension, but a reduction of the von K\'arm\'an system whose error must be
 stated. Freezing the force is an approximation, not an identity: the deflection relaxes the
 blocked-end mechanical strain $e_0=(1+\nu)\alpha\bar\theta=2.26\times10^{-3}$ by the
-arc-stretching term $\tfrac12\langle w^{'}{}^2\rangle=1.8\times10^{-4}$ (circular-arc estimate
-$1.6\times10^{-4}$), i.e.\ a first-iterate force relaxation of $6.1\%$. Solving the
+arc-stretching term $\tfrac12\langle w^{'}{}^2\rangle=1.39\times10^{-4}$ (circular-arc estimate
+$1.6\times10^{-4}$), i.e.\ a first-iterate force relaxation of $6.1\%$ (register D-23). Solving the
 compatibility relation \eqref{eq:nupdate} self-consistently (a scalar fixed point, since the
 solution family \eqref{eq:beamcolsol} holds for every fixed force) gives a relaxation of
 $5.9\%$ and lowers the baseline deflection to
@@ -272,7 +274,7 @@ dimensionally not a pressure (Pa/m) and produced an estimate three orders of mag
 the corrected value is computed in Chapter~\ref{ch:baseline} (register D-5).
 
 \textbf{Pressure deflection.} For a \emph{pinned--pinned} strip under uniform transverse load
-$\bar p$ opposing the bowing, the standard bending solution
+$\bar p$ acting in the same sense as the thermal bowing, the standard bending solution
 \cite{timoshenko1961stability,timoshenko1970elasticity} gives
 \begin{equation}
 w_p=\frac{5\,\bar p L^4}{384D_s}.
@@ -292,14 +294,20 @@ with mean
 \end{equation}
 rather than the value $\Delta p/2=36$~Pa quoted in earlier drafts (register D-16); the
 uniform-load formula \eqref{eq:wpdef} is then read as a design estimate for this mildly varying
-load. With $\bar p$ of \eqref{eq:pbar}, $w_p=9.2\times10^{-8}$~m, and with $w_{\mathrm{th}}$ of
+load. With $\bar p$ of \eqref{eq:pbar}, $w_p=9.2\times10^{-8}$~m, and with $w_{\max}$ of
 \eqref{eq:beamcolbase}, the deformation ratio
 \begin{equation}
-\Gamma_p=\frac{w_{\mathrm{th}}}{w_p}=\frac{48\,\kappa_{\mathrm{th}}D_s}{5\,\bar p L^2}
-=1.7\times10^{3}\quad\text{at the baseline},
+\Gamma_p=\frac{w_{\max}}{w_p}
+=\frac{48\,\kappa_{\mathrm{th}}D_s}{5\,\bar p L^2}\,\frac{w_{\max}}{w_{\max}^{\mathrm{lin}}}
+=2.4\times10^{3}\quad\text{at the baseline},
 \label{eq:gammap}
 \end{equation}
-measures how strongly the deformation is thermally, rather than hydraulically, driven; the
+where $w_{\max}^{\mathrm{lin}}=\kappa_{\mathrm{th}}L^2/8$ and
+$w_{\max}/w_{\max}^{\mathrm{lin}}=1.39$ is the beam--column amplification of
+\eqref{eq:beamcolbase}. The linear-limit ratio is
+$48\kappa_{\mathrm{th}}D_s/(5\bar pL^2)=1.7\times10^{3}$, which the amplification converts to the
+quoted value (register D-22). The ratio measures the thermal against the hydraulic contribution to a
+co-directional deflection; the
 conclusion (thermal dominance, $\Gamma_p\gg5$) is insensitive to the datum choice, since any
 plausible casing pressure shifts $\bar p$ by less than an order of magnitude.
 Because $\kappa_{\mathrm{th}}$ is independent of $d$ while $D_s\propto d^3$ and

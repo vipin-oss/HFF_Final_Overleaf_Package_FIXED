@@ -20,7 +20,7 @@ $p$ & fluid pressure & Pa \\
 $T_f,T_s$ & fluid, solid temperatures & K \\
 $\theta=T_s-T_{\mathrm{ref}}$ & solid temperature rise & K \\
 $\bd=(d_1,d_2)$ & solid displacement & m \\
-$w(x)=-d_2|_{Y=H_0}$ & interface deflection, positive into the channel & m \\
+$w(x)=+d_2|_{Y=H_0}$ & interface deflection, positive away from the channel & m \\
 $\widehat{\mathbf w}$ & mesh-displacement extension into $\Om_f^0$ & m \\
 $\bsig,\beps$ & Cauchy stress, infinitesimal strain & Pa, -- \\
 $\sigma_m=\tr\bsig/3$ & mean Cauchy stress & Pa \\
@@ -70,7 +70,7 @@ of \eqref{eq:vcb1}.
 membrane force the frozen-force beam--column solution (cell A9) gives
 $w_{\max}=2.19\times10^{-4}$ m (self-consistent $2.14\times10^{-4}$ m); bending
 fibre strain $(\kappa_{\mathrm{geo}}-\kappa_{\mathrm{th}})d/2=9.9\times10^{-4}$; arc-stretching
-term $\tfrac12\langle w^{'}{}^2\rangle=1.8\times10^{-4}$ (circular-arc estimate
+term $\tfrac12\langle w^{'}{}^2\rangle=1.39\times10^{-4}$ (circular-arc estimate
 $\kappa_{\mathrm{geo}}^2L^2/24=1.6\times10^{-4}$).
 
 \textbf{A4. Buckling catalog.} With denominator $12\alpha(1+\nu)L^2=7.56\times10^{-7}$,
@@ -101,7 +101,7 @@ $1/(1-N_\theta^c/N_{\mathrm{cr}})=1/0.725=1.38$. Mid-span moment
 $M_{\mathrm{mid}}=-6.4$ N\,m per unit depth; $\sigma_{\mathrm{bend}}=6|M|/d^2=4.2$ MPa;
 $w'_{\max}=0.027$ rad; blocked mechanical strain
 $e_0=(1+\nu)\alpha\bar\theta=2.26\times10^{-3}$; arc-stretching term
-$\tfrac12\langle w^{'}{}^2\rangle=1.8\times10^{-4}$ (circular-arc estimate $1.6\times10^{-4}$):
+$\tfrac12\langle w^{'}{}^2\rangle=1.39\times10^{-4}$ (circular-arc estimate $1.6\times10^{-4}$):
 first-iterate force relaxation $6.1\%$, self-consistent $5.9\%$
 \eqref{eq:nupdate}; total mechanical surface strain $\approx5.4\times10^{-3}$.
 Self-consistent comparison values: $w_{\max}=2.14\times10^{-4}$ m ($0.428H_0$; frozen force
@@ -127,7 +127,7 @@ $R_k$; $D_r$; $\Lambda$ & $k_s/k_f$; $d/H_0$; $L/H_0$ & 0.42; 6; 60 \\
 $\Sigma_\kappa$ & $\alpha q^{''}H_0/k_s$ & $5\times10^{-4}$ \\
 $w_{\max}^{\mathrm{lin}}/H_0$ & $(1+\nu)\Sigma_\kappa\Lambda^2/8$, \eqref{eq:relbow} & 0.315 \\
 $w_{\max}/H_0$ & beam--column, \eqref{eq:beamcolbase} & 0.438 \\
-$\Gamma_p$ & $48\kappa_{\mathrm{th}}D_s/(5\bar pL^2)$, $\bar p$ from \eqref{eq:pbar} & $2.4\times10^3$ \\
+$\Gamma_p$ & $w_{\max}/w_p$, \eqref{eq:gammap} & $2.4\times10^3$ \\
 $M_b$ & $\bar T_{\mathrm{cr}}/\bar\theta$ & 3.64 \\
 $\xi$ & $\beta^2T_0/[(\lambda+2\mu_L)\rho_sc_s]$ & $2.2\times10^{-2}$ \\
 \bottomrule

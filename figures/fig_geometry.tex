@@ -15,14 +15,16 @@
 \coordinate (B) at (\Le+\L,\Hf);
 \coordinate (At) at (\Le,\Hf+\ds);
 \coordinate (Bt) at (\Le+\L,\Hf+\ds);
-\fill[orange!25] (At) -- (Bt) -- (B) .. controls (\Le+\L/2,\Hf-12) .. (A) -- cycle;
-\draw[thick] (A) .. controls (\Le+\L/2,\Hf-12) .. (B);
-\draw[thick] (At) -- (Bt);
+% deformed wall bows AWAY from the channel (w>0 = +d_2); both faces displace by the same amount
+\fill[orange!25] (A) .. controls (\Le+\L/2,\Hf+12) .. (B) -- (Bt)
+  .. controls (\Le+\L/2,\Hf+\ds+12) .. (At) -- cycle;
+\draw[thick] (A) .. controls (\Le+\L/2,\Hf+12) .. (B);
+\draw[thick] (At) .. controls (\Le+\L/2,\Hf+\ds+12) .. (Bt);
 \draw[thick] (A) -- (At); \draw[thick] (B) -- (Bt);
 % heat flux arrows on top of heated wall
 \foreach \x in {0.12,0.30,0.5,0.7,0.88}{
-  \draw[->,red!70!black,thick] (\Le+\x*\L,\Hf+\ds+14) -- (\Le+\x*\L,\Hf+\ds+2);}
-\node[red!70!black] at (\Le+\L/2,\Hf+\ds+20) {$q^{''}$ prescribed, $\Ga_h$};
+  \draw[->,red!70!black,thick] (\Le+\x*\L,\Hf+\ds+24) -- (\Le+\x*\L,\Hf+\ds+12);}
+\node[red!70!black] at (\Le+\L/2,\Hf+\ds+29) {$q^{''}$ prescribed, $\Ga_h$};
 % adiabatic labels
 \node[align=center] at (\Le/2,\Hf+9) {adiabatic rigid lid\\(solid extension)};
 \node[align=center] at (\Le+\L+\Lo/2,\Hf+9) {adiabatic};
@@ -31,8 +33,8 @@
 \draw[<-,thick] (\Le+\L+\Lo,\Hf/2) -- ++(16,0);
 \node[below] at (\Le+\L+\Lo+8,\Hf/2-4) {outlet, $p=p_\mathrm{out}$};
 % interface and wall-motion annotation
-\draw[<->,blue!60!black] (\Le+\L/2,\Hf-12) -- (\Le+\L/2,\Hf-1);
-\node[blue!60!black,anchor=west] at (\Le+\L/2+4,\Hf-6) {$w(x)$, $\Ga$};
+\draw[<->,blue!60!black] (\Le+\L/2,\Hf) -- (\Le+\L/2,\Hf+6);
+\node[blue!60!black,anchor=west] at (\Le+\L/2+4,\Hf+3) {$w(x)$, $\Ga$};
 % dimension lines
 \draw[<->] (\Le,-8) -- ++(\L,0) node[midway,below] {$L$, heated flexible wall};
 \draw[<->] (0,-8) -- ++(\Le,0) node[midway,below] {entrance $L_e$};

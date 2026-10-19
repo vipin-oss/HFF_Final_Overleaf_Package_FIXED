@@ -17,7 +17,17 @@ equation \eqref{eq:fluidenergy} is strongly advection-dominated: with
 $\mathrm{Pe}=\mathrm{Re}_{D_h}\mathrm{Pr}=348$ the cell P\'eclet number exceeds the Galerkin
 oscillation threshold on any mesh affordable at the required near-wall resolution, so the
 temperature transport is stabilized by a consistent streamline-upwind (SUPG) term with the
-standard residual-based coefficient; oscillation-free behaviour of the computed interface flux is
+residual-based coefficient
+\begin{equation}
+\tau_K=\frac{h_K}{2|\bu|_K}\left(\coth\mathrm{Pe}_K-\frac{1}{\mathrm{Pe}_K}\right),
+\qquad
+\mathrm{Pe}_K=\frac{|\bu|_K h_K}{2\kappa_f},
+\qquad \kappa_f=\frac{k_f}{\rho c_p},
+\label{eq:supg}
+\end{equation}
+with $h_K$ the element length in the mean-flow direction and $|\bu|_K$ the element mean speed; $\tau_K$
+has units of time, tends to $h_K/(2|\bu|_K)$ for $\mathrm{Pe}_K\gg1$, and is the exact one-dimensional
+optimal value for steady advection--diffusion. Oscillation-free behaviour of the computed interface flux is
 part of the acceptance criteria of test V-B (Chapter~\ref{ch:validation}). The meshes of the
 fluid and solid subdomains are constructed \emph{conforming} at the interface: nodes and edges of
 the two meshes coincide on $\Ga_{\mathrm{if}}$. This choice is deliberate: interface quantities are
@@ -40,11 +50,31 @@ $\bu\in V_g$, $p\in Q$, $T_f\in S_f$, $\bd\in V_s$, $T_s\in S_s$ such that
 &\rho c_p\,a_T(\bu;T_f,\chi)+a_{kf}(T_f,\chi)
 =+\int_{\Ga}k_f\nabla T_f\cdot\bn\,\chi\,\mathrm ds, \label{eq:weaktf}\\
 &\int_{\Om_s^0}\bsig(\bd,\theta):\beps(\boldsymbol\varphi)\,\mathrm dX
+-\int_{\Om_s^0}N_\theta^c\,\partial_X d_2\,\partial_X\varphi_2\,\mathrm dX
 =-\int_{\Ga}\bsig\bn\cdot\boldsymbol\varphi\,\mathrm ds, \label{eq:weaks}\\
 &a_{ks}(T_s,\chi)=\int_{\Ga_h^0}q^{''}\chi\,\mathrm ds
 -\int_{\Ga}k_s\nabla T_s\cdot\bn\,\chi\,\mathrm ds , \label{eq:weakts}
 \end{align}
-for all test functions, where the bilinear and trilinear forms are
+for all test functions, where
+\begin{equation*}
+V_g=\{\mathbf v\in[H^1(\Om_f)]^2:\ \mathbf v=\mathbf 0\ \text{on the Dirichlet portions of }\partial\Om_f\},
+\qquad Q=L^2(\Om_f),
+\end{equation*}
+\begin{equation*}
+S_f=\{\chi\in H^1(\Om_f):\ \chi=0\ \text{at the inflow }x=-L_e\},\qquad
+V_s=\{\boldsymbol\varphi\in[H^1(\Om_s^0)]^2:\ \boldsymbol\varphi=\mathbf 0\ \text{on the pinned ends}\},
+\qquad S_s=H^1(\Om_s^0),
+\end{equation*}
+with the traces of these spaces on $\Ga_{\mathrm{if}}$ in $H^{1/2}(\Ga_{\mathrm{if}})$, the space in
+which the shared interface unknowns live. The one-parameter freedom of $Q=L^2(\Om_f)$ is removed by
+the datum of condition B2: the mean pressure over the outflow section is constrained to zero,
+$\int_{\Ga_{\mathrm{out}}}p\,\mathrm ds=0$, imposed as a single scalar constraint on the algebraic
+system (register D-25).
+The second integral of \eqref{eq:weaks} is the geometric-stiffness
+contribution of the frozen membrane state: with $N_\theta^c=|N_\theta|>0$ in compression it enters
+with a minus sign, and one-dimensional reduction of \eqref{eq:weaks} reproduces \eqref{eq:beamcol}
+when the transverse load is removed and \eqref{eq:beam} when the membrane force is.
+The bilinear and trilinear forms are
 \begin{align*}
 \hat a_f(\bu,\mathbf v)&=2\mu\int_{\Om_f}\mathbf D(\bu):\mathbf D(\mathbf v)\,\mathrm dx,
 & b(\mathbf v,p)&=-\int_{\Om_f}p\nabla\cdot\mathbf v\,\mathrm dx,\\
@@ -128,6 +158,13 @@ $\|\bd^{(k+1)}-\bd^{(k)}\|_\infty\le10^{-6}\,w_{\max}$
 fixed-point accuracy and is superseded), together with residual smallness of all four
 subproblem statements.
 \end{enumerate}
+The cancellation of \eqref{eq:weaktf}--\eqref{eq:weakts} is a property of the \emph{assembled}
+system, in which the interface temperature is a single unknown. The iteration described above solves
+the two subproblems separately with transferred data, so within an unconverged iterate the interface
+residuals do not cancel and the discrete flux balance is recovered only in the limit; the interface
+flux-jump norm of test V-B (Chapter~\ref{ch:validation}) is therefore an acceptance criterion
+alongside the residual smallness of item~5. The monolithic path of the next paragraph changes the
+solver, not the discretization of the interface unknown.
 The escalation trigger to the monolithic path is numeric: escalation occurs when
 $N_\theta^c/N_{\mathrm{cr}}>0.5$ at any iterate, or when the geometry increment stagnates
 (four consecutive iterations with reduction of the increment by less than a factor of two). At
