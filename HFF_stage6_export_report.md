@@ -1,6 +1,6 @@
 # HFF Stage‑6 — Export report
 
-**Deliverable:** `HFF_Stage6_Overleaf_Source.zip`
+**Deliverable:** `HFF_Stage6_Overleaf_Source.zip` (23 files, ~95 kB)
 **Date:** 19 October 2026
 **Scope:** packaging and pre-export verification of the corrected source. **No solver code was written, no simulation was run, and nothing was merged into `main`.**
 
@@ -111,7 +111,7 @@ HFF_Stage6_Overleaf_Source.zip
 └── HFF_stage6_export_report.md                (this report)
 ```
 
-19 files. `main.tex`, `references.bib`, `chapters/` and `figures/` sit at the ZIP root, so Overleaf resolves every `\input` path without rearrangement.
+23 files. `main.tex`, `references.bib`, `chapters/` and `figures/` sit at the ZIP root, so Overleaf resolves every `\input` path without rearrangement.
 
 ---
 
@@ -123,7 +123,8 @@ HFF_Stage6_Overleaf_Source.zip
 | `58acd5c` | Stage‑5 corrections: `chapters/ch05.tex`, `chapters/ch08.tex`, `chapters/audit_appendix.tex`, `references.bib` + four Stage‑5 reports |
 | `3082490` | Stage‑5 report wording |
 | `049cb36` | Stage‑6: definitions of `â_f`, `b`, `c`, `a_T`, `a_kf`, `a_ks` in `chapters/ch08.tex` |
-| packaging commit | `HFF_stage6_package_README.md`, this report, and the ZIP |
+| `a413e54` | Stage-6 packaging files: package README and this report (later commits only correct wording or counts in these two documents) |
+| packaging commit | the ZIP itself |
 
 **Exact corrected source files:** `chapters/ch05.tex`, `chapters/ch08.tex`, `chapters/audit_appendix.tex`, `references.bib`. No other `.tex` or `.bib` file was modified. Their combined diff against `5a25521` is **+45 / −23** lines; all hunks are listed in §2.
 
