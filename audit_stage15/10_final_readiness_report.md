@@ -35,7 +35,7 @@ the solid subproblem.
 |---|---|
 | `9066c3b` | baseline (verified clean; tree and remote identical) |
 | `e8ef0d7` | **all source corrections** — 13 files, 108 insertions, 41 deletions |
-| *(this commit)* | Stage 15 audit artefacts under `audit_stage15/` |
+| `5861d4d` | Stage 15 audit artefacts under `audit_stage15/` (this document) |
 
 ## 3. Evidence base
 
