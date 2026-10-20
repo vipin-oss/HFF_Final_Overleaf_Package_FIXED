@@ -1,0 +1,11 @@
+frozen:       N=29038.7  N/Ncr=0.2746  wmax=2.188579e-04 (0.4377 H0)  arc=1.387855e-04  DeltaN=1784.4 (6.14%)
+              sigma_memb=-9.6796 MPa sigma_bend=4.2369 MPa total=-5.4427 MPa
+              eps_mech=(1-nu^2)*sigma/E = -1.26996e-03  printed 3.25e-3
+              eps_mech = e0+(kgeo-kth)d/2 = 3.24717e-03
+              circular arc: kth*L^2/8=1.5750e-04  kgeo^2 L^2/24=1.58992e-04  printed 1.6e-4
+fixed point:  N*=27330.6 N/m (printed 2.733e4)  relaxation 5.882% (printed 5.9%)
+              wmax=2.139876e-04 m (0.4280 H0) [printed 2.14e-4, 0.428]  arc=1.328499e-04
+              sigma_bend=3.8989 MPa (printed 3.9)  M*=-5.8484 (printed -6.2?)  shift -7.98%
+              sigma_total*=13.5785 MPa ; D-28 quotes 13.0 MPa ; frozen 13.9165
+              sigma_memb* (relaxed) = 9.1102 MPa ; D-28 quotes 9.11 MPa (frozen 9.68)
+              5.9% relaxation implies N=2.7325e+04 ; D-28 quotes N 2.733e4

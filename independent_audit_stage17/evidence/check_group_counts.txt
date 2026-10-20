@@ -1,0 +1,58 @@
+executed assertions: 109 (= 34 cmp + 75 top-level check)
+numeric recompute/identity      : 42 [263, 267, 334, 336, 337, 338, 339, 340, 343, 344, 345, 346, 347, 348, 349, 352, 353, 354, 355, 356, 357, 358, 359, 362, 363, 364, 365, 366, 367, 368, 369, 370, 373, 374, 377, 379, 380, 381, 422, 424, 426, 427]
+prose-value consistency         : 4 [351, 375, 376, 394]
+structural                      : 8
+fingerprint (aggregate)         : 3 covering 76 equations + 32 register rows
+provenance/package              : 2
+claim-string / presence only    : 50
+      80 deflection convention w = +d_2
+      81 pressure term is D_s w'''' = +p
+      82 pressure term is not -p
+      84 geometric term present, negative, with N/d
+      85 old no-1/d geometric form removed
+      86 geometric term sign not flipped
+      87 no halved 1/(2d) coefficient anywhere
+      91 B7 found
+      92 B7 is not a full-edge clamp
+      93 B7 imposes d_2=0
+      94 B7 blocks mean axial displacement
+      99 A9 found
+     100 A9 states the pin, not a clamp
+     101 A9 no longer says the ends have zero displacement
+     102 A9 is not a clamp
+     103 A9 carries the measured 0.998
+     105 V_s defined with phi_2 = 0 on end edges
+     106 V_s is not a clamp
+     107 V_s integral condition is homogeneous
+     110 solid receives the interface temperature (Dirichlet)
+     112 fluid receives the interface flux (Neumann)
+     114 the false 'temperature level is fixed' claim is gone
+     115 the pure-Neumann argument is stated
+     116 the level is traced into theta-bar and N_theta
+     118 ch05 and ch08 agree that a solid flux datum is inadmissible
+     120 step 1 gives the solid T_s = T_Gamma^{(k)} on the interface
+     122 the flux-datum alternative is marked as the rejected one
+     125 the kernel/compatibility argument is spelled out
+     128 the loop closes on the extracted interface temperature
+     135 no pressure-gauge constraint in any notation
+     137 register pointer corrected to D-30
+     139 SUPG stabilised weak form written
+     140 SUPG P2 length scale addressed
+     145 no reversed-bow phrasing in body text
+     155 ch04 has no stale few-per-cent stiffening claim
+     156 ch11 has no stale few-per-cent stiffening claim
+     160 ch04 states the measured 0.2 % with its Q8 evidence
+     161 ch11 states the measured 0.2 % with its Q8 evidence
+     162 no 'one-time numerical check' left in the pin context
+     166 A8 labels the mixed ratio
+     167 A8 gives the like-for-like value
+     168 dictionary labels Gamma_p
+     169 ch07 table labels Gamma_p mixed
+     170 ch07 prose gives both ratios
+     171 A-5 is defined on the like-for-like ratio
+     174 figure fix is not claimed as visually verified
+     264 nu in (0,0.5)
+     384 ch08 writes the geometric stress with 1/d (not 1/(2d))
+     387 ch04 critical load is the pinned eigenvalue pi^2 D_s/L^2
+     390 ch07 table quotes the pinned critical load
+sum check: 109

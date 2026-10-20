@@ -1,0 +1,26 @@
+components of theta-bar: dTt/2=30.0000  q''/h=1.5475 (h=3231)  dTb/2=0.7177  sum=32.2652
+printed component line in ch07: '30 + 1.6 + 0.7';  q''/h to 1 dp = 1.5  -> printed 1.6 MISMATCH
+
+frozen force N0=29038.7 N/m ; N0/Ncr=0.27461
+  mu=54.8764 muL=1.64629 wmax=2.188579e-04 (0.4377 H0) kgeo=2.05907 Mmid=-6.35535 arc=1.387855e-04 slope=0.02751
+  amplification wmax/(kth L^2/8) = 1.3896 ; 1/(1-N0/Ncr)=1.3786
+  fibre strain (kgeo-kth)d/2 = 9.886096e-04 ; kgeo d/2 = 3.088610e-03 ; e0 = 2.258565e-03 ; e0+kgeo d/2 = 5.347174e-03
+  |eps_mech| candidate = 4.358565e-03 ; printed 3.25e-3
+  arc/(e0) = 6.1449%  -> first-iterate force relaxation 3.07%
+
+fixed point of eq:nupdate: N*=29952.4 N/m  relaxation -3.146%  wmax=2.215534e-04 (0.4431 H0)  arc=1.421264e-04
+  printed: N 2.733e4 ('2.904e4 -> 2.733e4'), relaxation 5.9%, w 2.14e-4, 0.428 H0
+  Mmid*=-6.6360  sigma_bend*=4.4240 MPa  vs frozen -6.3553 / 4.2369 MPa  shift 4.42%
+  sigma_memb*=-E alpha thbar/(1-nu)=-9.6796 MPa ; frozen -9.6796 MPa
+  total |sigma|* = 0.0000 MPa ; frozen 13.9165 MPa
+
+ODE + BC residuals (w = (kth/mu^2)(A sin mu x + cos mu x - 1), A=tan(muL/2)):
+   x/L=0.30  Ds w'''' + N w'' = 1.455e-11
+   x/L=0.50  Ds w'''' + N w'' = 0.000e+00
+   x/L=0.77  Ds w'''' + N w'' = 7.276e-12
+   w(0)=0.00e+00 w(L)=1.03e-19 w''(0)+kth=0.00e+00 w''(L)+kth=-2.22e-16
+
+pressure/deflection checks:
+  dp=120.0 Pa pL=48.0 pbar=84.0 | printed 72 Pa? (table says 72 for 12 mu U L/H0^2 with L=3cm) -> 72.0
+  wp=9.1875e-08 m (printed 9.2e-8) ; Gamma mixed=2382.13 (printed 2.4e3)
+  circular-arc check: 0.5<w'^2> approx from w''=const: 1.419e-04 ; printed 1.6e-4

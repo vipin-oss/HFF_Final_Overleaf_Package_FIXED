@@ -1,0 +1,30 @@
+== 'few per cent' ==
+chapters/audit_appendix.tex:50:D-26 & Assumption~A9 and condition~B7 prescribed $d_1=d_2=0$ on the \emph{whole} end edge, and the function space $V_s$ encoded it. Prescribing both displacement components on an edge forbids end rotation: it is a \emph{clamp}, and it contradicts the same sentence's ``zero applied moment''. It also contradicts \S\ref{sec:deriv:curvature}, which states that a clamped--clamped strip at uniform $\kappa_{\mathrm{th}}$ does not bow at all & B7/A9/$V_s$ restated as a genuine pin: $d_2=0$ on the end edge, $\langle d_1\rangle=0$ taken as the edge mean (blocked mean axial expansion), zero applied moment as a natural condition. An independent plane-strain Q8 computation gives $1.0000$ of $\kappa_{\mathrm{th}}L^2/8$ for point pins, $0.998$ for a full-edge vertical support with free axial mean, and $-0.02$ to $-0.06$ for $d_1=d_2=0$ on the whole edge; the ``few per cent'' claim is replaced by these measured values & resolved (Stage 16) \\
+chapters/ch02.tex:77:(Section~\ref{sec:baselinecalc}), over which the property variation remains below a few per cent.
+chapters/ch04.tex:168:against $-0.02$ to $-0.06$ for a clamp. The earlier reading of this end effect as ``a few per cent''
+chapters/ch11.tex:29:$-0.06$ clamp); the earlier estimate of a few per cent is superseded by that measurement, which is
+
+== 'one-time' ==
+
+== 'closing the residual' / end-compliance ==
+chapters/ch04.tex:169:is superseded by that measurement, the check is complete, and no separate end-compliance correction
+chapters/ch08.tex:145:normal-flux balance. Here the cancellation is genuine, and it is the reason no separate interface
+
+== clamp residue ==
+chapters/ch02.tex:117:\emph{clamp}, which forbids end rotation, contradicts the moment-free condition and suppresses the
+chapters/ch02.tex:118:bowing altogether, since a clamped strip at uniform $\kappa_{\mathrm{th}}$ has $w\equiv0$
+chapters/ch02.tex:123:restraint of a clamp destroys the mechanism.
+chapters/ch04.tex:110:the thickness. Second, a clamped--clamped strip at uniform $\kappa_{\mathrm{th}}$ carries a
+chapters/ch04.tex:161:The clamped--clamped eigenvalue $4\pi^2D_s/L^2$ would give a threshold four times higher; the
+chapters/ch04.tex:163:clamped-based estimate used in an early design note (Appendix~B, register D-4). The admissibility
+chapters/ch04.tex:168:against $-0.02$ to $-0.06$ for a clamp. The earlier reading of this end effect as ``a few per cent''
+chapters/ch04.tex:291:is the \emph{clamped--clamped} coefficient. See register D-13.) The load level requires a datum
+chapters/ch05.tex:52:B7 & strip ends $X=0,L$ & $d_2=0$, $\langle d_1\rangle=0$ (edge mean), zero applied moment; $\partial_nT_s=0$ & pin, not a clamp (A9, register D-26) \\
+chapters/ch11.tex:26:clamped comparison is recorded in the audit register. The full-edge pin idealization itself
+chapters/ch11.tex:29:$-0.06$ clamp); the earlier estimate of a few per cent is superseded by that measurement, which is
+
+== unresolved / RU ==
+chapters/ch01.tex:86:record (discrepancy register, consolidated evidence status, unresolved source checks, and the
+chapters/ch10.tex:55:(Scopus/Web of Science) remains open (Appendix~B, C-7), and no wording stronger than the bounded
+
+== 1.4377 ==

@@ -1,0 +1,27 @@
+shape-derivative check (max abs vs FD): 4.48e-11
+mesh 24 elements 101 nodes; kappa_th=5.8333e-01 1/m; beam w=6.5625e-05 m
+
+case    w (mid-surface)      ratio   w (top face)      ratio
+POINT      6.57891e-05     1.0025    6.56250e-05     1.0000
+PIN        6.56617e-05     1.0006    6.54976e-05     0.9981
+CLAMP     -2.67744e-06    -0.0408   -2.95531e-06    -0.0450
+
+FREE case: solved (unexpected: rigid modes not removed)
+
+DIAGNOSTIC: deflected mid-surface for the POINT case (x, w) and curvature fit
+  x=0.0000  w= 1.99614e-18   w/beam=0.0000
+  x=0.0025  w= 2.00521e-05   w/beam=1.0000
+  x=0.0050  w= 3.64583e-05   w/beam=1.0000
+  x=0.0075  w= 4.92188e-05   w/beam=1.0000
+  x=0.0100  w= 5.83333e-05   w/beam=1.0000
+  x=0.0125  w= 6.38021e-05   w/beam=1.0000
+  x=0.0150  w= 6.56250e-05   w/beam=1.0000
+  x=0.0175  w= 6.38021e-05   w/beam=1.0000
+  x=0.0200  w= 5.83333e-05   w/beam=1.0000
+  x=0.0225  w= 4.92188e-05   w/beam=1.0000
+  x=0.0250  w= 3.64583e-05   w/beam=1.0000
+  x=0.0275  w= 2.00521e-05   w/beam=1.0000
+  x=0.0300  w= 2.98732e-21   w/beam=0.0000
+  fitted curvature at mid-span: 5.83333e-01 1/m   (kappa_th = 5.83333e-01, ratio 1.0000)
+
+exact-field residual: max|K u_ex - f| = 1.393e-09   (max|f| = 1.875e+04, scale 1.875e+04)

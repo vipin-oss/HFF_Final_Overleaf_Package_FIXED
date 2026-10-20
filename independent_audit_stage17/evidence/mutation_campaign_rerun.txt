@@ -1,0 +1,38 @@
+id   result    first failing check / note
+base PASS      
+A1   detected  fingerprint no display equation has changed              | moment BC: half the thermal curvature at the pins
+A2   detected  fingerprint no display equation has changed              | closed-form solution: particular integral halved
+A3   detected  fingerprint no display equation has changed              | compatibility update: factor 2 lost
+A4   detected  fingerprint no display equation has changed              | linear bow formula: 1/8 -> 1/12
+A5   detected  maths       printed theta-bar equals the recomputed valu | printed mean temperature
+A6   detected  maths       ch04 Gamma_p = w_max/w_p matches             | water viscosity (feeds the whole pressure chain)
+A7   detected  maths       printed theta-bar equals the recomputed valu | imposed heat flux (feeds every thermal result)
+A8   detected  maths       register pointer corrected to D-30           | reintroduces a gauge constraint in different notation
+A9   detected  maths       V_s integral condition is homogeneous        | function space: non-homogeneous integral condition (not a subspace)
+A10  detected  fingerprint no display equation has changed              | SUPG term sign
+A11  detected  fingerprint no register row has changed                  | register D-31 reverts to the withdrawn false claim
+A12  detected  maths       ch07 table Gamma_p matches                   | table value of Gamma_p
+A13  detected  maths       appendix sigma_bend frozen matches           | frozen bending stress in their own arithmetic appendix
+A14  detected  maths       appendix circular-arc estimate matches       | circular-arc estimate inside a loose tolerance band
+A15  detected  maths       ch04 has no stale few-per-cent stiffening cl | restores the withdrawn few-per-cent stiffening claim
+A16  detected  maths       ch08 writes the geometric stress with 1/d (n | explanatory 1/d becomes 1/(2d) while eq:weaks is untouched
+A17  detected  maths       the loop closes on the extracted interface t | loop closure removed while both Dirichlet/Neumann keywords survive
+A18  detected  fingerprint no display equation has changed              | beam-column ODE sign (buckling term becomes stiffening)
+A19  detected  maths       every stress quoted in ch07 prose is one of  | the conservative stress value in the design chapter
+A20  detected  maths       appendix M_mid matches                       | mid-span moment in the arithmetic appendix
+A21  detected  maths       A9 states the pin, not a clamp               | pin reverted to a clamp in Assumption A9 only (B7 untouched)
+A22  detected  fingerprint no display equation has changed              | convective term sign in the momentum weak form
+A23  detected  maths       ch04 critical load is the pinned eigenvalue  | critical load: clamped eigenvalue substituted for the pinned one
+A24  detected  maths       appendix mu*L matches                        | printed beam-column parameter
+A25  detected  maths       ch09 V-C3 amplification matches              | benchmark acceptance value
+B1   detected  maths       step 1 gives the solid T_s = T_Gamma^{(k)} o | reverts step 1 to the flux datum the audit rejected (D-32)
+B2   detected  maths       the kernel/compatibility argument is spelled | deletes the kernel/compatibility argument
+B3   detected  maths       ch05 and ch08 agree that a solid flux datum  | data-model paragraph claims the flux datum is admissible
+B4   detected  maths       ch04 states the measured 0.2 % with its Q8 e | end-effect magnitude changed by a factor of ten (NEW-05)
+B5   detected  maths       ch07 table labels Gamma_p mixed              | removes the mixed/like-for-like label from the Gamma_p table row (I-11)
+B6   detected  maths       appendix A8 like-for-like Gamma_p matches    | like-for-like Gamma_p in A8
+B7   detected  fingerprint no equation or register row removed          | renumbers the D-32 register row (breaks the pointer from ch05/ch08)
+B8   detected  maths       geometric term present, negative, with N/d   | geometric stiffness doubled inside eq:weaks (display equation)
+B9   detected  maths       ch05 and ch08 agree that a solid flux datum  | dangling register pointer from the data-model paragraph
+
+DETECTED 34 / 34, SURVIVING 0  (caught by a numeric/identity check: 25; caught only by the equation fingerprint: 9)

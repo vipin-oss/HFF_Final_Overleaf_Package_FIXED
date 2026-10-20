@@ -1,0 +1,156 @@
+assertions: check()=77 cmp()=34 total=111
+  numeric recompute              41
+  claim string / presence        40
+  other                          17
+  structural                      8
+  fingerprint                     3
+  provenance/package              2
+
+line  class                      call   name
+55    structural                 check  ?
+56    structural                 check  environments balanced
+61    structural                 check  labels unique
+62    structural                 check  no dangling references
+69    structural                 check  all cited keys resolve
+70    structural                 check  no uncited bib entries
+74    structural                 check  no undefined shorthand macros
+76    structural                 check  register rows present and counted
+80    claim string / presence    check  deflection convention w = +d_2
+81    claim string / presence    check  pressure term is D_s w'''' = +p
+82    claim string / presence    check  pressure term is not -p
+84    claim string / presence    check  geometric term present, negative, with N/d
+85    claim string / presence    check  old no-1/d geometric form removed
+86    claim string / presence    check  geometric term sign not flipped
+87    claim string / presence    check  no halved 1/(2d) coefficient anywhere
+91    other                      check  B7 found
+92    claim string / presence    check  B7 is not a full-edge clamp
+93    claim string / presence    check  B7 imposes d_2=0
+94    claim string / presence    check  B7 blocks mean axial displacement
+99    other                      check  A9 found
+100   claim string / presence    check  A9 states the pin, not a clamp
+101   claim string / presence    check  A9 no longer says the ends have zero displacement
+102   claim string / presence    check  A9 is not a clamp
+103   claim string / presence    check  A9 carries the measured 0.998
+105   claim string / presence    check  V_s defined with phi_2 = 0 on end edges
+106   claim string / presence    check  V_s is not a clamp
+107   claim string / presence    check  V_s integral condition is homogeneous
+110   claim string / presence    check  solid receives the interface temperature (Dirichlet)
+112   claim string / presence    check  fluid receives the interface flux (Neumann)
+114   claim string / presence    check  the false 'temperature level is fixed' claim is gone
+115   claim string / presence    check  the pure-Neumann argument is stated
+116   claim string / presence    check  the level is traced into theta-bar and N_theta
+118   claim string / presence    check  ch05 and ch08 agree that a solid flux datum is inadmissible
+120   claim string / presence    check  step 1 gives the solid T_s = T_Gamma^{(k)} on the interface
+122   claim string / presence    check  the flux-datum alternative is marked as the rejected one
+125   claim string / presence    check  the kernel/compatibility argument is spelled out
+128   claim string / presence    check  the loop closes on the extracted interface temperature
+135   other                      check  no pressure-gauge constraint in any notation
+137   claim string / presence    check  register pointer corrected to D-30
+139   claim string / presence    check  SUPG stabilised weak form written
+140   claim string / presence    check  SUPG P2 length scale addressed
+145   other                      check  no reversed-bow phrasing in body text
+155   other                      check  ch04 has no stale few-per-cent stiffening claim
+156   other                      check  ch11 has no stale few-per-cent stiffening claim
+160   other                      check  ch04 states the measured 0.2 % with its Q8 evidence
+161   other                      check  ch11 states the measured 0.2 % with its Q8 evidence
+162   claim string / presence    check  no 'one-time numerical check' left in the pin context
+166   claim string / presence    check  A8 labels the mixed ratio
+167   claim string / presence    check  A8 gives the like-for-like value
+168   claim string / presence    check  dictionary labels Gamma_p
+169   claim string / presence    check  ch07 table labels Gamma_p mixed
+170   claim string / presence    check  ch07 prose gives both ratios
+171   claim string / presence    check  A-5 is defined on the like-for-like ratio
+174   other                      check  figure fix is not claimed as visually verified
+215   fingerprint                check  no display equation has changed
+216   fingerprint                check  no register row has changed
+217   fingerprint                check  no equation or register row removed
+263   numeric recompute          check  L/d = 10 at the baseline
+264   other                      check  nu in (0,0.5)
+267   numeric recompute          check  all parsed inputs positive and finite
+328   other                      check  ?
+330   other                      check  ?
+334   numeric recompute          check  printed theta-bar equals the recomputed value to its 3-s.f. rounding
+336   numeric recompute          cmp    appendix N_theta matches
+337   numeric recompute          cmp    appendix N_cr matches
+338   numeric recompute          cmp    appendix M_b matches
+339   numeric recompute          cmp    ch07 M_b matches
+340   numeric recompute          cmp    appendix mu*L matches
+343   numeric recompute          cmp    ch04 printed w_max matches recomputation
+344   numeric recompute          cmp    ch04 printed w_max/H0 matches
+345   numeric recompute          cmp    ch04 printed linear w/H0 matches
+346   numeric recompute          cmp    ch04 amplification matches
+347   numeric recompute          cmp    ch04 fibre strain matches
+348   numeric recompute          cmp    ch04 arc term matches quadrature
+349   numeric recompute          cmp    ch04 relaxation matches arcterm/e0
+351   other                      check  circular-arc estimate is an upper bound, 10-20% above exact
+352   numeric recompute          cmp    appendix circular-arc estimate matches
+353   numeric recompute          cmp    appendix w'_max matches
+354   numeric recompute          cmp    appendix M_mid matches
+355   numeric recompute          cmp    appendix sigma_bend frozen matches
+356   numeric recompute          cmp    ch07 table sigma_bend matches
+357   numeric recompute          cmp    ch07 table w_max matches
+358   numeric recompute          cmp    ch07 conservative stress 13.9 matches
+359   numeric recompute          cmp    ch09 V-C3 amplification matches
+362   numeric recompute          cmp    ch04 Gamma_p = w_max/w_p matches
+363   numeric recompute          cmp    ch04 linear-limit closed form matches
+364   numeric recompute          cmp    ch04 like-for-like w_p matches beam-column pressure solution
+365   numeric recompute          cmp    ch04 like-for-like Gamma_p matches
+366   numeric recompute          cmp    appendix A8 w_p matches
+367   numeric recompute          cmp    appendix A8 Gamma_p matches
+368   numeric recompute          cmp    appendix A8 like-for-like Gamma_p matches
+369   numeric recompute          cmp    ch07 table w_p matches
+370   numeric recompute          cmp    ch07 table Gamma_p matches
+373   numeric recompute          cmp    appendix self-consistent w_max matches
+374   numeric recompute          cmp    appendix self-consistent sigma_bend matches
+375   other                      check  frozen stress exceeds self-consistent (conservative)
+376   other                      check  frozen stress below 0.2 sigma_y cap
+377   numeric recompute          check  E/(1-nu^2)*max|eps_mech| reproduces frozen sigma_max
+379   numeric recompute          cmp    ch04 printed mechanical surface strain matches
+380   numeric recompute          cmp    appendix envelope matches
+381   numeric recompute          cmp    appendix e0 matches
+384   claim string / presence    check  ch08 writes the geometric stress with 1/d (not 1/(2d))
+387   claim string / presence    check  ch04 critical load is the pinned eigenvalue pi^2 D_s/L^2
+390   claim string / presence    check  ch07 table quotes the pinned critical load
+394   other                      check  every stress quoted in ch07 prose is one of the recomputed values
+422   numeric recompute          check  kappa_geo = kappa_th*sec(muL/2)
+424   numeric recompute          check  (kgeo+kth)/(kgeo-kth) = cot^2(muL/4)
+426   other                      check  eq:beamcolsol satisfies the printed ODE
+427   numeric recompute          check  eq:beamcolsol satisfies all four BCs
+432   provenance/package         check  tracked main.pdf exists
+437   provenance/package         check  every package filename in README.md exists
+
+CAMPAIGN biting check -> class
+  A1  detected  fingerprint  no display equation has changed              -> fingerprint
+  A2  detected  fingerprint  no display equation has changed              -> fingerprint
+  A3  detected  fingerprint  no display equation has changed              -> fingerprint
+  A4  detected  fingerprint  no display equation has changed              -> fingerprint
+  A5  detected  maths        printed theta-bar equals the recomputed valu -> numeric recompute
+  A6  detected  maths        ch04 Gamma_p = w_max/w_p matches             -> numeric recompute
+  A7  detected  maths        printed theta-bar equals the recomputed valu -> numeric recompute
+  A8  detected  maths        register pointer corrected to D-30           -> claim string / presence
+  A9  detected  maths        V_s integral condition is homogeneous        -> claim string / presence
+  A10 detected  fingerprint  no display equation has changed              -> fingerprint
+  A11 detected  fingerprint  no register row has changed                  -> fingerprint
+  A12 detected  maths        ch07 table Gamma_p matches                   -> numeric recompute
+  A13 detected  maths        appendix sigma_bend frozen matches           -> numeric recompute
+  A14 detected  maths        appendix circular-arc estimate matches       -> numeric recompute
+  A15 detected  maths        ch04 has no stale few-per-cent stiffening cl -> other
+  A16 detected  maths        ch08 writes the geometric stress with 1/d (n -> claim string / presence
+  A17 detected  maths        the loop closes on the extracted interface t -> claim string / presence
+  A18 detected  fingerprint  no display equation has changed              -> fingerprint
+  A19 detected  maths        every stress quoted in ch07 prose is one of  -> other
+  A20 detected  maths        appendix M_mid matches                       -> numeric recompute
+  A21 detected  maths        A9 states the pin, not a clamp               -> claim string / presence
+  A22 detected  fingerprint  no display equation has changed              -> fingerprint
+  A23 detected  maths        ch04 critical load is the pinned eigenvalue  -> claim string / presence
+  A24 detected  maths        appendix mu*L matches                        -> numeric recompute
+  A25 detected  maths        ch09 V-C3 amplification matches              -> numeric recompute
+  B1  detected  maths        step 1 gives the solid T_s = T_Gamma^{(k)} o -> claim string / presence
+  B2  detected  maths        the kernel/compatibility argument is spelled -> claim string / presence
+  B3  detected  maths        ch05 and ch08 agree that a solid flux datum  -> claim string / presence
+  B4  detected  maths        ch04 states the measured 0.2 % with its Q8 e -> other
+  B5  detected  maths        ch07 table labels Gamma_p mixed              -> claim string / presence
+  B6  detected  maths        appendix A8 like-for-like Gamma_p matches    -> numeric recompute
+  B7  detected  fingerprint  no equation or register row removed          -> fingerprint
+  B8  detected  maths        geometric term present, negative, with N/d   -> claim string / presence
+  B9  detected  maths        ch05 and ch08 agree that a solid flux datum  -> claim string / presence

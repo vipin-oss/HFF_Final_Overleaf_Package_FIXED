@@ -1,0 +1,22 @@
+date: 2026-10-20T06:06:21Z (UTC) / user tz Asia/Kolkata
+branch: arena/c875f9b3-hff-final-overleaf-package-fix
+HEAD: 211f75163485a2b209b79fb3e22ecb0d7227d342
+HEAD short: 211f751 Stage 17: repair Stage 16 audit findings (D-32 thermal well-posedness, NEW-05 0.2 %, D-29/I-11 labelling) + regression suite v3 + 34-mutant campaign
+origin/main: 5a255212a51374f7eb178647eb12b0a9c2b67ded
+tree clean (excluding audit dir): 0 modified paths
+?? independent_audit_stage17/
+python: Python 3.11.2
+--- toolchain probe:
+pdflatex   MISSING
+latex      MISSING
+lualatex   MISSING
+xelatex    MISSING
+latexmk    MISSING
+tectonic   MISSING
+pdftoppm   MISSING
+pdftotext  MISSING
+gs         MISSING
+qpdf       MISSING
+magick     MISSING
+convert    /usr/bin/convert
+inkscape   MISSING
