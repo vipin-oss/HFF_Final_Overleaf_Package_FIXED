@@ -73,14 +73,19 @@ With the thermal load imposed on the solid side, the coupled problem exchanges t
 of data, and they must not be conflated. Mechanically the exchange is Dirichlet--Neumann: the fluid
 subproblem receives its domain from the solid displacement through the no-slip condition
 \eqref{eq:ifkin}, and the solid receives the fluid traction \eqref{eq:iftraction} as a computed load.
-Thermally it is neither: the interface temperature is a single unknown shared by the two subdomains,
-neither prescribed as data nor eliminated, and the flux equality \eqref{eq:ifflux} is the equation
-that determines it (\S\ref{sec:coupling}). Prescribing that temperature as data, or prescribing a
-conjugate flux on the solid side in place of it, would be inadmissible: the solid carries the
+Thermally it is neither: in the model the interface temperature is a single unknown shared by the
+two subdomains, neither prescribed as data nor eliminated, and the flux equality
+\eqref{eq:ifflux} is the equation that determines it (\S\ref{sec:coupling}). Substituting either
+one of the two as data in place of that equation would be inadmissible: the solid carries the
 prescribed flux on the whole outer face $\Ga_h^0$ and zero flux on its remaining faces, so a flux
-datum on $\Ga_{\mathrm{if}}$ would leave the solid subproblem pure-Neumann, its temperature level
-undetermined up to an additive constant, and that constant would propagate into the membrane force
-$N_\theta$ (register D-24). Because the
+datum on $\Ga_{\mathrm{if}}$ would leave the solid subproblem pure-Neumann --- its temperature level
+undetermined up to an additive constant, and solvable at all only when the boundary fluxes balance
+--- and that constant would propagate into the membrane force $N_\theta$ (register D-24). What the
+model forbids, an algorithm must nevertheless do one subproblem at a time: in the staggered
+iteration of \S\ref{sec:iteration} the interface temperature is prescribed to the \emph{solid} and
+the interface flux to the \emph{fluid}, which is the only assignment under which both subproblems
+are uniquely solvable at every iterate (register D-32); the two are reconciled at the fixed point,
+where \eqref{eq:iftemp}--\eqref{eq:ifflux} hold together. Because the
 solid problem is linear, the displacement decomposes exactly as
 \begin{equation}
 \bd=\bd_{\mathrm{th}}+\bd_p,

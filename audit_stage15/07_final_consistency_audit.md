@@ -139,3 +139,45 @@ Defects introduced by the batches themselves, caught on this pass and fixed:
   with `|N_θ|` after a macro sweep — recorded because it is exactly the failure mode a batch creates;
 - the first attempt to append D-26 … D-29 used a stale anchor and asserted on a row that no longer
   existed; the retry targeted the real D-25 row and the count was verified (31 rows, not 30).
+
+---
+
+# Stage 17 recheck of the dependency chain after the thermal repair
+
+The thermal correction (D-32) changes *which subproblem holds which datum*, not the physics, so the
+chain was rechecked end to end rather than assumed. Every value below is recomputed by
+`regression.py` from inputs parsed out of `ch02`/`ch09`; `python3 audit_stage15/regression.py --chain`
+prints the same table.
+
+| Step | Recomputed | Printed | Where |
+|---|---|---|---|
+| `θ̄` | `32.2652 K` | `32.3` | `ch04`, appendix A5 |
+| `N_θ = −Eαθ̄d/(1−ν)` | `−2.9039×10⁴ N/m` | `−2.91×10⁴` | appendix A5 |
+| `N_cr = π²D_s/L²` | `1.0575×10⁵ N/m` | `1.057×10⁵` | appendix A5, `ch07` table |
+| `μ = √(N_θ/D_s)` | `54.876 m⁻¹` | `55` | appendix A9 |
+| `μL` | `1.6463` | `1.65` | appendix A9, `ch04` |
+| `κ_geo = 2w_max/L²` | `2.0591 m⁻¹` | *not printed*; enters as `(κ_geo−κ_th)d/2` | appendix A3/A9 |
+| `w_max` | `2.1886×10⁻⁴ m` | `2.19×10⁻⁴` | `ch04` `eq:beamcolbase`, `ch07` table |
+| `M_mid` | `−6.3554 N·m/m` | `−6.4` | appendix A9 |
+| `σ_bend` | `4.2369 MPa` | `4.2` | appendix A9 |
+| `Γ_p` mixed | `2.382×10³` | `2.4×10³` | `ch04`, `ch07`, appendix A8 |
+| `Γ_p` like-for-like | `1.726×10³` | `1.73×10³` | `ch04`, `ch07`, appendix A8 |
+| end effect | `0.2 %` | `0.2 %` | `ch04`, `ch11`, D-26 |
+| self-consistent `w_max` | `2.13988×10⁻⁴ m` | `2.14×10⁻⁴` | appendix |
+
+Consistency statements re-verified in the same pass:
+
+1. `ch05` (`sec:datamodel`), `ch08` (`sec:iteration`, incl. the new well-posedness paragraph) and the
+   solver specification §12 now describe **one** assignment: solid Dirichlet → fluid Neumann.
+2. `eq:iftemp` and `eq:ifflux` are still both enforced — as the two halves of the loop — and the
+   model is unchanged; the fixed point satisfies them together.
+3. No reference temperature, gauge or mean-zero projection is added to the solid problem, and the
+   text says so explicitly.
+4. The level of `T_s` is traced in the text to `θ̄`, `N_θ` and the geometric stiffness, so a solver
+   that shifts it cannot pass silently.
+5. Nothing in the printed result set changed, so no earlier claim (RB/CC items) is invalidated by
+   the repair; the 109-check suite passes on the new text.
+
+Remaining known inconsistencies are author-physics, not arithmetic: RU-01 (casing clearance /
+contact / vent) and RU-03 (`1.4377 H₀`), plus the `Γ_p` headline choice. They keep the coupled
+solver **NOT READY**.

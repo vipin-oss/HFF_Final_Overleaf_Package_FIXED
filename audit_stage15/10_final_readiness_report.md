@@ -197,3 +197,21 @@ I-08, I-09, I-11, I-13 and I-15 are now closed, and whether the new tests are no
 Working tree at the time of writing: clean apart from this hash record. Branch:
 `arena/c875f9b3-hff-final-overleaf-package-fix` (push target; `origin/main` untouched at
 `5a255212`).
+
+---
+
+# Stage 17 readiness
+
+| Question | Answer |
+|---|---|
+| Is the coupled production solver ready? | **NO — NOT READY**, unchanged. Three reasons remain and none is arithmetic. |
+| 1. Author physics | RU-01 (casing clearance / contact / vented vs sealed cavity), RU-03 (`1.4377 H₀`), heater mounting and face, contact law, headline `Γ_p`. Not determined by the source; the minimum author decision is stated in `01_…` §3 and `09_…` §12.5. |
+| 2. Build/visual evidence | I-13 (`main.pdf` predates the sources) and I-15 (no rendered figure check) are **OPEN**; no TeX engine and no renderer exist here. |
+| 3. Independence | The repair has not been independently audited. A fresh audit of the new commit is requested in `13_stage17_audit_request.md`. |
+| What *is* closed | The thermal subproblem is now well posed and specified identically in model, manuscript and solver spec (D-32); the end-effect magnitude is the measured 0.2 % everywhere (D-26/NEW-05); every `Γ_p` presentation is labelled (D-29/I-11). |
+| How is that evidenced? | 109-check regression suite (all passing) with a parse-and-recompute layer, plus a 34-mutant campaign in isolated copies (34/34 detected, 0 survivors). |
+| What the evidence does **not** show | That the corrected equations are physically right — only the independent audit and, later, a real build can say that. Nine mutants are caught only by the equation-fingerprint change detector, not by a recomputation. |
+
+**Statement of non-approval.** I cannot approve my own repair. `IMPLEMENTED` in
+`01_…` means "in the source, guarded by a test", not "verified". The coupled solver stays blocked
+until an independent audit closes the items and the author decides RU-01/RU-03.

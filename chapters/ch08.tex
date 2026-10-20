@@ -91,7 +91,7 @@ admissible test function, so constants are \emph{not} in the kernel of $b(\cdot,
 determined absolutely. The natural condition at $\Ga_{\mathrm{out}}$ together with a developed exit
 profile then leaves $p\to0$ across that section. Constraining, say, $\int_{\Ga_{\mathrm{out}}}p\,
 \mathrm ds=0$ as an extra equation would over-determine the system and, with a Lagrange multiplier,
-inject a spurious outlet mass source (register D-25). The level that results is reported with every
+inject a spurious outlet mass source (register D-25, corrected in D-30). The level that results is reported with every
 computed case and is what fixes $\bar p=84$~Pa of Section~\ref{sec:deriv:pressure}.
 The second integral of \eqref{eq:weaks} is the geometric-stiffness contribution of the frozen
 membrane state, written as a \emph{stress} $N_\theta^c/d$ (force per unit depth divided by thickness,
@@ -163,6 +163,7 @@ quadrature-consistency audit is part of tests V-B and V-D. The outflow term in \
 the do-nothing natural condition of Section~\ref{sec:bcs} and does not cancel.
 
 \section{Solution procedure for the steady problem}
+\label{sec:iteration}
 The domain map $\widehat{\mathbf w}$ is defined as the solution of a pseudo-elastic problem on
 $\Om_f^0$ with coefficient graded to stiffen small elements near the interface, Dirichlet data
 $\widehat{\mathbf w}=\bd$ on $\Ga_{\mathrm{if}}^0$ and $\widehat{\mathbf w}=\mathbf 0$ on rigid
@@ -170,23 +171,27 @@ boundaries -- the standard solid-based mesh-motion device of deformable-domain c
 \cite{lesoinne1996geometric}. The steady coupled state is obtained by the following fixed-point
 iteration on the geometry:
 \begin{enumerate}\itemsep1pt
+\item solve the \emph{solid thermal} subproblem first, with the interface temperature carried from
+the previous iterate as a \emph{Dirichlet datum}: $T_s=T_\Gamma^{(k)}$ on $\Ga_{\mathrm{if}}$, the
+prescribed flux $+k_s\nabla T_s\cdot\bn_{\mathrm{out}}=q^{''}$ on $\Ga_h^0$ and zero flux on
+$\Ga_{\mathrm{end}}$ and on the remaining faces (B6--B8). The interface flux is then extracted as
+$q_\Gamma^{(k)}=+k_s\nabla T_s^{(k)}\cdot\bn$, the heat leaving the solid, with $\bn$ the fluid's
+outward normal so that $q_\Gamma^{(k)}$ is exactly the flux entering the fluid in
+\eqref{eq:ifflux};
 \item solve the fluid subproblem on the current $\Om_f$ by exact Newton linearization of
-\eqref{eq:weakf} and \eqref{eq:supgwf} (the advection derivative is linearized analytically). At
-this stage the interface temperature $T_\Gamma^{(k)}$ is a \emph{Dirichlet datum} on
-$\Ga_{\mathrm{if}}$, and the resulting interface flux is extracted as
-$q_\Gamma^{(k)}=-k_f\nabla T_f^{(k)}\cdot\bn$;
-\item transfer to the solid (i) the pressure-dominated traction $\bsig_f^{(k)}\bn$ as a computed
-load and (ii) the interface flux $q_\Gamma^{(k)}$ as a \emph{Neumann datum} on $\Ga_{\mathrm{if}}$.
-Neither side is ever left with Neumann data on its whole boundary: the solid additionally carries
-the prescribed flux $q^{''}$ on $\Ga_h^0$, so its temperature level is fixed;
+\eqref{eq:weakf} and \eqref{eq:supgwf} (the advection derivative is linearized analytically), with
+the interface flux $q_\Gamma^{(k)}$ imposed as a \emph{Neumann datum},
+$k_f\nabla T_f\cdot\bn=q_\Gamma^{(k)}$ on $\Ga_{\mathrm{if}}$. The fluid temperature level is
+anchored by the inflow datum of B1, so this subproblem is uniquely solvable; the pressure-dominated
+traction $\bsig_f^{(k)}\bn$ is extracted as the mechanical load and the interface temperature as
+$T_\Gamma^{(k+1)}=T_f^{(k)}|_{\Ga_{\mathrm{if}}}$, which closes the thermal loop;
 \item solve the thermoelastic subproblem \eqref{eq:weaks}--\eqref{eq:weakts} at the reduced
 (frozen-force) von K\'arm\'an level specified by Section~\ref{sec:deriv:beamcolumn} (linear
 thermoelasticity augmented by the geometric-stiffness contribution of the current membrane
 state; the membrane force is re-evaluated from the computed state after each solve, so the
 consistency update \eqref{eq:nupdate} is recovered at the fixed point; one direct solve per
-iteration). The solid solve returns the interface temperature $T_s|_{\Ga_{\mathrm{if}}}$, which is
-taken as $T_\Gamma^{(k+1)}$ and closes the thermal loop for the next fluid solve; the flux balance
-is thus enforced by alternation, not exactly at any iterate;
+iteration), using the temperature field $T_s^{(k)}$ of step~1. The flux balance is enforced by
+alternation, exactly in the fluid subproblem at every iterate and in the solid limit;
 \item solve the mesh-extension problem, update $\Om_f$, and recompute all geometry-dependent
 data (normals, Jacobians, quadrature);
 \item under-relax the interface displacement with a documented factor $\omega$
@@ -197,6 +202,25 @@ $\|\bd^{(k+1)}-\bd^{(k)}\|_\infty\le10^{-6}\,w_{\max}$
 fixed-point accuracy and is superseded), together with residual smallness of all four
 subproblem statements.
 \end{enumerate}
+\emph{Why the solid receives the temperature and not the flux.} The assignment of the thermal data
+in steps 1--2 is forced by well-posedness, not by convenience. Transferring the conjugate flux instead would give the solid flux data on its
+whole boundary: $q^{''}$ on $\Ga_h^0$, zero flux on $\Ga_{\mathrm{end}}$ and the remaining faces,
+and the conjugate flux on $\Ga_{\mathrm{if}}$. A pure-Neumann problem of this kind has the constant
+in its kernel, so its solution is determined only up to an additive constant, and it has a solution
+at all only if the boundary fluxes sum to zero --- which holds at the fixed point and not at an
+intermediate iterate. A flux datum on the solid is therefore doubly inadmissible: the level is free
+and the iterate is generally unsolvable. Prescribing the interface \emph{temperature} to the solid
+removes both problems at once, because $\Ga_{\mathrm{if}}$ is then a Dirichlet surface and the
+remaining flux data determine the field uniquely; the fluid, conversely, keeps one Dirichlet
+surface of its own, the inflow plane B1, so it is well posed with the flux as a Neumann datum.
+In the \emph{model} the level is fixed by neither side alone: \eqref{eq:iftemp} together with the
+inflow datum $T_{\mathrm{in}}$ is what anchors it, and the staggered scheme inherits that anchor
+through $T_\Gamma^{(k)}$. Nothing is added to the model, and no reference temperature is invented:
+the constant that the Neumann form leaves free is precisely the interface temperature, and it is an
+output of the conjugate problem (register D-32). The consequence is worth stating where it bites:
+the mean wall temperature $\bar\theta$, and through \eqref{eq:ntheta} the membrane force
+$N_\theta$ and the geometric stiffness of \eqref{eq:weaks}, inherit the level from
+$T_{\mathrm{in}}$; they are not free parameters of the thermal subproblem.
 The cancellation of \eqref{eq:weaktf}--\eqref{eq:weakts} is a property of the \emph{assembled}
 system, in which the interface temperature is a single unknown. The iteration described above solves
 the two subproblems separately with transferred data, so within an unconverged iterate the interface

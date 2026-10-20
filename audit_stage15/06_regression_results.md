@@ -194,3 +194,76 @@ one, because the recompute is chained from the parsed material data.
 2. It cannot render the figure; the `fig_geometry` rewrite is checked for structure only.
 3. It cannot validate the physics — the pin idealisation, the casing clearance and the vent
    question remain author decisions (see `01_…`, `10_…`).
+
+---
+
+# Stage 17 — regression suite v3 and the re-run mutation campaign
+
+## 1. Suite size and layers
+
+    $ python3 audit_stage15/regression.py
+    ...
+    ALL 109 CHECKS PASSED
+
+| § | Layer | What it does | Checks |
+|---|---|---|---|
+| 1 | Structural | braces, environments, labels/references, citations, register rows, macros | 8 |
+| 2 | Claims | sign conventions, boundary conditions, function spaces, thermal well-posedness, D-32/D-29 wording | 46 |
+| 2b | Fingerprints | canonical hash of every display-equation body and every `D-xx` row (`equation_fingerprints.json`, 76 entries) | 3 aggregate |
+| 3 | Inputs | every material and operating input parsed out of `ch02`/`ch09` (not hard-coded) | 3 |
+| 4 | Recompute | every printed result recomputed from those inputs and compared with the printed number | 43 |
+| 5 | Exact identities | `κ_geo = κ_th sec(μL/2)`, `(κ+κ_th)/(κ−κ_th) = cot²(μL/4)`, ODE + 4 BC residuals | 4 |
+| **Total** | | | **109** |
+
+The recomputation is chained from parsed inputs, so a corrupted input moves every downstream printed
+value and is caught by whichever printed value is checked first (mutation A6 fires on the `Γ_p`
+check, A7 on `θ̄`, not because those are the only checks that would see it).
+
+## 2. Mutation campaign
+
+    $ python3 audit_stage15/mutation_campaign_stage17.py
+    DETECTED 34 / 34, SURVIVING 0  (caught by a numeric/identity check: 25;
+                                    caught only by the equation fingerprint: 9)
+
+Full log: `audit_stage15/mutation_stage17_results.txt`.
+
+| Group | Mutants | Detected | Caught by a recomputation/identity | Caught only by a fingerprint |
+|---|---|---|---|---|
+| A — independent Stage 16 campaign | 25 | 25 | 17 | 8 |
+| B — Stage 17 repairs | 9 | 9 | 8 | 1 |
+| **Total** | **34** | **34** | **25** | **9** |
+
+Re-anchored mutants: A8, A15, A17. Their original anchor text was rewritten by the Stage 17 repair
+(A8: the D-25 sentence now says "corrected in D-30"; A15: the "few per cent" sentence is withdrawn;
+A17: the loop-closure sentence was rewritten). The campaign **fails loudly** if an anchor is missing
+rather than counting a vacuous mutant as a pass, so the re-anchoring is visible in the output.
+
+New mutants and what they prove:
+
+| ID | Mutation | First failing check |
+|---|---|---|
+| B1 | step 1 reverts to the solid flux datum | `step 1 gives the solid T_s = T_Gamma^{(k)} on the interface` |
+| B2 | deletes the kernel/compatibility argument | `the kernel/compatibility argument is spelled out` |
+| B3 | `ch05` claims the flux datum is well posed | `ch05 and ch08 agree that a solid flux datum is inadmissible` |
+| B4 | `0.2 % → 2 %` | `ch04 states the measured 0.2 % with its Q8 evidence` |
+| B5 | drops `(mixed)` from the `Γ_p` table row | `ch07 table labels Gamma_p mixed` |
+| B6 | like-for-like `1.73 → 1.93` | `appendix A8 like-for-like Gamma_p matches` |
+| B7 | renumbers `D-32 → D-33` | `no equation or register row removed` |
+| B8 | doubles `N_θ^c/d` in `eq:weaks` | `geometric term present, negative, with N/d` |
+| B9 | `ch05` pointer `D-32 → D-31` | `ch05 and ch08 agree …` |
+
+## 3. What "detected" does and does not mean
+
+Nine mutants are caught **only** by the fingerprint layer. That layer is a change detector: it
+proves that no equation can drift silently, but it would also fire on a legitimate, deliberate edit
+(hence the explicit `--update-fingerprints` step and its own regression check). It is **not** a
+mathematical proof of the corrected equation. The mathematical defence is the recomputation layer,
+which is what catches the other 25.
+
+## 4. What the suite still cannot do (unchanged and not claimed)
+
+1. It cannot compile LaTeX (no TeX engine); §7 reports `main.pdf` as stale — **I-13 stays OPEN**.
+2. It cannot render the figures; the `fig_geometry` rewrite is checked for structure only —
+   **I-15 stays OPEN**.
+3. It cannot validate the physics: casing clearance/contact, vent vs sealed cavity, heater mounting,
+   and the headline `Γ_p` remain author decisions (RU-01, RU-03, `OPEN-AD`).

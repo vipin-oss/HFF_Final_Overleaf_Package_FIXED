@@ -189,9 +189,69 @@ The specification below is amended in four places. Nothing else in the solver de
 3. **Pressure space (§ flow).** No gauge constraint. The discrete system is non-singular because
    `b(v,1) ≠ 0`. If a gauge is nonetheless desired for conditioning, it must be **reported as a
    numerical device**, not presented as removing a null space that does not exist.
-4. **Thermal coupling (§ FSI loop).** Fluid with Dirichlet `T_Γ` → extract `q_Γ` → solid with Neumann
-   `q_Γ` → extract `T_Γ^{k+1}` → repeat. SUPG with `τ` built from `h_K/p` for `P2`.
+4. **Thermal coupling (§ FSI loop).** ~~Fluid with Dirichlet `T_Γ` → extract `q_Γ` → solid with
+   Neumann `q_Γ` → extract `T_Γ^{k+1}` → repeat.~~ **Superseded in Stage 17 (D-32); see §12.4.**
+   That order hands the solid a pure-Neumann problem, whose temperature level is free and which is
+   solvable only when the interface fluxes balance — true at the fixed point, not at an iterate.
+   The required order is solid with Dirichlet `T_Γ^{(k)}` → extract `q_Γ^{(k)}` → fluid with Neumann
+   `q_Γ^{(k)}` → extract `T_Γ^{(k+1)}` → repeat. SUPG with `τ` built from `h_K/p` for `P2`.
 
 Still open before a production run (unchanged, and they are physics not code): casing clearance
 (RU-01), vent vs sealed cavity, heater mounting, contact law, pin idealisation, `Γ_p` headline
 definition, and the `1.4377 H₀` mid-span check (RU-03).
+
+---
+
+# Stage 17 changes to the solver-ready specification
+
+**Status: the coupled production solver remains NOT READY.** Two of the three reasons are physics
+that the source does not determine (RU-01/B-7, RU-03); the third is that no LaTeX/TikZ build and no
+visual figure check exists in this environment (I-15). One *code-level* reason has now been removed:
+the thermal subproblem assignment, which was ill-posed as specified.
+
+## 12.1 Solid thermal subproblem (step 1) — replaces "fluid first"
+
+Solve, on the current solid domain, the steady conduction problem
+
+    ∇·(k_s ∇T_s) = 0,
+    T_s = T_Γ^{(k)}                        on Γ_if   (Dirichlet, from the previous iterate or the initial guess),
+    +k_s ∇T_s·n_out = q''                  on Γ_h⁰   (prescribed flux, n_out the solid's outward normal),
+    k_s ∇T_s·n = 0                         on Γ_end, Γ_h^out, Γ_c⁰ and the remaining faces,
+
+then extract `q_Γ^{(k)} = +k_s ∇T_s^{(k)}·n`, the heat leaving the solid, with `n` the fluid's
+outward normal so that `q_Γ^{(k)}` is exactly the flux entering the fluid in `eq:ifflux`.
+
+*Why not the reverse assignment.* With the conjugate flux imposed on `Γ_if` instead of the interface
+temperature, the solid's data are pure-Neumann: `ker = span{1}`, the solution set is a line, and the
+iterate is solvable only when `∫ q'' + ∫ q_Γ + 0 = 0`, which holds at the fixed point only. The
+temperature level is therefore not a free parameter to be fixed by a gauge: it is the interface
+temperature, carried by the model's own interface condition `eq:iftemp` and anchored by the inflow
+datum `T_in` of B1 through the fluid subproblem. **No reference temperature is added to the model.**
+
+## 12.2 Fluid thermal subproblem (step 2)
+
+Same flow/energy solve as before, with the interface *flux* `q_Γ^{(k)}` as a Neumann datum,
+`k_f ∇T_f·n = q_Γ^{(k)}` on `Γ_if`. The fluid keeps one Dirichlet surface of its own (the inflow
+plane B1, `T = T_in`), so this subproblem is uniquely solvable at every iterate without a gauge.
+
+## 12.3 Consequence for post-processing
+
+The level of `T_s` — hence `θ̄` (or `θ`), `N_θ` (eq:ntheta), `κ_geo`, `w_max`, `σ`, and `Γ_p` —
+is inherited from `T_in` and the prescribed flux, never chosen. A solver that perturbs the level of
+`T_s` (by a gauge, a mean-zero projection applied to `T_s`, or a reference-temperature offset) will
+reproduce the Stage 16 defect and must fail the V-D thermal check.
+
+## 12.4 Verification hooks the code must satisfy
+
+| Test | Requirement |
+|---|---|
+| V-D (rigid conjugate thermal) | run **solid-Dirichlet / fluid-Neumann**; a run with the reversed assignment must fail to converge or return a level that differs by an arbitrary constant |
+| V-B flux balance | interface flux-jump norm small in the limit; not expected to vanish at an iterate |
+| V-C3 beam–column | `1.39` amplification at `μL = 1.65` |
+| `Γ_p` | report the mixed `2.4×10³` **and** the like-for-like `1.73×10³`, labelled |
+
+## 12.5 Still open (author physics, unchanged)
+
+RU-01 casing clearance/contact, vent vs sealed cavity, heater mounting and face, contact law,
+headline `Γ_p` definition, and the `1.4377 H₀` mid-span statement (RU-03). Until these are decided
+the coupled production run stays NOT READY regardless of the state of the code.

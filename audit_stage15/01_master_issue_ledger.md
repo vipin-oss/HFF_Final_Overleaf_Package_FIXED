@@ -124,3 +124,36 @@ physics. Nothing here is marked "verified closed" by me: closure requires a fres
 | I-13 provenance | **IMPLEMENTED** | `README.md` build note | `main.pdf` staleness is *reported* (see §7 of the suite); a rebuild is still required |
 | I-15 figure collisions | **IMPLEMENTED** | `figures/fig_geometry.tex` | brace/label structure only — rendering is a visual judgement, not a test |
 | I-14 (report-only items) | **n/a** | — | no source change required |
+
+---
+
+# Stage 17 status update (repair of the Stage 16 audit)
+
+None of these is marked `VERIFIED CLOSED`: closure needs a fresh independent audit of the new
+commit. `IMPLEMENTED` means the source contains the correction **and** a regression check fails if it
+is reverted (mutation-tested). `OPEN-AD` means the physics is not determined by the source.
+
+| ID | Item | Status after Stage 17 | Evidence in the tree | Guarding test(s) |
+|---|---|---|---|---|
+| NEW-01 | Solid thermal subproblem ill-posed (pure Neumann) | **IMPLEMENTED** — iteration reordered, solid Dirichlet first, level inherited from `T_in`, no datum invented | `ch08` `sec:iteration` steps 1–2 + well-posedness paragraph; `ch05` `sec:datamodel`; register `D-32`; solver spec §12 | 9 structural checks + mutation B1/B2/B3/B9 (all detected) |
+| NEW-02 | Expected value vs printed rounding | **IMPLEMENTED** — `θ̄` true `32.2652` vs printed `32.3`; tolerance stated as the printed 3 s.f. | `ch04`, appendix A5 | `printed theta-bar equals the recomputed value to its 3-s.f. rounding` |
+| NEW-03 | Dangling pointer after the D-25/D-30 split | **IMPLEMENTED** — `D-25 → D-30` in `ch08` | `ch08:94` | `register pointer corrected to D-30` |
+| NEW-05 | "Few per cent" / "one-time numerical check" end effect | **IMPLEMENTED** — measured `0.2 %` (`1.0000`, `0.998`, `−0.02…−0.06`), D-26 | `ch04`, `ch11` | 5 checks + mutation B4 (detected) |
+| I-01 | Pin vs clamp | IMPLEMENTED (Stage 16), re-verified | `ch02` A9, `ch05` B7, `ch08` `V_s` | B7/A9/`V_s` checks + mutation A21 (detected) |
+| I-02 | Casing clearance / contact | **OPEN-AD** (RU-01) | `ch07` RU-01 | not testable — no parameter in source |
+| I-03 | Missing `1/d` in the geometric term | IMPLEMENTED, re-verified | `ch08` `eq:weaks` | 4 checks + mutation B8 (detected) |
+| I-04 | Pressure gauge | IMPLEMENTED, re-verified | `ch08` spaces paragraph | gauge scan + mutation A8 (detected) |
+| I-05/I-06 | SUPG, stagger | IMPLEMENTED, re-verified | `ch08` `eq:supgwf`, `sec:iteration` | SUPG checks + NEW-01 checks |
+| I-07 | Vacuous mutation tests | **IMPLEMENTED** — suite v3, 34/34 detected | `regression.py`, `mutation_campaign_stage17.py`, `mutation_stage17_results.txt` | campaign exits 0 only with zero survivors |
+| I-08 | Stress inconsistency | IMPLEMENTED, re-verified | `ch04`, `ch07`, appendix | recompute + ch07 stress whitelist + mutation A19 (detected) |
+| I-09 | Strain envelope | IMPLEMENTED, re-verified | `ch02`, `ch04`, `ch07`, `ch08`, appendix | `appendix envelope matches`, `…mechanical surface strain…` |
+| I-10 | `θ̄` rounding | IMPLEMENTED, re-verified | `ch04` | 0.05 K tolerance check |
+| I-11 | `Γ_p` like-for-like | **IMPLEMENTED** (5 sites labelled, A-5 on the like-for-like ratio); headline choice **OPEN-AD** | `ch04`, `ch07`, appendix A8 + dictionary, `ch06` A-5 | 6 checks + mutations B5/B6 (detected) |
+| I-12 | Stale package | IMPLEMENTED — deterministic ZIP rebuilt, hash recorded | `README.md`, `package_manifest.txt` | manifest check (§8 of the suite) |
+| I-13 | Provenance / staleness of `main.pdf` | **OPEN** — the PDF still predates the modified sources; no TeX engine here | `08_build_and_packaging_report.md` | suite §7 reports, does not assert |
+| I-14 | Report-only items | n/a | — | — |
+| I-15 | Figure collision / visual check | **OPEN** — structure only; no renderer, no visual check | `figures/fig_geometry.tex` | brace/label structure only |
+
+**Tally after Stage 17:** 13 items implemented (12 of them mutation-tested), 1 open author decision
+on the `Γ_p` headline, 2 open environment items (I-13 rebuild, I-15 visual check), 1 open physics
+item (RU-01/B-7) plus RU-03. The coupled production solver remains **NOT READY**.

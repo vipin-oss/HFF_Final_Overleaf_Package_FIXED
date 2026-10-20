@@ -175,3 +175,29 @@ first paragraph that mentions the PDF.
     python3 audit_stage15/build_package.py     # writes the ZIP and the manifest
     python3 audit_stage15/regression.py        # 56 checks, exit 0
     python3 audit_stage15/mutation_test.py     # 6 mutants, all must be caught
+
+---
+
+# Stage 17 rebuild of the package
+
+The archive is rebuilt deterministically (fixed member order, fixed timestamp `(2026,10,19)`,
+deflate level 9) after the Stage 17 source and audit edits, with:
+
+    python3 audit_stage15/build_package.py
+    HFF_Final_Overleaf_Package.zip   75 members
+
+The **authoritative** SHA-256, size and per-member hashes are in
+`audit_stage15/package_manifest.txt`, regenerated with the archive. That file is deliberately
+**not** a ZIP member — the manifest cannot contain the hash of the archive that contains it, and by
+the same argument no hash printed *inside* this report describes the archive that contains this
+report. The manifest is therefore the record; a number typed here would be stale by construction.
+
+Stage 17 additions to the archive: `audit_stage15/equation_fingerprints.json`,
+`audit_stage15/mutation_campaign_stage17.py`, `audit_stage15/mutation_stage17_results.txt` and the
+new report files (`12_…`, `13_…`), plus the corrected `chapters/*.tex` of D-32, D-26/NEW-05 and
+D-29/I-11.
+
+**The PDF is still stale.** No TeX engine exists here; `main.pdf` remains the 49-page pre-Stage-16
+build. `regression.py` §7 reports (does not assert) that `main.pdf` predates every modified source,
+and `README.md` states it. Items I-13 and I-15 stay **OPEN** until a real TeX/TikZ build and a visual
+figure check are performed by someone with the toolchain.

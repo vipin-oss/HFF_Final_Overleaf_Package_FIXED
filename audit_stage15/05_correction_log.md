@@ -253,3 +253,115 @@ recalculated results, regression check, commit. Commit hashes are recorded in
 (not asserted) build-freshness section; `audit_stage15/mutation_test.py` clones the repository six
 times into `/tmp/hff_mut`, applies one mutation per clone, and requires the baseline to pass and
 every mutant to fail. Results are in `06_regression_results.md`.
+
+---
+
+# Stage 17 — repair of the independent Stage 16 findings
+
+Every entry below states: the claim as it stood, why a change was needed, the old and new
+value/equation, the downstream dependents, the recomputed results, the regression check that now
+guards it, and the commit (a commit hash is recorded in `12_stage17_repair_report.md` §7, because a
+commit cannot contain its own hash).
+
+## SUPERSEDED — the D-31 entry above describes the wrong thermal assignment
+
+The D-31 entry in this log says "(i) the fluid sees a Dirichlet datum `T_Γ` and the flux `q_Γ` is
+extracted; (ii) the solid sees a Neumann datum `q_Γ`; (iii) the loop closes when the solid returns
+`T_Γ^{k+1}`". That is the assignment the independent audit then showed to be ill-posed. The entry is
+left in place as the historical record of what Stage 16 believed; **it must not be read as the
+current specification**. The current specification is D-32 below and §12 of `09_…`.
+
+## D-32 — the solid thermal subproblem was ill-posed (NEW-01)
+
+- **Original claim (Stage 16, `ch05` and `ch08`):** the fluid was solved first with a Dirichlet
+  interface temperature, the flux `q_Γ` was extracted, and the solid then received `q_Γ` as a
+  Neumann datum; the text asserted that the prescribed flux `q''` **fixes the level** of `T_s`.
+- **Why this is wrong.** The solid carries flux data on its whole boundary (`q''` on `Γ_h⁰`, zero
+  elsewhere, `q_Γ` on `Γ_if`). A pure-Neumann problem has `ker = span{1}`: the solution is a line,
+  and it exists only when the boundary fluxes sum to zero. At an intermediate iterate they do not.
+  So the old iterate was *doubly* inadmissible — free level **and** generally unsolvable — and the
+  claim that a flux fixes a level contradicted the chapter's own B7 remark.
+- **Derivation of the well-posed solid problem.**
+  `∇·(k_s∇T_s) = 0` in `Ω_s`, `T_s = T_Γ` on `Γ_if`, `+k_s∇T_s·n_out = q''` on `Γ_h⁰`,
+  `k_s∇T_s·n = 0` on `Γ_end`, `Γ_h^out`, `Γ_c⁰`. With at least one Dirichlet surface the problem is
+  uniquely solvable for every admissible flux data; the constant that a pure-Neumann form leaves
+  free is exactly the interface temperature, which is *unknown of the coupled problem*, not a datum
+  to be chosen.
+- **Is a reference condition legitimate?** Yes — the model already contains one: `eq:iftemp`
+  (temperature continuity on `Γ_if`) together with the inflow datum `T_in` of B1. No reference
+  temperature, mean-zero projection or gauge was added. Choosing a datum "to make the solid
+  solvable" would have replaced an output of the conjugate problem by an invention.
+- **Change (iteration reordered, model untouched):**
+  1. solid thermal with Dirichlet `T_s = T_Γ^{(k)}` on `Γ_if` and `+k_s∇T_s·n = q''` on `Γ_h⁰`;
+     extract `q_Γ^{(k)} = +k_s∇T_s^{(k)}·n`;
+  2. fluid thermal with Neumann `k_f∇T_f·n = q_Γ^{(k)}` on `Γ_if`, level anchored by `T_in` (B1);
+     extract `T_Γ^{(k+1)} = T_f^{(k)}|_{Γ_if}`, which closes the loop;
+  3–5. thermoelastic solve, mesh extension, under-relaxation (unchanged).
+- **Trace through the dependency chain.** Level of `T_s` → `θ̄` (mean wall rise, `eq:ntheta`
+  inputs) → `N_θ = −Eαθ̄d/(1−ν)` → `κ_geo`, `w_max` → `M_mid`, `σ_bend` → `Γ_p`. Recomputing from
+  the parsed inputs: `θ̄ = 32.2652 K` (printed `32.3`), `N_θ = −2.9039×10⁴ N/m`
+  (printed `−2.91×10⁴`), `N_cr = 1.0575×10⁵ N/m`, `μL = 1.6463`, `w_max = 2.1886×10⁻⁴ m`
+  (printed `2.19×10⁻⁴`), `M_mid = −6.3554 N·m/m`, `σ_bend = 4.2369 MPa` (printed `4.2`),
+  `Γ_p = 2.382×10³` mixed and `1.726×10³` like-for-like (printed `2.4×10³`, `1.73×10³`). **No
+  printed value changes**, because the physical level was and remains the one set by `T_in`; what
+  changes is that the algorithm can now reach it.
+- **Where:** `ch08` §`sec:iteration` steps 1–2 and the new paragraph *"Why the solid receives the
+  temperature and not the flux"*; `ch05` §`sec:datamodel`; register `D-32`; solver spec §12.
+- **Downstream dependents rechecked:** `ch05` decomposition `d = d_th + d_p`, `eq:iftemp`,
+  `eq:ifflux`, `eq:ntheta`, `eq:weaks` geometric term, V-B/V-D acceptance criteria, D-26/D-29
+  numbers and the whole printed result set (109 regression checks pass).
+- **Regression checks:** `solid receives the interface temperature (Dirichlet)`, `fluid receives
+  the interface flux (Neumann)`, `step 1 gives the solid T_s = T_Gamma^{(k)} on the interface`,
+  `the kernel/compatibility argument is spelled out`, `the pure-Neumann argument is stated`,
+  `the false 'temperature level is fixed' claim is gone`, `the loop closes on the extracted
+  interface temperature`, `the level is traced into theta-bar and N_theta`, `ch05 and ch08 agree
+  that a solid flux datum is inadmissible`. Mutation evidence: B1, B2, B3, B9 are all detected.
+
+## D-26 reconciliation — the end effect is 0.2 %, not "a few per cent" (NEW-05)
+
+- **Original claim:** the pin idealisation was said to leave "an `O(d/L)` stiffening — a few per
+  cent at the baseline", to be settled by "a one-time numerical check".
+- **Change:** the measured plane-strain Q8 values are quoted (`1.0000` of `κ_th L²/8` for point
+  pins, `0.998` for a full-edge vertical support with free axial mean, `−0.02` to `−0.06` for
+  `d₁ = d₂ = 0`), i.e. **0.2 %**, `D-26`; the phrase "few per cent", the "one-time numerical check"
+  and the "closing the residual" wording are removed from `ch04` and `ch11`, and the check is
+  declared complete with no separate end-compliance correction.
+- **Downstream:** none of the printed results moves by more than its last digit; the admissibility
+  argument (A-3/A-6) is unchanged because the penalty is an order of magnitude below the bound.
+- **Regression checks:** `ch04 has no stale few-per-cent stiffening claim`, `ch11 has no stale …`,
+  `ch04 states the measured 0.2 % with its Q8 evidence`, `ch11 …`, `no 'one-time numerical check'
+  left in the pin context`. Mutation B4 (`0.2 % → 2 %`) is detected.
+
+## D-29 completion — every `Γ_p` presentation is labelled (I-11)
+
+- **Original claim:** a single `Γ_p = 2.4×10³` was quoted as a like-for-like amplification,
+  mixing an amplified numerator (`w_max`, beam–column) with an unamplified denominator
+  (`w_p`, simply supported pressure deflection).
+- **Change:** the mixed ratio is labelled as mixed wherever it appears (`ch04`, `ch07` table and
+  prose, appendix A8 and the dictionary); the like-for-like value is given as
+  `w_p(N_θ^c) = 1.27×10⁻⁷ m → Γ_p = 1.73×10³`; condition A-5 is evaluated on the like-for-like
+  ratio and is met under either definition, so the *conclusion* (thermal dominance) never depended
+  on the choice.
+- **Still open (author):** which ratio is the headline figure — `OPEN-AD`, unchanged.
+- **Regression checks:** `A8 labels the mixed ratio`, `A8 gives the like-for-like value`,
+  `dictionary labels Gamma_p`, `ch07 table labels Gamma_p mixed`, `ch07 prose gives both ratios`,
+  `A-5 is defined on the like-for-like ratio`, plus numeric checks on all five printed ratios.
+  Mutations B5, B6 are detected.
+
+## Regression suite v3 (I-07) and the mutation campaign
+
+- `regression.py` now has three layers: (a) structural/claim checks; (b) **fingerprints** — every
+  display equation body and every register row is canonicalised and SHA-256 hashed into
+  `equation_fingerprints.json`, so any edit to an equation fails the suite until the file is
+  deliberately regenerated with `--update-fingerprints`; (c) **parse-and-recompute** — the inputs
+  are parsed from `ch02`/`ch09` and `θ̄`, `N_θ`, `N_cr`, `M_b`, `μL`, `w_max`, `w'_max`, `κ_geo`,
+  the strains, the arc term, `M_mid`, `σ_bend`, both `Γ_p`, the self-consistent state and the four
+  exact identities are recomputed and compared with the **printed** values, not with rounded
+  intermediates.
+- Results: **109 checks, all passing**; **34/34 mutants detected, 0 survivors** — the 25 independent
+  Stage 16 mutants (A1–A25; A8, A15, A17 re-anchored because the sentences they attacked were
+  rewritten, and the re-anchoring is recorded in the campaign file) plus nine new mutants B1–B9 that
+  attack the Stage 17 repairs themselves.
+- Honest limitation: 9 of the 34 are caught **only** by the fingerprint layer, which is a change
+  detector — it would also fire on a legitimate edit. The 25 remaining are caught by a numeric or
+  identity check that recomputes the quantity from the inputs.

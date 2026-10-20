@@ -162,10 +162,12 @@ The clamped--clamped eigenvalue $4\pi^2D_s/L^2$ would give a threshold four time
 pinned value \eqref{eq:tcr} is the one consistent with the adopted supports and replaces the
 clamped-based estimate used in an early design note (Appendix~B, register D-4). The admissibility
 rule is $\bar\theta_{\max}\le\bar T_{\mathrm{cr}}/M$, with margin $M=2$ used in
-Chapter~\ref{ch:baseline}. The full-edge pin idealization of Assumption~A9 stiffens the ends by
-$O(d/L)$ relative to ideal point pins; the catalogue is therefore read as accurate to a few per
-cent at the baseline aspect ratio, with the one-time numerical check of
-Chapter~\ref{ch:validation} closing the residual.
+Chapter~\ref{ch:baseline}. The full-edge pin idealization of Assumption~A9 stiffens the ends relative to ideal point pins by
+$0.2\%$ at the baseline aspect ratio ($L/d=10$): the plane-strain Q8 computation of register D-26
+gives $1.0000$ of $\kappa_{\mathrm{th}}L^2/8$ for point pins and $0.998$ for the full-edge pin,
+against $-0.02$ to $-0.06$ for a clamp. The earlier reading of this end effect as ``a few per cent''
+is superseded by that measurement, the check is complete, and no separate end-compliance correction
+is applied to the catalogue.
 
 \section{Beam--column bowing at finite membrane force}
 \label{sec:deriv:beamcolumn}
