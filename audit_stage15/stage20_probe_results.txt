@@ -1,0 +1,16 @@
+Stage 20 targeted probe of findings F-1 to F-4
+repository: /home/user/HFF_Final_Overleaf_Package_FIXED
+baseline: exit 0, 159 checks passed
+
+F2    F-2 gauge explanation deleted from the formulation       DETECTED       exit 1   the formulation itself states why no pressure gauge is imposed
+F3a   F-3 legitimate: flux "on the outer face $Gamma_h^0$"     PASS           exit 0   -
+F3b   F-3 legitimate: fronted "On $Gamma_h^0$ the solid carries" PASS           exit 0   -
+F3c   F-3 legitimate: "is applied on the heated face" (words)  PASS           exit 0   -
+F3d   F-3 NEGATIVE: solid flux datum on the interface in prose DETECTED       exit 1   no solid flux datum is imposed on Gamma_if anywhere in the formulation
+F3e   F-3 NEGATIVE: double thermal datum, no surface named     DETECTED       exit 1   no prose datum gives the solid a temperature AND a non-heated-face heat flux in one sentence
+F4    F-4 eq:beamcol end moment halved, fingerprints REGENERATED DETECTED       exit 1   eq:beamcol states the zero total end moment, w'' = -kappa_th at both pins
+F1a   F-1 the mid-surface statement is removed                 DETECTED       exit 1   ch04 states that the Q8 ratios are sampled at the mid-surface (y = d/2)
+F1b   F-1 the withdrawn through-thickness claim returns        DETECTED       exit 1   the withdrawn claim that the Q8 ratios shift with the through-thickness mesh is absent
+E1    S20-E an extra & makes register row D-35 over-full       DETECTED       exit 1   every table row has exactly its declared number of cells
+
+10 of 10 cases behaved as intended

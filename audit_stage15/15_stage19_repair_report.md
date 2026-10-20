@@ -166,6 +166,14 @@ paragraph (which would also have broken the Stage 18 mutation B4's unique anchor
 
 ## 5. Q8 six-mesh study (re-run in Stage 19)
 
+> **Corrected in Stage 20 (register D-35, correction log S20-A).** The two column headings of the
+> table below are not physical heights: `lat[(NX,1)]` and `lat[(NX,2)]` sit at $y=d/4$ and $y=d/2$
+> for two elements through the thickness but at $y=d/8$ and $y=d/4$ for four, so the table compares
+> different heights between its $NY=2$ and $NY=4$ rows. The numbers are correct at the heights
+> actually sampled; the *reading* given after the table — that the ratios depend on the
+> through-thickness discretisation, and that the pin ratio approaches 1 — is withdrawn. The corrected
+> evidence, sampled at three fixed heights, is `audit_stage15/q8_height_study.py`.
+
 Only `NX, NY` are changed in each variant; the shipped verifier
 `independent_audit_stage16/evidence/q8_pin_verification.py` is otherwise untouched.
 
@@ -178,9 +186,12 @@ Only `NX, NY` are changed in each variant; the shipped verifier
 | 12×4 | 48 | 1.0056 / 1.0025 | 1.0037 / 1.0006 | −0.0284 / −0.0336 |
 | 24×4 | 96 | 1.0056 / 1.0025 | 1.0036 / 1.0005 | −0.0159 / −0.0211 |
 
-Reading: the point-pin ratio does not move with axial refinement (it depends on the through-thickness
-discretisation); the pin ratio approaches 1 as the axial mesh is refined; the clamp magnitude falls
-monotonically under every refinement. The quoted `1.0000`/`0.998` pair is therefore a finite-mesh
+Reading (superseded by Stage 20 — see the note above and S20-A): the point-pin ratio does not move
+with axial refinement (it depends on the through-thickness discretisation); the pin ratio approaches
+1 as the axial mesh is refined; the clamp magnitude falls monotonically under every refinement. At
+fixed heights the correct reading is: point pins $1.0000$ on every mesh; pin ratio independent of the
+through-thickness mesh to within $0.0001$ and falling towards $0.998$ under axial refinement; only
+the clamp magnitude is mesh-dependent. The quoted `1.0000`/`0.998` pair is therefore a finite-mesh
 pair, and the `0.2 %` **difference** between them is the part that is stable across meshes
 (0.0019 at 12×2 and at 12×4). This is exactly what the manuscript now says.
 

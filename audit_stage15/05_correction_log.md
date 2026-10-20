@@ -438,9 +438,174 @@ The six-mesh study (re-run in Stage 19, `15_stage19_repair_report.md` §5) gives
 
 The point-pin ratio is independent of the axial refinement and depends only on the through-thickness
 discretisation; the pin ratio approaches 1 as the axial mesh is refined; the clamp magnitude falls
-monotonically under every refinement. The measured values (`1.0000`, `0.998`, `−0.02` to `−0.06`)
+monotonically under every refinement.
+
+> **Corrected in Stage 20 — see S20-A and register D-35.** These two sentences, and the two column
+> headings of the table above, are wrong: both columns were read from lattice rows whose physical
+> heights move with the through-thickness mesh ($y=d/4$ and $y=d/2$ at $NY=2$, $y=d/8$ and $y=d/4$ at
+> $NY=4$). At a fixed height the point-pin ratio is $1.0000$ on every mesh, the pin ratio is
+> independent of the through-thickness refinement (to within $0.0001$) and falls towards $0.998$ as
+> the axial mesh is refined, and only the clamp magnitude is mesh-dependent. The table values above
+> are correct *as numbers*, at the heights actually sampled; they are not a through-thickness
+> comparison. The corrected evidence is `q8_height_study.py`; the sentence ``approaches 1'' is
+> withdrawn. The measured values (`1.0000`, `0.998`, `−0.02` to `−0.06`)
 are **preserved**, and are now described as values on one 24-element mesh: finite-mesh evidence that
 the clamped alternative is not the measured configuration, **not** a converged strip solution and not
 a converged clamp penalty. The `0.2 %` difference between the two pin idealizations is reproduced at
 two and four elements through the thickness, which is why the *difference* is quoted while the
 absolute ratios are not.
+
+## Stage 20 — the Q8 observation height, the gauge explanation, the heated-face detector, and `eq:beamcol`
+
+Final implementation stage. It repairs the four findings of the independent Stage 19 acceptance
+audit (`independent_audit_stage19/HFF_Stage19_Independent_Acceptance_Audit.md`) and adds nothing
+else, plus one build-fatal defect found while rebuilding the package (S20-E). Suite v5 (156) → v6
+(163). Fingerprints regenerated deliberately, twice and each time documented: 79 entries,
+`reg:D-26` changed and `reg:D-35` added in the first pass; `reg:D-32`…`reg:D-35` re-canonicalised in
+the second, after their cells were rebalanced. Nothing removed, and in neither pass did a
+display-equation key change.
+
+### S20-A. Q8 observation height and the withdrawn through-thickness claim (F-1, register D-35)
+
+**What was wrong.** The Stage 19 text said the ``absolute ratios shift with the through-thickness
+discretisation'' and compared clamp values $-0.041$ ($24$ elements) and $-0.025$ ($48$) with pin
+values read at a different height. Both were artefacts of the evidence script, whose two columns read
+`lat[(NX,1)]` and `lat[(NX,2)]`; the lattice maps node $j$ to $y=d\,j/(2\,NY)$, so those rows sit at
+
+| elements through the thickness | `lat[(NX,1)]` | `lat[(NX,2)]` |
+|---|---|---|
+| $NY=2$ | $y=d/4$ | $y=d/2$ |
+| $NY=4$ | $y=d/8$ | $y=d/4$ |
+
+The ``shift'' was therefore the difference between $y=d/2$ and $y=d/4$, not a through-thickness
+effect.
+
+**Recomputation.** `audit_stage15/q8_height_study.py` re-solves the same six meshes (independent
+code: own mesh, own shape functions validated against finite differences, own banded Cholesky, patch
+test on the exact stress-free field $10^{-13}$) and samples three fixed heights. At the mid-surface
+$y=d/2$:
+
+| mesh | elements | POINT | PIN | CLAMP |
+|---|---|---|---|---|
+| 6x2 | 12 | 1.0000 | 0.9999 | -0.0803 |
+| 12x2 | 24 | 1.0000 | 0.9981 | -0.0450 |
+| 24x2 | 48 | 1.0000 | 0.9979 | -0.0288 |
+| 6x4 | 24 | 1.0000 | 0.9998 | -0.0660 |
+| 12x4 | 48 | 1.0000 | 0.9981 | -0.0379 |
+| 24x4 | 96 | 1.0000 | 0.9980 | -0.0253 |
+
+The point-pin ratio is $1.0000$ on every mesh; the full-edge pin ratio depends only on the axial
+mesh, falling from $0.9999$ to $0.9979$ ($NY=2$) and from $0.9998$ to $0.9980$ ($NY=4$), i.e. at
+most $0.0001$ apart between the two through-thickness meshes at fixed $NX$; the clamp magnitude is
+the only quantity that is not mesh-converged, falling from $0.045$ to $0.029$ under axial
+refinement. The $0.2\%$ pin difference ($0.0019$ of $\kappa_{\mathrm{th}}L^2/8$) is unchanged between
+two and four elements through the thickness.
+
+**Corrections.** `ch04`, `ch11`, `ch02` A9 and the D-26 register row now sample at the mid-surface
+and quote the clamp as $-0.045$ ($24$ elements) and $-0.029$ ($48$); the through-thickness claim is
+withdrawn; D-35 records the defect, the recomputation and the dependency set. The ``not a converged
+strip solution'' scope is retained and is now *better* supported: the pin values are a trend in the
+axial mesh, not a converged limit, and no Richardson extrapolation is attempted.
+
+**Regression.** `ch04 states that the Q8 ratios are sampled at the mid-surface (y = d/2)` and
+`the withdrawn claim that the Q8 ratios shift with the through-thickness mesh is absent` (both
+failing before the text was corrected, passing after). Probe F1a/F1b in `stage20_probe.py` remove and
+reintroduce the statements respectively; both are DETECTED.
+
+### S20-B. The gauge explanation must be in the formulation (F-2)
+
+**What was wrong.** `the rejected pressure normalisation is still identified explicitly` counted
+occurrences of a constraint pattern over every file, including `audit_appendix.tex`. Deleting the
+whole argument from `ch08` (``No pressure gauge is required ... would over-determine the system ...
+spurious outlet mass source'') left the suite green, satisfied by the D-30 register row that
+*describes* the removed constraint. The independent audit reproduced this as A27b.
+
+**Correction.** Two checks now require the explanation in the formulation itself:
+`the formulation itself states why no pressure gauge is imposed` (at least one gauge occurrence whose
+file is `chapters/ch08.tex`) and `the formulation states that no pressure gauge is required`
+(the statement is present in `ch08`). The register row is no longer able to satisfy either.
+
+**Regression.** Probe F2 deletes the argument from `ch08`; DETECTED by the first of the two checks.
+The manuscript itself needed no change — the explanation was present; only the test's scope was wrong.
+
+### S20-C. Legitimate heated-face descriptions (F-3)
+
+**What was wrong.** The companion assertion `no prose sentence puts a non-zero solid flux datum on a
+surface other than the heated face` located the heated face only through the literal sequence
+``on $\Gamma_h^0$'' **after** the flux, and so rejected three correct sentences: ``... $=q^{''}$ on
+the outer face $\Gamma_h^0$'', a fronted ``On $\Gamma_h^0$ the solid carries the prescribed flux
+...'', and ``... is applied on the heated face''.
+
+**Correction.** The clause that carries the flux is located with `_clause_of` (delimited by `;` and
+`:`) and searched **in either direction** for the heated-face symbol or for the words
+``outer/heated face, surface, wall, side''. A flux whose clause names no heated surface is still a
+datum in the wrong place, and a flux whose immediate tail names $\Gamma_{if}$ is still a flux datum on
+the interface, so both genuine failure modes are preserved.
+
+**Regression.** Probe F3a-F3c (the three legitimate sentences) PASS; F3d (a solid flux datum placed
+on $\Gamma_{if}$ in prose) and F3e (a double thermal datum with no surface named) are both DETECTED.
+Stage 19's M8 and the Stage 18 cases that depend on the double-datum rule still detect.
+
+### S20-D. `eq:beamcol` has a substantive check (F-4)
+
+**What was wrong.** The two Stage 19 checks compared the *coded* solution with hard-coded
+$\kappa_{\mathrm{th}}$; nothing parsed the printed equation. Changing
+$w''(0)=w''(L)=-\kappa_{\mathrm{th}}$ to $-\tfrac12\kappa_{\mathrm{th}}$ therefore left the suite
+green even after `--update-fingerprints` (independent audit mutation A29).
+
+**Correction.** The printed equation is parsed: the ODE coefficients of
+$D_s w''''+N_\theta^c w''=0$ and the end-curvature coefficient of $w''(0)=w''(L)=-c\,\kappa_{\mathrm{th}}$.
+The derivation fixes $c=1$, because the text defines the total moment as
+$M=D_s(w''+\kappa_{\mathrm{th}})$ and requires $M=0$ at the pins; no new constant is invented. The
+parsed coefficients now drive the ODE residual and the boundary-condition test, so the solution is
+tested against the *printed* equation rather than against literals in the test file. Two checks are
+added (`eq:beamcol is the reduced beam-column equation ...`, `eq:beamcol states the zero total end
+moment ...`) and two existing ones are re-pointed at the parsed coefficients.
+
+**Regression.** Probe F4 halves the printed end curvature **with** fingerprint regeneration; DETECTED
+by the end-moment check. Two Stage 18 cases improved as a side effect: A1 (moment boundary condition)
+and A18 (beam-column ODE sign) were fingerprint-only and are now detected substantively, so the Stage
+18 campaign reads 44/44 with **38 substantive and 6 fingerprint-only** rather than 36/8.
+
+**Remaining limitation (accepted, class B).** The check validates the printed ODE and end conditions
+against the printed closed-form solution and against the identity stated in the text; it does not
+re-derive the reduced beam-column model from the three-dimensional problem, and it does not test the
+physical correctness of the frozen-force assumption. The same is true of every other statement pin in
+the suite: a passing suite means the manuscript still says what it is supposed to say.
+
+### S20-E. Three over-full register rows — a hard LaTeX error (build integrity)
+
+**What was wrong.** `chapters/audit_appendix.tex` declares its register table with four columns,
+`\begin{longtable}{p{1cm}p{4.6cm}p{5.2cm}p{3.2cm}}`, but rows D-33, D-34 and D-35 each carried six
+cells, and D-32 carried three. A row with more `&` than the declaration is a hard LaTeX error
+(*"Extra alignment tab has been changed to \cr"*): `main.tex` would not have compiled. This was found
+while rebuilding the package, not by any test — there is no TeX engine in this environment, the suite
+never counted cells, and the fingerprint layer hashes cell contents without knowing how many cells
+the table declares. It affects the *shipped* appendix, so it is a delivery defect, not a
+documentation one.
+
+**Why it went unseen.** Every gate this repository has is semantic: does the text still say the right
+thing. None of them is syntactic. The three broken rows were introduced by three separate later
+stages (D-33, D-34 in Stage 19, D-35 in Stage 20), each of which added its evidence columns in the
+belief that the table had six, and the earlier rows were never recounted because nothing counted.
+
+**Repair.** The three six-cell rows are folded into the declared four columns: the former
+"resolution" and "dependencies" cells are joined into the resolution cell as
+`… Dependencies: … Recalculation: …`, and the status remains the fourth cell. D-32's empty fourth
+cell is filled with its actual status, `resolved (Stage 16)`, taken from the ledger entry and the
+D-32 correction-log entry — no status is invented. The register still has **35 rows** and no row
+lost content: every word of the three merged cells is still present, in the same row.
+
+**Check.** New `audit_stage15/table_shape_check.py` counts the cells of every row of every
+`tabular`/`longtable` in `main.tex`, `chapters/` and `figures/`, brace-aware and honouring
+`\multicolumn`, against the column specification (also brace-aware, so `p{5.2cm}` counts as one
+column and `@{}` counts as none). Result: **16 files, 156 rows, 0 over-full, 0 short**. One suite
+check runs that scan, so the suite is 163, and probe case **E1** appends an extra `&` to the D-35 row
+**with** fingerprint regeneration → **DETECTED**.
+
+**Limitation (accepted, class B).** A cell count is not a compile. It catches over-full and short
+rows, which are the common structural faults, and nothing else: unmatched braces, undefined control
+sequences, missing packages, duplicate labels, bad `\ref`/`\eqref` targets and overfull boxes are
+outside what this check can see, and the build itself remains NOT EXECUTED — no TeX engine exists
+here (see the finalization report). The register table's *contents* are still only checked
+semantically, by the per-row fingerprints and by the checks that cite them.

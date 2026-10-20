@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""HFF regression suite, version 5 (Stage 19).
+"""HFF regression suite, version 6 (Stage 20).
 
 Version 3 answers the Stage 16 audit finding that the suite was blind to equation-level
 faults.  It has three independent layers:
@@ -29,7 +29,7 @@ run instead of skipping the numeric checks that depend on it.
 
 Run from the repository root:  python3 audit_stage15/regression.py
 """
-import re, glob, sys, os, json, hashlib, time
+import re, glob, sys, os, json, hashlib, time, importlib.util
 
 from math import *
 
@@ -96,7 +96,7 @@ defined = set(re.findall(r'\\(?:newcommand|renewcommand|DeclareMathOperator|def)
 undefined = [m for m in ('ie','eg','cf','etal','wrt') if (BS+m) in ALL and m not in defined]
 check("no undefined shorthand macros", not undefined, undefined)
 REG_ROWS = [l for l in SRC['chapters/audit_appendix.tex'].split('\n') if re.match(r'^D-\d+ &', l)]
-check("register rows present and counted", len(REG_ROWS) == 34, "%d rows" % len(REG_ROWS))
+check("register rows present and counted", len(REG_ROWS) == 35, "%d rows" % len(REG_ROWS))
 
 # ----------------------------------------------------------------------------------
 print(); print("=" * 78); print("SECTION 2  Claims: sign, boundary conditions, units, model"); print("=" * 78)
@@ -266,6 +266,15 @@ for _f, _s, _ok in gauge_seen:
 check("the outflow pressure datum is a boundary value, not an interior point constraint",
       bool(re.search(r'p\\to\s*0', C5)) and ('traction-free' in C5),
       "B2: the level at the outflow is an output, not an imposed datum")
+# --- Stage 20 (F-2): the explanation must be in the FORMULATION, not only in the register -------
+# Before this check, deleting the whole "no pressure gauge is required ... would over-determine the
+# system" argument from ch08 left the suite green, because `gauge_seen` was satisfied by the D-30
+# register row in audit_appendix, which *describes* the removed constraint.
+_f8_gauge = [s for (f, s, _ok) in gauge_seen if f == 'chapters/ch08.tex']
+check("the formulation itself states why no pressure gauge is imposed",
+      bool(_f8_gauge), "gauge occurrences in ch08 = %d (register-only would be 0)" % len(_f8_gauge))
+check("the formulation states that no pressure gauge is required",
+      'No pressure gauge is required' in re.sub(r'\s+', ' ', C8))
 check("register pointer corrected to D-30", 'corrected in D-30' in C8)
 check("SUPG stabilised weak form written", 'eq:supgwf' in C8)
 check("SUPG P2 length scale addressed", ('h_K'+BS+'to h_K/p') in C8)
@@ -335,9 +344,20 @@ check("ch04 scopes the Q8 values to one finite mesh, not a converged strip solut
 check("ch11 scopes the Q8 comparison to a finite mesh, not a converged strip solution",
       ('24-element' in _F11) and ('finite-mesh' in _F11) and ('not a' in _F11 and 'converged' in _F11))
 _D26F = _D26[0].replace('$', '') if _D26 else ''
-check("the D-26 register row states the Q8 finite-mesh scope",
-      bool(_D26) and ('24-element' in _D26F) and ('finite-mesh' in _D26F)
-      and ('not a converged strip solution' in _D26F))
+# --- Stage 20 (F-1): the Q8 ratios are sampled at a FIXED physical height ---------------------
+# The Stage 19 statement that "the absolute ratios shift with the through-thickness
+# discretisation" was an artefact of reading lat[(NX,1)]/lat[(NX,2)], whose physical heights move
+# with NY (d/4 and d/2 at NY=2, d/8 and d/4 at NY=4).  The study `q8_height_study.py` samples at
+# fixed heights; the pins below keep the manuscript on that footing.
+_I4 = _F04.find('The full-edge pin idealization')
+_J4 = _F04.find('no separate end-compliance correction')
+_Q8P = _F04[_I4:_J4] if (_I4 >= 0 and _J4 > _I4) else ''
+check("ch04 states that the Q8 ratios are sampled at the mid-surface (y = d/2)",
+      ('mid-surface' in _Q8P) and ('y=d/2' in _Q8P), _Q8P[:90])
+check("the withdrawn claim that the Q8 ratios shift with the through-thickness mesh is absent",
+      'shift with the through-thickness' not in _F04)
+check("ch11 states that the Q8 ratios are sampled at the mid-surface",
+      ('mid-surface' in _F11) or ('mid-surface' in _D26F))
 check("the ledger records the Stage 19 repairs", 'Stage 19' in LEDGER)
 
 # ----------------------------------------------------------------------------------
@@ -688,10 +708,32 @@ print(); print("=" * 78); print("SECTION 5  Exact identities"); print("=" * 78)
 check("kappa_geo = kappa_th*sec(muL/2)", abs(kgeo/kth - 1/cos(uL/2)) < 1e-12)
 ratio = (kgeo+kth)/(kgeo-kth)
 check("(kgeo+kth)/(kgeo-kth) = cot^2(muL/4)", abs(ratio - 1/tan(uL/4)**2) < 1e-10, "%.9f" % ratio)
-res = max(abs(Ds*(kth*mu**2*(A*sin(mu*x)+cos(mu*x))) + N0*w2(x)) for x in (0.3*L,0.5*L,0.77*L))
+# --- eq:beamcol (Stage 20, F-4): the printed equation is PARSED and the closed-form solution is
+#     tested against the printed coefficients.  Stage 19 tested the solution against literals in
+#     this file, so replacing w''=-kappa_th by -kappa_th/2 in the text survived both the suite and
+#     fingerprint regeneration.  The parsed quantities are the ones the derivation requires:
+#     the reduced beam-column equation with equal D_s and N_theta^c weights, and a zero total end
+#     moment w'' = -kappa_th, which is M = D_s(w''+kappa_th) = 0 at the pins.
+_C4F = re.sub(r'\s+', ' ', C4)
+_ode = re.search(r'([0-9]*\.?[0-9]*)\\?,?D_s\\,w\^\{\'\'\'\'\}\(x\)\s*([+-])\s*'
+                 r'([0-9]*\.?[0-9]*)\\?,?N_\\theta\^c\\,w\^\{\'\'\}\(x\)\s*=\s*0', _C4F)
+_cD = (float(_ode.group(1)) if _ode.group(1) else 1.0) if _ode else None
+_cN = (float(_ode.group(3)) if _ode.group(3) else 1.0) if _ode else None
+_sg = _ode.group(2) if _ode else None
+check("eq:beamcol is the reduced beam-column equation D_s w'''' + N_theta^c w'' = 0",
+      bool(_ode) and _cD == 1.0 and _cN == 1.0 and _sg == '+',
+      "parsed %s D_s %s %s N_theta^c" % (_cD, _sg, _cN))
+_bc_w = re.search(r'w\(0\)=w\(L\)=0', _C4F)
+_bc_m = re.search(r"w\^\{\'\'\}\(0\)=w\^\{\'\'\}\(L\)=-\s*([0-9]*\.?[0-9]*)"
+                  r"\\?,?\\?kappa_\{\\mathrm\{th\}\}", _C4F)
+_cB = (float(_bc_m.group(1)) if _bc_m.group(1) else 1.0) if _bc_m else None
+check("eq:beamcol states the zero total end moment, w'' = -kappa_th at both pins",
+      bool(_bc_w) and _cB == 1.0, "printed end-curvature coefficient %s" % _cB)
+res = max(abs((_cD or 1)*Ds*(kth*mu**2*(A*sin(mu*x)+cos(mu*x))) + (_cN or 1)*N0*w2(x))
+          for x in (0.3*L,0.5*L,0.77*L))
 check("eq:beamcolsol satisfies the printed ODE", res < 1e-8, "%.2e" % res)
-check("eq:beamcolsol satisfies all four BCs",
-      max(abs(w(0)), abs(w(L)), abs(w2(0)+kth), abs(w2(L)+kth)) < 1e-12)
+check("eq:beamcolsol satisfies the printed BCs",
+      max(abs(w(0)), abs(w(L)), abs(w2(0)+(_cB or 1)*kth), abs(w2(L)+(_cB or 1)*kth)) < 1e-12)
 
 # ----------------------------------------------------------------------------------
 print(); print("=" * 78)
@@ -749,8 +791,22 @@ check("no tab:bcs row puts a non-zero solid flux datum on a surface other than t
 IF_NAME = re.compile(r'Ga_\{\\mathrm\{if\}\}|Ga_\{if\}')
 FLUX_D = re.compile(r'(\\nabla\s*T_s\s*\\cdot\s*\\bn(?:_\{\\mathrm\{out\}\})?|\\partial_n\s*T_s)'
                     r'\s*=\s*([^,;\s$]{0,24})')
-ON_HEATED = re.compile(r',?\s*on\s*\$?\s*\\?(?:Ga_h\^0|Gamma_h\^0|Ga_\{\\mathrm\{h\}\}|Ga_\{h\})')
+# Where a flux datum is placed is decided by the CLAUSE that carries it, in either order, and
+# either by naming the face or by naming it in words (Stage 20, finding F-3).  The Stage 19 form
+# required the literal sequence "on $\Gamma_h^0$" immediately AFTER the flux, and so rejected three
+# correct statements: "... on the outer face $\Gamma_h^0$", a fronted "On $\Gamma_h^0$ the solid
+# carries ...", and "... is applied on the heated face".  A flux whose clause names no heated
+# surface is still a datum in the wrong place, and a flux whose tail names $\Gamma_{if}$ is still a
+# flux datum on the interface.
+ON_HEATED = re.compile(r'(?:outer|heated)\s+(?:outer\s+|heated\s+)?(?:face|surface|wall|side)'
+                       r'|(?:Ga|Gamma)_h\b|Ga_\{\\mathrm{h}\}')
 DIR_IF = re.compile(r'T_s\s*=\s*T_\\?(?:\\Ga|\\Gamma)')
+
+def _clause_of(sent, a, b):
+    """the ;/: delimited clause of `sent` that contains the span [a, b)"""
+    left = max(sent.rfind(';', 0, a), sent.rfind(':', 0, a)) + 1
+    cuts = [p for p in (sent.find(';', b), sent.find(':', b)) if p != -1]
+    return sent[left:(min(cuts) if cuts else len(sent))]
 dir_if, flux_if, dbl_prose, flux_elsewhere = [], [], [], []
 for f in FILES:
     if f == 'chapters/audit_appendix.tex':
@@ -768,8 +824,9 @@ for f in FILES:
             if rhs in ('0', '0.', ''):
                 continue                       # adiabatic datum, not a thermal load
             tail = sent[m.end():m.end() + 90]
+            seg = _clause_of(sent, m.start(), m.end())
             on_if = bool(IF_NAME.search(tail)) or bool(IF_NAME.search(rhs))
-            on_heated = bool(ON_HEATED.search(tail)) or bool(ON_HEATED.search(rhs))
+            on_heated = bool(ON_HEATED.search(seg)) or bool(ON_HEATED.search(rhs))
             if on_if:
                 here_if.append(m.group(0)[:70])
             elif not on_heated:
@@ -835,6 +892,19 @@ print("INFO  correct end-effect magnitude present in ch04 and ch11: %s"
 
 # ----------------------------------------------------------------------------------
 print(); print("=" * 78); print("SECTION 6  Package provenance"); print("=" * 78)
+# --- table shape (Stage 20, S20-E): a row with more `&` than the column specification is a hard
+#     LaTeX error ("Extra alignment tab has been changed to \\cr"), and no TeX engine is available
+#     here, so nothing else in the suite or in any campaign could catch it.  Three register rows
+#     (D-33, D-34, D-35) and one short row (D-32) were in that state and are repaired.  This check
+#     counts cells statically against the declared column specification of every tabular/longtable.
+sys.dont_write_bytecode = True          # the scan must not leave a __pycache__ in the tree
+_tsc_spec = importlib.util.spec_from_file_location('table_shape_check',
+                                                   'audit_stage15/table_shape_check.py')
+_tsc = importlib.util.module_from_spec(_tsc_spec)
+_tsc_spec.loader.exec_module(_tsc)
+_nf, _nr, _over, _short = _tsc.scan('.')
+check("every table row has exactly its declared number of cells", not _over and not _short,
+      "%d files, %d rows, %d over-full, %d short" % (_nf, _nr, len(_over), len(_short)))
 check("tracked main.pdf exists", os.path.exists('main.pdf'),
       ("%d bytes" % os.path.getsize('main.pdf')) if os.path.exists('main.pdf') else "")
 readme = read('README.md') if os.path.exists('README.md') else ''

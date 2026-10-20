@@ -241,3 +241,60 @@ the intended headline definition of `Γ_p`. **I-13** (no TeX engine: `main.pdf` 
 and **I-15** (no renderer: no figure check) remain **OPEN**. The coupled production solver remains
 **NOT READY**: no convergence of the staggered iteration is demonstrated, and no interface
 temperature history has been computed.
+
+## Stage 20 — final scientific corrections and freeze (implementation, not audit)
+
+Parent on entry: `90b237f` (Stage 19), reviewed by the independent Stage 19 acceptance audit
+(`independent_audit_stage19/HFF_Stage19_Independent_Acceptance_Audit.md`, verdict *conditional
+acceptance*, findings F-1 to F-4). This stage repairs exactly those four findings, verifies
+proportionately, and freezes. Suite v5 (156 assertions) → **v6 (163 assertions)**. Fingerprints were
+regenerated twice, deliberately and each time documented: once for the corrected register values
+(**79 entries**, `reg:D-26` changed, `reg:D-35` added, nothing removed, **no display-equation
+fingerprint changed**), and once for the table-shape repair of S20-5 (`reg:D-32`…`reg:D-35`
+canonicalised after their cells were rebalanced; still 79 entries, still **no display-equation
+fingerprint changed**).
+
+| ID | Original claim / defect | Why it needed repair | Old source | New source | Dependencies | Recalculation / check | Mutation |
+|---|---|---|---|---|---|---|---|
+| S20-1 | The Stage 19 Q8 statement said the ``absolute ratios shift with the through-thickness discretisation'' and quoted clamp values $-0.041$ ($24$ elements) and $-0.025$ ($48$) beside pin values sampled at a different height | the evidence script's `lat[(NX,1)]` and `lat[(NX,2)]` sit at $y=d/4$, $y=d/2$ for two elements through the thickness but $y=d/8$, $y=d/4$ for four, so its ``through-thickness'' rows compared different physical heights; at a fixed height the pin ratios do not move with that refinement | `ch04`, `ch11`, `ch02` A9, D-26 | every ratio sampled at the mid-surface $y=d/2$ by the new height-consistent study `audit_stage15/q8_height_study.py`; the through-thickness dependence is withdrawn; the clamp is quoted as $-0.045$ ($24$ elements) and $-0.029$ ($48$), both at the mid-surface | `ch04`, `ch11`, `ch02` A9, D-26, D-35 | independent Q8 code, six meshes at three fixed heights: point pins $1.0000$ on all six; pin $0.9999/0.9981/0.9979$ at $12/24/48$ elements; through-thickness change in either pin ratio $\le0.0001$; clamp $-0.045\to-0.029$ | `ch04 states that the Q8 ratios are sampled at the mid-surface`; `the withdrawn claim ... is absent`; probe F1a/F1b → both DETECTED |
+| S20-2 | `the rejected pressure normalisation is still identified explicitly` could be satisfied by the D-30 **register row** | deleting the whole gauge argument from the formulation left the suite green (independent audit F-2, reproduced as A27b) | `gauge_seen` collected over every file, including `audit_appendix` | two checks scoped to `ch08`: at least one gauge occurrence in the formulation itself, and the ``No pressure gauge is required'' statement present there | `ch08` | probe F2 (explanation deleted from `ch08`) → DETECTED |
+| S20-3 | The prose flux-location detector required the literal sequence ``on $\Gamma_h^0$'' immediately **after** the flux | three correct sentences were rejected: ``on the outer face $\Gamma_h^0$'', a fronted ``On $\Gamma_h^0$ the solid carries ...'', and ``... is applied on the heated face'' (audit F-3) | `ON_HEATED` adjacency regex, searched only in the 90-character tail | the clause carrying the flux is located (`_clause_of`) and searched in either direction for the symbol or for ``outer/heated face, surface, wall, side'' | `ch08` steps 1-2 | probe F3a-F3c (legitimate) → PASS; F3d (flux datum on $\Gamma_{if}$) and F3e (double datum, no surface named) → DETECTED |
+| S20-4 | `eq:beamcol` had no substantive check: the Stage 19 tests compared the coded solution against the hard-coded $\kappa_{\mathrm{th}}$ | halving the printed end curvature survived the suite **and** fingerprint regeneration, because the printed equation was never parsed (audit F-4) | solution tested against literals in `regression.py` | the printed ODE and end conditions are parsed, and the parsed coefficients drive the ODE residual and the boundary-condition test; `w''=-c\,\kappa_{\mathrm{th}}` requires $c=1$, which is $M=D_s(w''+\kappa_{\mathrm{th}})=0$ at the pins | `eq:beamcol`, `eq:beamcolsol`, `ch04` | probe F4 ($w''=-\kappa_{\mathrm{th}}\to-\kappa_{\mathrm{th}}/2$ **with** `--update-fingerprints`) → DETECTED substantively; Stage 18 cases A1 and A18 promoted from fingerprint-only to substantive |
+
+**Tally after Stage 20 (final).** Suite v6 = **163 assertions, all passing**. Stage 18 campaign
+**44/44** (38 substantive, 6 fingerprint-only; A1 and A18 are now caught substantively by the
+`eq:beamcol` checks, which is the intended effect of S20-4). Stage 19 campaign **10/10, all
+substantive, 3/3 controls**. Four-finding probe **10/10** (the nine cases of F-1…F-4 plus the
+S20-5 build-integrity case). Non-vacuity probes **6/6**. Fingerprints
+79 entries, byte-stable on a clean tree. Package rebuilt deterministically; the archive SHA-256 is in
+`package_manifest.txt`. **This is the final planned implementation stage; no Stage 21.**
+
+**Repaired in Stage 20:** F-1 (Q8 height and sensitivity), F-2 (gauge explanation located in the
+formulation), F-3 (legitimate heated-face descriptions accepted), F-4 (`eq:beamcol` substantive
+check), and S20-5, a build-fatal table defect found while rebuilding the package (see below).
+
+### S20-5 — three over-full register rows (build-fatal, found during package rebuild)
+
+While rebuilding the package the register table was checked against its declared column
+specification, `\begin{longtable}{p{1cm}p{4.6cm}p{5.2cm}p{3.2cm}}` — **four** columns. Rows D-33,
+D-34 and D-35 carried **six** cells each, and D-32 carried three. A row with more `&` than the
+declaration is a hard LaTeX error (*``Extra alignment tab has been changed to \cr''*), so
+`main.tex` would not have compiled. No earlier stage could see this: there is no TeX engine in this
+environment, the suite never counted cells, and the fingerprint layer hashes cell *contents* without
+knowing the column count.
+
+**Repair.** The three six-cell rows are folded back into the declared four columns: the former
+``resolution'' and ``dependencies'' cells are joined into the resolution cell as
+``… Dependencies: … Recalculation: …'', and the status stays the fourth cell; D-32's missing fourth
+cell is filled with its true status, `resolved (Stage 16)`, taken from this ledger and from the D-32
+correction-log entry — no status is invented. New script `audit_stage15/table_shape_check.py` counts
+cells against the declared specification, brace-aware, honouring `\multicolumn`: **16 files, 156
+rows, 0 over-full, 0 short**. One suite check now runs that scan, and probe case E1 adds an extra
+`&` to the D-35 row **with** fingerprint regeneration → DETECTED. This is the only addition beyond
+F-1…F-4, and it is there because a package that cannot compile cannot be finalized.
+
+**Unchanged and still OPEN (author decisions, listed once in `FINALIZATION_REPORT.md`):** RU-01
+(casing clearance / contact interpretation / vented-or-sealed cavity), RU-03 (`1.4377 H₀`), heater
+mounting and heated-face interpretation, the contact law, and the intended headline definition of
+`Γ_p`. **I-13** (no TeX engine: `main.pdf` predates the sources) and **I-15** (no renderer: no figure
+check) remain **OPEN**. The coupled production solver remains **NOT READY**.

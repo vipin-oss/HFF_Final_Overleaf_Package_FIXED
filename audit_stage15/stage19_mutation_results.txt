@@ -1,12 +1,12 @@
 Stage 19 mutation campaign -- raw results
 repository: /home/user/HFF_Final_Overleaf_Package_FIXED
 suite: audit_stage15/regression.py (version 5, Stage 19)
-baseline: exit 0, 156 checks passed in a fresh isolated copy
+baseline: exit 0, 163 checks passed in a fresh isolated copy
 
 summary
 -------
 id    result    layer     intended assertion / first failing check
-base  PASS                156 checks, exit 0
+base  PASS                163 checks, exit 0
 M3c   detected  substantive a pressure normalisation occurs only as an explicitly rejected counterfactual | pointwise pressure datum in another notation, in the same sentence as its own explanation
 M6b   detected  substantive a pressure normalisation occurs only as an explicitly rejected counterfactual | adopting statement phrased 'we choose ... rather than ...' (verb outside any vocabulary)
 M7    detected  substantive no tab:bcs row gives any surface a solid Dirichlet AND a solid Neumann thermal datum | double thermal datum in a Condition column whose Boundary cell omits Gamma_if
