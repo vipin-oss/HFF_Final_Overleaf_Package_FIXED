@@ -11,11 +11,17 @@ STAMP = (2026, 10, 19, 0, 0, 0)
 
 FIXED = ['main.tex', 'references.bib', 'main.pdf', 'README.md']
 
+SKIP_DIRS = {'__pycache__'}
+SKIP_EXT = ('.pyc', '.pyo')
+
 def walk_top(d):
+    """every file under d, sorted; byte-code caches are never shipped"""
     out = []
     for root, dirs, files in os.walk(d):
-        dirs.sort()
+        dirs[:] = sorted(x for x in dirs if x not in SKIP_DIRS)
         for f in sorted(files):
+            if f.endswith(SKIP_EXT):
+                continue
             out.append(os.path.join(root, f).replace(os.sep, '/'))
     return sorted(out)
 

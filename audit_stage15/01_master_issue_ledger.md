@@ -157,3 +157,37 @@ is reverted (mutation-tested). `OPEN-AD` means the physics is not determined by 
 **Tally after Stage 17:** 13 items implemented (12 of them mutation-tested), 1 open author decision
 on the `Γ_p` headline, 2 open environment items (I-13 rebuild, I-15 visual check), 1 open physics
 item (RU-01/B-7) plus RU-03. The coupled production solver remains **NOT READY**.
+
+---
+
+## Stage 18 — verification defects repaired (implementation, not audit)
+
+Parent on entry: `a61837e` (Stage 18 acceptance audit: no Stage 18 existed; implementation still
+`211f751`, suite v3 = 109 assertions). Stage commit: the commit that adds this section (hash in the
+commit message; it cannot be written into a file that the shipped ZIP contains — see
+`14_stage18_repair_report.md` §15). Full detail: `14_stage18_repair_report.md`; raw mutation evidence:
+`stage18_mutation_results.txt`.
+
+| ID | Original claim / defect | Why it needed repair | Old source | New source | Dependencies | Recalculation / check | Mutation |
+|---|---|---|---|---|---|---|---|
+| S18-1 | `regression.py` asserted the I-15 figure item with `… or True` | an unconditional pass is not a test | `check("figure fix is not claimed as visually verified", … or True)` | two assertions: no positive visual-verification claim in any source; ledger I-15 still `**OPEN**`; missing required files now exit non-zero with a named FAIL instead of a traceback | `FIGCLAIM` scan, `LEDGER` regex, `REQUIRED` guard | `no chapter claims a visual verification of a figure (I-15 remains open)`, `the ledger still records I-15 as OPEN` | V1 (insert a positive claim in `ch09`) → detected |
+| S18-2 | A pressure constraint was forgiven when its explanation was within ±260 characters | the exemption, not the condition, decided the outcome | `explained = [i for i in gauge_hits if 'over-determine' in C8[i-260:i+260]]` | `P_NORM` (5 notations) × sentence-scoped `REJECT` and no-`ADOPT` test, no exemption window; register row handled separately (must call it an error) | `ch08` gauge paragraph; register D-30 | `a pressure normalisation occurs only as an explicitly rejected counterfactual`; two occurrences reported (ch08 = rejected counterfactual, D-30 row = removed error) | G1, G2, A8 → detected; G1/G2 pass v3 |
+| S18-3 | `tab:bcs` was never parsed; a solid Γ_if with two thermal data was unrepresentable | the interface data are the core of the conjugate problem | string checks only (`B7 found` …) | `tab:bcs` parsed row by row; Γ_if row may carry neither a solid flux datum nor Dirichlet+Neumann at once; prose data are located **with their surface** by `DATUM` | `ch05` `tab:bcs`, `ch08` step 1–2 | `no Gamma_if row gives the solid a Dirichlet AND a Neumann temperature datum`; `no solid flux datum is imposed on Gamma_if anywhere in the formulation`; exactly one solid Dirichlet datum found (`ch08` step 1) | G3 → detected; passes v3 |
+| S18-4 | `θ̄` was compared only as a total, from a hard-typed chain | the table cell could say anything | one check, `abs(thbar-thp) <= 0.05` | cell formula and three components parsed; each recomputed at its displayed precision (30.0 / 1.55 / 0.72 vs 30.000 / 1.548 / 0.718) and the total compared with 32.2652 | `ch02` inputs, `Nu_H1`, `ch07` cell | `each component printed in the theta-bar cell is its recomputed value at 2 dp`, `the theta-bar cell total is the recomputed theta-bar` | T1 → detected; passes v3 |
+| S18-5 | `T̄_cr` was never recomputed; `M_b ≥ 2` was not tied to it | the buckling margin is an admissibility claim | `M_b` compared with a hard-coded `117.5/θ̄` | `eq:tcr` coefficient parsed (12), `T̄_cr = 117.495 K` recomputed, thickness catalogue recomputed, `M_b = 3.6415` and the two `M_b=2` consequences (`58.75 K`, `9104 W/m²`) recomputed | `eq:tcr`, A4, A5, `ch07` rows | `ch07 table T_cr is the recomputed threshold`, `the T_cr versus thickness catalogue matches eq:tcr`, `the M_b numerator is the recomputed T_cr`, `bound A-2 (M_b >= 2) is met by the recomputed margin` | T2 → detected; `117→130` passes v3, fails v4 |
+| S18-6 | `eq:wmax` was checked only through the printed `w_max/H_0` | the display could be corrupted with the printed result untouched (A4-class) | `cmp("ch04 printed linear w/H0 matches", …)` | constants of `eq:wmax` parsed; mid-span = stated maximum; `w''=−κ_th`; `μL→0` limit of `eq:beamcolsol`; printed `1.575×10⁻⁴` reproduced | `eq:wmax`, `eq:beamcolsol`, appendix A3, `ch07` | four assertions incl. `eq:wmax is the mu -> 0 limit of eq:beamcolsol` | F1 (`8→16` **with** `--update-fingerprints`) → exit 1 on four substantive assertions |
+| S18-7 | The `Γ_p` nomenclature entry was unchecked (only the dictionary and A8 were) | nomenclature is the definition readers take away | `$\Gamma_p$ & thermal-to-pressure deflection ratio & --` | `$\Gamma_p$ & deflection ratio $w_{\max}/w_p$, \eqref{eq:gammap}; mixed and like-for-like presentations & --` (headline still an author decision) | `eq:gammap`, A8, dictionary row | three assertions on the entry itself | N1 → detected |
+| S18-8 | Stale end-condition magnitudes were matched only as “a few per cent” with a ±200-character exemption | reworded claims escaped; scope of the scan was unstated | `stale_few()` on `ch04`/`ch11` | sentence-scoped scan of 22 files (16 sources + 6 reports), magnitudes `one|two|three|few|couple|1|2|3` + `per cent`/`%`, exemption only for an explicit supersession marker in the same sentence; locations printed by the suite | `ch04`, `ch11`, register D-26, README/reports | `no stale end-effect percentage survives in the 22 scanned files` | S1, S2 (+2 probes) → detected; all pass v3 |
+| S18-9 | Nothing said that well-posedness ≠ convergence of the staggered iteration; no thermal stopping measure | the audit's §8 requirement | the iteration section stopped at subproblem well-posedness and a displacement-based criterion | `ch08` paragraph: no contraction/energy proof claimed; `ΔT_Γ^{(k)}` and `‖ΔT_Γ^{(k)}‖ = max_{Γ_if}|T_Γ^{(k)}−T_Γ^{(k−1)}|` defined; acceptance rule stated with the tolerance **left to the mesh/iteration study**, no value asserted; flux-jump criterion named as a-posteriori only | `sec:iteration`, `sec:quality` | none (prose; inline math only, so the 76 fingerprints are unchanged) | — |
+
+**Note on a withdrawn suspicion.** An internal note during this stage suspected the `q''/h` component
+of `θ̄` of being inconsistent; it used `D_h = 6 mm` instead of `D_h = 2H_0 = 1 mm`. The suspicion was
+wrong and is withdrawn (`h = 3231 W/m²K`, `q''/h = 1.548 K`, `θ̄ = 32.2652 K`). Only a display
+rounding (`1.6` for `1.548` at one decimal) was corrected, with no change of value.
+
+**Tally after Stage 18.** Suite v4 = 144 assertions, all passing. Mutation campaign: 44 cases
+executed, 44 detected, **36 substantive**, **8 fingerprint-only**, 0 escapes, 0 invalid, 0 anchors
+missing. Unchanged and still **OPEN**: RU-01, RU-03, heater mounting/heated-face interpretation, the
+contact law, the intended headline definition of `Γ_p`, **I-13** (no TeX engine; `main.pdf` stale),
+**I-15** (no renderer; no visual check). The coupled production solver remains **NOT READY**; no
+convergence of the staggered iteration is claimed or demonstrated.

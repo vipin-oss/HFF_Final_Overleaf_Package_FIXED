@@ -221,6 +221,30 @@ output of the conjugate problem (register D-32). The consequence is worth statin
 the mean wall temperature $\bar\theta$, and through \eqref{eq:ntheta} the membrane force
 $N_\theta$ and the geometric stiffness of \eqref{eq:weaks}, inherit the level from
 $T_{\mathrm{in}}$; they are not free parameters of the thermal subproblem.
+\emph{Well-posedness is not convergence.} The argument above establishes only that each of the four
+subproblems of items~1--4 is uniquely solvable at every iterate; it says nothing about whether the
+alternation that couples them converges, and no contraction argument or energy-stability proof of
+the staggered map is given or claimed here. The thermal exchange in particular is a
+Dirichlet-to-Neumann-to-Dirichlet loop: the solid is driven by the interface temperature and returns
+the interface flux, and the fluid does the reverse, so the amplification of an interface-temperature
+error from one cycle to the next depends on the relative interface admittances of the two sides and
+is not controlled by the well-posedness constants of the subproblems. Convergence is therefore to be
+demonstrated numerically, not inferred from solvability. The thermal loop is monitored by the
+interface-temperature increment $\Delta T_\Gamma^{(k)}=T_\Gamma^{(k)}-T_\Gamma^{(k-1)}$ and by its
+discrete maximum norm
+$\|\Delta T_\Gamma^{(k)}\|=\max_{\Ga_{\mathrm{if}}}|T_\Gamma^{(k)}-T_\Gamma^{(k-1)}|$ in kelvin,
+evaluated on the interface nodes of the current mesh and reported with each run. Items~5--6 monitor
+the mechanical loop through the interface-displacement increment and, through the residuals, all
+four subproblems; the thermal loop
+is accepted only when $\|\Delta T_\Gamma^{(k)}\|$ falls below a tolerance that is fixed by the
+mesh-refinement and iteration study and reported for every configuration, and not before the
+successive interface temperatures agree to the precision at which the reported wall quantities are
+quoted. No numerical value of that tolerance is asserted here, because none has been demonstrated by
+a computation in this work. The interface flux-jump criterion~(ii) of
+Section~\ref{sec:quality} is an a-posteriori test on the converged state and does not supply the
+missing proof either. A stagnating $\|\Delta T_\Gamma^{(k)}\|$ joins a stagnating geometry increment
+as a trigger for the escalation of item~6 to the monolithic path.
+
 The cancellation of \eqref{eq:weaktf}--\eqref{eq:weakts} is a property of the \emph{assembled}
 system, in which the interface temperature is a single unknown. The iteration described above solves
 the two subproblems separately with transferred data, so within an unconverged iterate the interface

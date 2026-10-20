@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""HFF regression suite, version 3 (Stage 17).
+"""HFF regression suite, version 4 (Stage 18).
 
 Version 3 answers the Stage 16 audit finding that the suite was blind to equation-level
 faults.  It has three independent layers:
@@ -8,7 +8,12 @@ faults.  It has three independent layers:
   B. FINGERPRINTS: every display equation and every register row is canonicalised, hashed and
      compared with audit_stage15/equation_fingerprints.json.  Editing an equation therefore
      fails the suite unless the fingerprint file is deliberately regenerated with
-     `python3 audit_stage15/regression.py --update-fingerprints`;
+     `python3 audit_stage15/regression.py --update-fingerprints`.
+     A fingerprint is CHANGE DETECTION, NEVER A CORRECTNESS PROOF: it records that an expression
+     is unchanged, not that it is right.  Regeneration therefore no longer short-circuits the
+     run (Stage 18 fix, F1): it writes the file, prints a warning and then executes every
+     substantive check below, exiting non-zero if any of them fails.  Corrupting an equation and
+     regenerating its fingerprint cannot turn a wrong expression into a passing suite;
   C. numeric checks that parse BOTH the printed inputs and the printed results out of the
      manuscript and recompute.
 
@@ -39,6 +44,14 @@ def check(name, ok, detail=""):
 def read(p): return open(p, encoding='utf-8').read()
 
 FILES = ['main.tex'] + sorted(glob.glob('chapters/*.tex')) + sorted(glob.glob('figures/*.tex'))
+REQUIRED = (['main.tex', 'references.bib', 'README.md'] +
+            ['chapters/ch%02d.tex' % i for i in range(1, 12)] +
+            ['chapters/appendix.tex', 'chapters/audit_appendix.tex'])
+_MISSING = [p for p in REQUIRED if not os.path.isfile(p)]
+if _MISSING:
+    print("FAIL  required source files missing: %s" % ", ".join(_MISSING))
+    print("FAIL  the suite cannot run; NO check below this line was executed")
+    sys.exit(1)
 SRC = {f: read(f) for f in FILES}
 ALL = ''.join(SRC.values())
 BODY = ''.join(SRC[f] for f in FILES if f != 'chapters/audit_appendix.tex')
@@ -128,12 +141,73 @@ check("the kernel/compatibility argument is spelled out",
 check("the loop closes on the extracted interface temperature",
       "which closes the thermal loop" in C8)
 
-# --- pressure gauge: no constraint in any notation, allowing the explanatory mention ---
-gauge_hits = [m.start() for m in re.finditer(r'\\int[^$]{0,90}(?<![A-Za-z\\\\])p(?![A-Za-z])[^$]{0,60}=\s*0', C8)]
-explained = [i for i in gauge_hits
-             if ('over-determine' in C8[max(0,i-260):i+260]) or ('Constraining' in C8[max(0,i-260):i+260])]
-check("no pressure-gauge constraint in any notation", len(gauge_hits) == len(explained),
-      "occurrences=%d explained=%d" % (len(gauge_hits), len(explained)))
+# --- pressure gauge (Stage 18, G1/G2): the *mathematical condition* is tested, not a keyword ---
+# A pressure normalisation may appear ONLY as an explicitly rejected counterfactual.  The test is
+# applied to the sentence that contains the integral or mean condition itself, so a constraint
+# cannot be smuggled in beside its own explanation, in another notation, or in another chapter.
+# There is no character-window exemption: the sentence must carry rejecting language AND must not
+# carry adopting language.
+P_NORM = [
+    re.compile(r'\\int[^$]{0,140}?(?<![A-Za-z\\\\])p(?![A-Za-z])[^$]{0,80}?=\s*0'),
+    re.compile(r'\\langle\s*p\s*\\rangle[^$]{0,40}?=\s*0'),
+    re.compile(r'\\overline\{\s*p\s*\}[^$]{0,40}?=\s*0'),
+    re.compile(r'\\bar\{?\s*p\s*\}?[^$]{0,40}?=\s*0'),
+    re.compile(r'(zero[- ]mean|mean[- ]zero)[^.$]{0,40}?(?:pressure|\\bp\\b)', re.I),
+]
+REJECT = re.compile(r'(over-determin|overdetermin|would be inadmissible|would inject|spurious|'
+                    r'nothing is imposed|is not imposed|are not imposed|must not be\b|no gauge|'
+                    r'no such freedom|rather than|instead of|unnecessary|redundant|would be wrong|'
+                    r'not required)', re.I)
+ADOPT = re.compile(r'(we (?:impose|fix|set|enforce|adopt|normalise|normalize|require)|'
+                   r'(?:is|are) (?:imposed|enforced|fixed|required|normalised|normalized)|'
+                   r'imposes?\b|enforces?\b|adding the|add the|we take|is set to zero|'
+                   r'is normalised|is normalized|we normalise|we normalize)', re.I)
+NEG_ADOPT = re.compile(r'(nothing|not|never|no)\s+(?:is|are|was|were)?\s*'
+                       r'(?:imposed|enforced|required|fixed|added)', re.I)
+
+def _flat_sentences(txt):
+    flat = re.sub(r'\s+', ' ', re.sub(r'(?<!\\)%.*', '', txt))
+    spans, start = [], 0
+    for m in re.finditer(r'(?<=[.!?])\s+(?=[A-Z\\$])', flat):
+        spans.append((start, m.start())); start = m.end()
+    spans.append((start, len(flat)))
+    return flat, spans
+
+def _sentence_at(spans, flat, i):
+    for a, b in spans:
+        if a <= i < b:
+            return flat[a:b]
+    return flat[max(0, i-160):i+160]
+
+# The formulation must not impose a normalisation; the historical register (audit_appendix)
+# *describes* the removed constraint, so there the whole register row must call it an error.
+gauge_seen, gauge_bad = [], []
+for f in FILES:
+    if f == 'chapters/audit_appendix.tex':
+        for line in SRC[f].split('\n'):
+            for pat in P_NORM:
+                for m in pat.finditer(line):
+                    ok = bool(re.search(r'(over-determin|overdetermin|removed|no such freedom|'
+                                        r'not imposed|must not)', line, re.I))
+                    gauge_seen.append((f + ' (register row)', line[max(0, m.start()-40):m.start()+60], ok))
+                    if not ok:
+                        gauge_bad.append("%s: %s" % (f + ' (register row)', line[:120]))
+        continue
+    flat, spans = _flat_sentences(SRC[f])
+    for pat in P_NORM:
+        for m in pat.finditer(flat):
+            sent = _sentence_at(spans, flat, m.start())
+            adopt = ADOPT.search(NEG_ADOPT.sub(' ', sent))
+            ok = bool(REJECT.search(sent)) and not adopt
+            gauge_seen.append((f, flat[m.start():m.start()+60], ok))
+            if not ok:
+                gauge_bad.append("%s: %s" % (f, sent[:120]))
+check("a pressure normalisation occurs only as an explicitly rejected counterfactual",
+      not gauge_bad, gauge_bad[:2])
+check("the rejected pressure normalisation is still identified explicitly", bool(gauge_seen),
+      "normalisation occurrences=%d" % len(gauge_seen))
+for _f, _s, _ok in gauge_seen:
+    print("INFO  pressure normalisation in %s (%s): %s" % (_f, "rejected" if _ok else "ADOPTED", _s))
 check("register pointer corrected to D-30", 'corrected in D-30' in C8)
 
 check("SUPG stabilised weak form written", 'eq:supgwf' in C8)
@@ -170,9 +244,19 @@ check("ch07 table labels Gamma_p mixed", P("Gamma_p$ & $w_{@max}/w_p$, @eqref{eq
 check("ch07 prose gives both ratios", ("mixed ratio" in C7) and (R("@times").join([]) or P("1.73@times10^{3}") in C7))
 check("A-5 is defined on the like-for-like ratio", 'like-for-like' in C6 and 'D-29' in C6)
 
-# --- I-15: stated as unverified, not as closed ---
-check("figure fix is not claimed as visually verified",
-      ('I-15' in read('audit_stage15/01_master_issue_ledger.md')) or True)
+# --- I-15: stated as unverified, not as closed (Stage 18: this check was `... or True`) ---
+FIGCLAIM = re.compile(r'(visually verified|visual(?:ly)? (?:check|inspection) (?:passed|confirms|confirmed)'
+                      r'|rendered (?:correctly|as intended)|verified by eye|confirmed by eye'
+                      r'|figure(?:s)? (?:were|was) inspected)', re.I)
+fig_claims = []
+for f in FILES:
+    for m in FIGCLAIM.finditer(re.sub(r'(?<!\\)%.*', '', SRC[f])):
+        fig_claims.append("%s: %s" % (f, SRC[f][max(0, m.start()-90):m.end()+60].replace('\n', ' ')[:110]))
+check("no chapter claims a visual verification of a figure (I-15 remains open)",
+      not fig_claims, fig_claims[:2])
+LEDGER = read('audit_stage15/01_master_issue_ledger.md')
+check("the ledger still records I-15 as OPEN",
+      bool(re.search(r'\|\s*I-15\s*\|[^|]*\|\s*\*\*OPEN\*\*', LEDGER)), "I-15 row")
 
 # ----------------------------------------------------------------------------------
 print(); print("=" * 78); print("SECTION 2b Fingerprints of every display equation and register row"); print("=" * 78)
@@ -198,13 +282,21 @@ def fingerprint():
     return fp
 
 FP = fingerprint()
-if '--update-fingerprints' in sys.argv:
+REGEN = '--update-fingerprints' in sys.argv
+if REGEN:
     json.dump(FP, open(FING, 'w'), indent=1, sort_keys=True)
-    print("wrote %s (%d entries)" % (FING, len(FP)))
-    sys.exit(0)
+    print("WROTE  %s (%d entries)" % (FING, len(FP)))
+    print("WARNING  fingerprints were REGENERATED in this run.  A fingerprint is change detection,")
+    print("WARNING  never a correctness proof: it records that an expression is unchanged, not that")
+    print("WARNING  it is right.  Regeneration therefore cannot make a wrong expression right.  Every")
+    print("WARNING  substantive check below still runs, and this process still exits non-zero if any")
+    print("WARNING  of them fails (Stage 18, finding F1).")
 if not os.path.exists(FING):
     print("FAIL  fingerprint file missing -- run with --update-fingerprints once, deliberately")
     FAIL.append("fingerprints")
+elif REGEN:
+    print("INFO  fingerprint comparison SKIPPED: the file was regenerated in this same run.")
+    print("INFO  %d fingerprints recomputed (44 expected equations + 32 register rows)." % len(FP))
 else:
     OLD = json.load(open(FING))
     changed = sorted(k for k in FP if k in OLD and FP[k] != OLD[k])
@@ -395,6 +487,89 @@ check("every stress quoted in ch07 prose is one of the recomputed values",
       bool(_seen) and set(_seen) <= _allowed_stress,
       "seen=%s allowed=%s" % (_seen, sorted(_allowed_stress)))
 
+# --- T1: the theta-bar table cell, recomputed from its own formula and from the inputs ---
+# The cell quotes three components and a total.  Each component is recomputed from the parsed
+# inputs (q, d, k_s, Nu_H1, k_f, H0, rho, U, c_p, L) at the precision at which it is printed,
+# and the total is compared with both the quoted value and the recomputed theta-bar.
+_cell = re.search(r'\$\\bar\\theta\$ \(mean wall rise\) & \$\\Delta T_t/2\+q\^\{\'\'\}/h\+\\Delta T_b/2\$ & '
+                  r'\$([0-9.]+)\+([0-9.]+)\+([0-9.]+)\\approx([0-9.]+)\$ K', C7)
+check("the theta-bar cell quotes its three components and the total", bool(_cell))
+if _cell:
+    c1, c2, c3, ctot = (float(g) for g in _cell.groups())
+    comps = (q*d/ks/2, q/h, q*L/(rho*U*H0*cp)/2)
+    errs = [abs(a - b) for a, b in zip((c1, c2, c3), comps)]
+    check("each component printed in the theta-bar cell is its recomputed value at 2 dp",
+          max(errs) <= 0.0050001,
+          "printed=(%.2f, %.2f, %.2f) recomputed=(%.4f, %.4f, %.4f) maxerr=%.4f"
+          % (c1, c2, c3, comps[0], comps[1], comps[2], max(errs)))
+    check("the theta-bar cell total is the recomputed theta-bar",
+          abs(ctot - thbar) <= 0.05 and abs((c1 + c2 + c3) - thbar) <= 0.05,
+          "quoted=%.2f sum=%.2f recomputed=%.4f" % (ctot, c1 + c2 + c3, thbar))
+
+# --- T2: T_cr and the M_b margin, recomputed from eq:tcr and from theta-bar ---
+_tcr = re.search(r'\\frac\{\\pi\^2d\^2\}\{([0-9]+)[^}]*\\alpha\(1\+\\nu\)L\^2\}', re.sub(r'\s+', ' ', C4))
+check("eq:tcr carries an explicit analytic denominator coefficient", bool(_tcr))
+if _tcr:
+    Tcr = pi**2*d*d/(float(_tcr.group(1))*alpha*(1+nu)*L*L)
+    print("INFO  eq:tcr coefficient %s -> T_cr=%.4f K" % (_tcr.group(1), Tcr))
+    cmp("the denominator printed in A4 matches 12 alpha (1+nu) L^2",
+        val(APP, "With denominator $12@alpha(1+@nu)L^2=", "@times10^{-7}$", -7), 12*alpha*(1+nu)*L*L, 0.01)
+    cmp("ch07 table T_cr is the recomputed threshold", val(C7, "9@times10^{-4})]=", "$ K"), Tcr, 0.005)
+    _sw = re.search(r'\$\\bar T_\{\\mathrm\{cr\}\}=\\\{([0-9.,]+)\\\}\$ K', APP)
+    check("the T_cr versus thickness catalogue is present", bool(_sw))
+    if _sw:
+        pred = [Tcr*(mm/3.0)**2 for mm in (1.0, 1.5, 2.0, 2.5, 3.0)]
+        got = [float(x) for x in _sw.group(1).split(',')]
+        check("the T_cr versus thickness catalogue matches eq:tcr",
+              len(got) == 5 and max(abs(a - b) for a, b in zip(pred, got)) <= 0.5,
+              "printed=%s recomputed=%s" % (got, ["%.2f" % v for v in pred]))
+    _mb = re.search(r'M_b=([0-9.]+)/([0-9.]+)=([0-9.]+)', APP)
+    check("the M_b row carries numerator, denominator and quotient", bool(_mb))
+    if _mb:
+        n_, dn_, qq_ = (float(g) for g in _mb.groups())
+        check("the M_b numerator is the recomputed T_cr", abs(n_ - Tcr) <= 0.05,
+              "printed %.2f recomputed %.4f" % (n_, Tcr))
+        check("the M_b denominator is the recomputed theta-bar", abs(dn_ - thbar) <= 0.05,
+              "printed %.2f recomputed %.4f" % (dn_, thbar))
+        check("the M_b quotient is T_cr/theta-bar", abs(qq_ - Tcr/thbar) <= 0.005,
+              "printed %.2f recomputed %.4f" % (qq_, Tcr/thbar))
+        check("bound A-2 (M_b >= 2) is met by the recomputed margin",
+              Tcr/thbar >= 2.0 and qq_ >= 2.0,
+              "computed M_b=%.4f, printed %.2f" % (Tcr/thbar, qq_))
+        cmp("the M_b = 2 ceiling reproduces the quoted 58.8 K",
+            val(C7, "restricting $@bar@theta@le", "$ K"), Tcr/2.0, 0.005)
+        cmp("the M_b = 2 ceiling reproduces the quoted 9.1e3 W/m2",
+            val(C7, "$q^{''}@approx", "@times10^{3}$", 3, span="restricting $@bar@theta@le"),
+            q*(Tcr/2.0)/thbar, 0.01)
+
+# --- eq:wmax: validated against its governing relation, its own printed value and the
+#     small-force limit of eq:beamcolsol -- not by searching for the number 8 ---
+_w1 = re.search(r'w_\{\\max\}=\\frac\{\\kappa_\{\\mathrm\{th\}\}L\^2\}\{([0-9]+)\}', C4)
+_wq = re.search(r'w\(x\)=\\frac\{\\kappa_\{\\mathrm\{th\}\}\}\{([0-9]+)\}\\,?x\(L-x\)', C4)
+check("eq:wmax states a parabola and a w_max with explicit constants", bool(_w1 and _wq))
+if _w1 and _wq:
+    nden, nquad = float(_w1.group(1)), float(_wq.group(1))
+    implied = kth*L*L/nden
+    check("the parabola's mid-span value equals the w_max of the same equation",
+          abs(kth*L*L/(4*nquad) - implied) <= 1e-30 + 1e-12*abs(implied),
+          "1/(4*%g) vs 1/%g" % (nquad, nden))
+    cmp("the eq:wmax denominator reproduces the printed linear w_max (appendix A3)",
+        val(APP, ")/8=", "@times10^{-4}$ m", -4), implied, 0.005)
+    cmp("the eq:wmax denominator reproduces the printed linear w_max (ch07 table)",
+        val(C7, ")/8=", "@times10^{-4}$ m", -4), implied, 0.005)
+    mu_s = 1e-4*pi/L
+    a_s = tan(mu_s*L/2)
+    w_eps = (kth/mu_s**2)*(a_s*sin(mu_s*L/2) + cos(mu_s*L/2) - 1)
+    check("eq:wmax is the mu -> 0 limit of eq:beamcolsol",
+          abs(w_eps/implied - 1) < 1e-6, "ratio-1=%.2e" % (w_eps/implied - 1.0))
+    _wf = lambda x: kth/nquad*x*(L - x)
+    _hh = 1e-5*L
+    _res = max(abs((_wf(x + _hh) - 2*_wf(x) + _wf(x - _hh))/_hh**2 + kth)
+               for x in (0.31*L, 0.5*L, 0.73*L))
+    check("the eq:wmax parabola satisfies w'' = -kappa_th with w(0) = w(L) = 0",
+          _res < 1e-6*kth and abs(_wf(0)) < 1e-30 and abs(_wf(L)) < 1e-30,
+          "residual=%.2e" % _res)
+
 if '--chain' in sys.argv:
     print(); print("=" * 78)
     print("DEPENDENCY CHAIN  inputs -> theta-bar -> N_theta -> geometry -> stress -> ratios")
@@ -428,6 +603,105 @@ check("eq:beamcolsol satisfies all four BCs",
       max(abs(w(0)), abs(w(L)), abs(w2(0)+kth), abs(w2(L)+kth)) < 1e-12)
 
 # ----------------------------------------------------------------------------------
+print(); print("=" * 78)
+print("SECTION 5b  Interface data set, Gamma_p nomenclature, stale-claim scan")
+print("=" * 78)
+
+# --- G3: the boundary-condition set must give each side exactly ONE thermal datum on Gamma_if.
+# The table is parsed, not searched: a row whose boundary is Gamma_if may not carry a solid flux
+# datum, and may not carry a solid Dirichlet and a solid Neumann datum at the same time.
+def bc_rows(txt):
+    rows = {}
+    for line in txt.split('\n'):
+        m = re.match(r'^\s*(B\d+)\s*&\s*(.*?)\s*\\\\\s*$', line)
+        if m:
+            rows[m.group(1)] = [x.strip() for x in m.group(2).split(' & ')]
+    return rows
+
+BC = bc_rows(C5)
+check("tab:bcs is parsed row by row", len(BC) >= 9, sorted(BC))
+IFACE = {k: v for k, v in BC.items() if v and 'Ga_{\\mathrm{if}}' in v[0]}
+check("tab:bcs has a boundary row for Gamma_if", bool(IFACE), sorted(IFACE))
+DIR_S = re.compile(r'(?<![A-Za-z])T_s\s*=')
+NEU_S = re.compile(r'(\\nabla\s*T_s\s*\\cdot|\\partial_n\s*T_s|\\partial_nT_s)')
+flux_rows, double_rows = [], []
+for k, v in sorted(IFACE.items()):
+    cond = ' , '.join(v[1:])
+    if NEU_S.search(cond):
+        flux_rows.append("%s: %s" % (k, cond[:80]))
+    if DIR_S.search(cond) and NEU_S.search(cond):
+        double_rows.append("%s: %s" % (k, cond[:80]))
+check("no Gamma_if row prescribes a solid flux datum", not flux_rows, flux_rows[:2])
+check("no Gamma_if row gives the solid a Dirichlet AND a Neumann temperature datum",
+      not double_rows, double_rows[:2])
+
+# The same condition on the prose: locate each solid datum together with the surface it is
+# imposed on, and reject a solid flux datum on Gamma_if wherever it appears.
+DATUM = re.compile(r'(T_s\s*=|\\partial_n\s*T_s\s*=|\\nabla\s*T_s\s*\\cdot\s*\\bn(?:[^=]{0,25})?=)'
+                   r'\s*([^;,$]{0,40}?)\s*\$?\s+on\s+\$([^$]{0,60})\$')
+dir_if, neu_if = [], []
+for f in FILES:
+    if f == 'chapters/audit_appendix.tex':
+        continue
+    flatf = re.sub(r'\s+', ' ', re.sub(r'(?<!\\)%.*', '', SRC[f]))
+    for m in DATUM.finditer(flatf):
+        surf = m.group(3)
+        if not (r'Ga_{\mathrm{if}}' in surf or 'Ga_{if}' in surf):
+            continue
+        if m.group(1).startswith('T_s'):
+            dir_if.append("%s: %s" % (f, m.group(0)[:90]))
+        else:
+            neu_if.append("%s: %s" % (f, m.group(0)[:90]))
+check("the solid interface temperature is imposed as a Dirichlet datum", bool(dir_if), dir_if[:2])
+check("no solid flux datum is imposed on Gamma_if anywhere in the formulation",
+      not neu_if, neu_if[:2])
+check("the solid problem keeps its flux datum on the outer face, not the interface",
+      (r'\Ga_h^0' in C8) and (r'\Ga_h^0' in C5), "B6/step 1")
+
+# --- N1: the Gamma_p nomenclature entry itself (not the dictionary, not a neighbouring row) ---
+_nom = re.search(r'^\$\\Gamma_p\$ & (.*?) & (.*?) \\\\ *$', APP, re.M)
+check("the Gamma_p nomenclature entry exists", bool(_nom))
+if _nom:
+    entry = _nom.group(1)
+    check("the Gamma_p nomenclature entry defines the labelled ratio",
+          r'w_{\max}/w_p' in entry and r'\eqref{eq:gammap}' in entry, entry[:100])
+    check("the Gamma_p nomenclature entry distinguishes the mixed and like-for-like presentations",
+          ('mixed' in entry) and ('like-for-like' in entry), entry[:100])
+    check("the Gamma_p nomenclature entry is not a bare thermal-to-pressure description",
+          'thermal-to-pressure' not in entry, entry[:100])
+
+# --- S1: stale end-condition percentages, reworded or not, across every file that states them ---
+SCAN = list(FILES) + [f for f in ('README.md', 'HFF_revision_summary.md',
+                                  'HFF_source_pdf_consistency_report.md',
+                                  'HFF_final_packaging_report.md',
+                                  'HFF_final_pre_coding_checklist.md',
+                                  'HFF_final_reference_status_notes.txt') if os.path.exists(f)]
+END_CTX = re.compile(r'(end[- ]effect|end condition|end-compliance|pinned end|pin\b|pins\b|clamp|'
+                     r'stiffen|aspect ratio|B7|A9|D-26|kappa_\{\\mathrm\{th\}\}L\^2/8)', re.I)
+STALE = re.compile(r'(?:(?:about|approximately|roughly|some|around|nearly|close to|~|≈)\s*)?'
+                   r'(?<![\d.])(?:one|two|three|few|couple|[123])(?:\.\d+)?\s*'
+                   r'(?:of\s+)?(?:per[\s~]*cent|\\?%|\$?\s*per~cent)', re.I)
+SUPERSEDED = re.compile(r'(supersed|withdrawn|earlier|previously|no longer|replaced|obsolete)', re.I)
+stale_hits, scanned = [], []
+for f in SCAN:
+    flatf = re.sub(r'\s+', ' ', re.sub(r'(?<!\\)%.*', '', read(f)))
+    n_end = 0
+    for sent in re.split(r'(?<=[.;:])\s+', flatf):
+        if not END_CTX.search(sent):
+            continue
+        n_end += 1
+        if STALE.search(sent) and not SUPERSEDED.search(sent):
+            stale_hits.append("%s: %s" % (f, sent[:100]))
+    scanned.append("%s(%d)" % (f, n_end))
+check("no stale end-effect percentage survives in the %d scanned files" % len(SCAN),
+      not stale_hits, stale_hits[:2])
+print("INFO  files scanned for stale end-effect claims, with end-effect sentences counted:")
+for _s in scanned:
+    print("INFO    " + _s)
+print("INFO  correct end-effect magnitude present in ch04 and ch11: %s"
+      % (("$0.2\\%$" in C4) and ("$0.2\\%$" in C11)))
+
+# ----------------------------------------------------------------------------------
 print(); print("=" * 78); print("SECTION 6  Package provenance"); print("=" * 78)
 check("tracked main.pdf exists", os.path.exists('main.pdf'),
       ("%d bytes" % os.path.getsize('main.pdf')) if os.path.exists('main.pdf') else "")
@@ -444,7 +718,7 @@ _stale = sorted(f for f in _src if os.path.getmtime(f) > _pdf)
 if _stale:
     print("WARNING  main.pdf predates %d source file(s); a LaTeX rebuild is REQUIRED." % len(_stale))
     print("WARNING  No TeX engine is available in this environment, so no rebuild is executed or")
-    print("WARNING  claimed. The tracked main.pdf does NOT contain the Stage 17 corrections.")
+    print("WARNING  claimed. The tracked main.pdf does NOT contain the Stage 18 corrections.")
 else:
     print("INFO     main.pdf is newer than every source file")
 

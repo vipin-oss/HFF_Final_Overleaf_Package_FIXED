@@ -1,0 +1,462 @@
+Stage 18 mutation campaign -- raw results
+repository: /home/user/HFF_Final_Overleaf_Package_FIXED
+suite: audit_stage15/regression.py (version 4, Stage 18)
+baseline: exit 0, 144 checks passed in a fresh isolated copy
+
+summary
+-------
+id   result        intended assertion / first failing check
+base PASS          
+A1   detected      no display equation has changed          | moment BC: half the thermal curvature at the pins
+A2   detected      no display equation has changed          | closed-form solution: particular integral halved
+A3   detected      no display equation has changed          | compatibility update: factor 2 lost
+A4   detected      the eq:wmax denominator reproduces the printed linear w_max (appendix A3) | linear bow formula: 1/8 -> 1/12
+A5   detected      printed theta-bar equals the recomputed value to its 3-s.f. rounding | printed mean temperature
+A6   detected      ch04 Gamma_p = w_max/w_p matches         | water viscosity (feeds the whole pressure chain)
+A7   detected      printed theta-bar equals the recomputed value to its 3-s.f. rounding | imposed heat flux (feeds every thermal result)
+A8   detected      a pressure normalisation occurs only as an explicitly rejected counterfactual | reintroduces a gauge constraint in different notation
+A9   detected      V_s integral condition is homogeneous    | function space: non-homogeneous integral condition (not a subspace)
+A10  detected      no display equation has changed          | SUPG term sign
+A11  detected      no register row has changed              | register D-31 reverts to the withdrawn false claim
+A12  detected      ch07 table Gamma_p matches               | table value of Gamma_p
+A13  detected      appendix sigma_bend frozen matches       | frozen bending stress in their own arithmetic appendix
+A14  detected      appendix circular-arc estimate matches   | circular-arc estimate inside a loose tolerance band
+A15  detected      ch04 has no stale few-per-cent stiffening claim | restores the withdrawn few-per-cent stiffening claim
+A16  detected      ch08 writes the geometric stress with 1/d (not 1/(2d)) | explanatory 1/d becomes 1/(2d) while eq:weaks is untouched
+A17  detected      the loop closes on the extracted interface temperature | loop closure removed while both Dirichlet/Neumann keywords survive
+A18  detected      no display equation has changed          | beam-column ODE sign (buckling term becomes stiffening)
+A19  detected      every stress quoted in ch07 prose is one of the recomputed values | the conservative stress value in the design chapter
+A20  detected      appendix M_mid matches                   | mid-span moment in the arithmetic appendix
+A21  detected      A9 states the pin, not a clamp           | pin reverted to a clamp in Assumption A9 only (B7 untouched)
+A22  detected      no display equation has changed          | convective term sign in the momentum weak form
+A23  detected      ch04 critical load is the pinned eigenvalue pi^2 D_s/L^2 | critical load: clamped eigenvalue substituted for the pinned one
+A24  detected      appendix mu*L matches                    | printed beam-column parameter
+A25  detected      ch09 V-C3 amplification matches          | benchmark acceptance value
+B1   detected      step 1 gives the solid T_s = T_Gamma^{(k)} on the interface | reverts step 1 to the flux datum the audit rejected (D-32)
+B2   detected      the kernel/compatibility argument is spelled out | deletes the kernel/compatibility argument
+B3   detected      ch05 and ch08 agree that a solid flux datum is inadmissible | data-model paragraph claims the flux datum is admissible
+B4   detected      ch04 states the measured 0.2 % with its Q8 evidence | end-effect magnitude changed by a factor of ten (NEW-05)
+B5   detected      ch07 table labels Gamma_p mixed          | removes the mixed/like-for-like label from the Gamma_p table row (I-11)
+B6   detected      appendix A8 like-for-like Gamma_p matches | like-for-like Gamma_p in A8
+B7   detected      no equation or register row removed      | renumbers the D-32 register row (breaks the pointer from ch05/ch08)
+B8   detected      geometric term present, negative, with N/d | geometric stiffness doubled inside eq:weaks (display equation)
+B9   detected      ch05 and ch08 agree that a solid flux datum is inadmissible | dangling register pointer from the data-model paragraph
+G1   detected      a pressure normalisation occurs only as an explicitly rejected counterfactual | gauge constraint reinserted in the same sentence as its own explanation
+G2   detected      a pressure normalisation occurs only as an explicitly rejected counterfactual | equivalent reworded normalisation placed beside 'nothing is imposed'
+G3   detected      no Gamma_if row gives the solid a Dirichlet AND a Neumann temperature datum | solid interface row carries a Dirichlet AND a Neumann temperature datum
+T1   detected      each component printed in the theta-bar cell is its recomputed value at 2 dp | theta-bar components and total no longer follow from their formula
+T2   detected      bound A-2 (M_b >= 2) is met by the recomputed margin | T_cr halved in eq:tcr while every printed value is untouched
+N1   detected      the Gamma_p nomenclature entry defines the labelled ratio | nomenclature entry reverted to the bare description (dictionary untouched)
+S1   detected      no stale end-effect percentage survives in the 22 scanned files | reworded stale end-effect magnitude ('about two per cent')
+S2   detected      no stale end-effect percentage survives in the 22 scanned files | second reworded stale magnitude ('a couple of per cent')
+F1   detected      the eq:wmax denominator reproduces the printed linear w_max (appendix A3) | eq:wmax corrupted and its fingerprint REGENERATED (--update-fingerprints)
+V1   detected      no chapter claims a visual verification of a figure (I-15 remains open) | proof case for the removed `or True`: a positive claim of visual verification
+
+TOTAL CASES 44: detected 44, escaped 0, invalid (wrong-failure) 0, anchor not applied 0
+  of the 44 detections, 36 are supported by the substantive layer and 8 are FINGERPRINT-ONLY
+  a fingerprint-only detection shows that text changed; it is NOT evidence that the
+  substantive checks would notice a wrong expression, and it is not counted as one.
+new Stage 18 cases: G1 G2 G3 T1 T2 N1 S1 F1 (F1 runs under --update-fingerprints) and S2;
+V1 is the proof case for the removed `or True`.
+
+per-case evidence
+-----------------
+### A1  moment BC: half the thermal curvature at the pins
+    file     chapters/ch04.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended no display equation has changed
+    fails    ['no display equation has changed']
+    stderr   empty
+    RESULT   detected (fingerprint-only)
+
+### A2  closed-form solution: particular integral halved
+    file     chapters/ch04.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended no display equation has changed
+    fails    ['no display equation has changed']
+    stderr   empty
+    RESULT   detected (fingerprint-only)
+
+### A3  compatibility update: factor 2 lost
+    file     chapters/ch04.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended no display equation has changed
+    fails    ['no display equation has changed']
+    stderr   empty
+    RESULT   detected (fingerprint-only)
+
+### A4  linear bow formula: 1/8 -> 1/12
+    file     chapters/ch04.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended the eq:wmax denominator reproduces the printed linear w_max (appendix A3)
+    fails    ['no display equation has changed', "the parabola's mid-span value equals the w_max of the same equation", 'the eq:wmax denominator reproduces the printed linear w_max (appendix A3)', 'the eq:wmax denominator reproduces the printed linear w_max (ch07 table)', 'eq:wmax is the mu -> 0 limit of eq:beamcolsol']
+    stderr   empty
+    RESULT   detected (supported by the substantive layer)
+
+### A5  printed mean temperature
+    file     chapters/appendix.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended printed theta-bar equals the recomputed value
+    fails    ['printed theta-bar equals the recomputed value to its 3-s.f. rounding']
+    stderr   empty
+    RESULT   detected (supported by the substantive layer)
+
+### A6  water viscosity (feeds the whole pressure chain)
+    file     chapters/ch02.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended ch04 Gamma_p = w_max/w_p matches
+    fails    ['ch04 Gamma_p = w_max/w_p matches', 'ch04 linear-limit closed form matches', 'ch04 like-for-like w_p matches beam-column pressure solution', 'ch04 like-for-like Gamma_p matches', 'appendix A8 w_p matches', 'appendix A8 Gamma_p matches', 'appendix A8 like-for-like Gamma_p matches', 'ch07 table w_p matches', 'ch07 table Gamma_p matches']
+    stderr   empty
+    RESULT   detected (supported by the substantive layer)
+
+### A7  imposed heat flux (feeds every thermal result)
+    file     chapters/ch02.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended printed theta-bar equals the recomputed value
+    fails    ['printed theta-bar equals the recomputed value to its 3-s.f. rounding', 'appendix N_theta matches', 'appendix M_b matches', 'ch07 M_b matches', 'appendix mu*L matches', 'ch04 printed w_max matches recomputation', 'ch04 printed w_max/H0 matches', 'ch04 printed linear w/H0 matches', 'ch04 amplification matches', 'ch04 fibre strain matches', 'ch04 arc term matches quadrature', 'ch04 relaxation matches arcterm/e0', 'appendix circular-arc estimate matches', "appendix w'_max matches", 'appendix M_mid matches', 'appendix sigma_bend frozen matches', 'ch07 table sigma_bend matches', 'ch07 table w_max matches', 'ch07 conservative stress 13.9 matches', 'ch09 V-C3 amplification matches', 'ch04 Gamma_p = w_max/w_p matches', 'ch04 linear-limit closed form matches', 'ch04 like-for-like w_p matches beam-column pressure solution', 'ch04 like-for-like Gamma_p matches', 'appendix A8 Gamma_p matches', 'appendix A8 like-for-like Gamma_p matches', 'ch07 table Gamma_p matches', 'appendix self-consistent w_max matches', 'appendix self-consistent sigma_bend matches', 'frozen stress below 0.2 sigma_y cap', 'ch04 printed mechanical surface strain matches', 'appendix envelope matches', 'appendix e0 matches', 'every stress quoted in ch07 prose is one of the recomputed values', 'each component printed in the theta-bar cell is its recomputed value at 2 dp', 'the theta-bar cell total is the recomputed theta-bar', 'the M_b denominator is the recomputed theta-bar', 'the M_b quotient is T_cr/theta-bar', 'the eq:wmax denominator reproduces the printed linear w_max (appendix A3)', 'the eq:wmax denominator reproduces the printed linear w_max (ch07 table)']
+    stderr   empty
+    RESULT   detected (supported by the substantive layer)
+
+### A8  reintroduces a gauge constraint in different notation
+    file     chapters/ch08.tex
+    note     re-anchored: the D-25 sentence now carries the 'corrected in D-30' phrasing
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended a pressure normalisation occurs only as an explicitly rejected counterfactual
+    fails    ['a pressure normalisation occurs only as an explicitly rejected counterfactual', 'register pointer corrected to D-30']
+    stderr   empty
+    RESULT   detected (supported by the substantive layer)
+
+### A9  function space: non-homogeneous integral condition (not a subspace)
+    file     chapters/ch08.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended V_s integral condition is homogeneous
+    fails    ['V_s integral condition is homogeneous', 'no display equation has changed']
+    stderr   empty
+    RESULT   detected (supported by the substantive layer)
+
+### A10  SUPG term sign
+    file     chapters/ch08.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended no display equation has changed
+    fails    ['no display equation has changed']
+    stderr   empty
+    RESULT   detected (fingerprint-only)
+
+### A11  register D-31 reverts to the withdrawn false claim
+    file     chapters/audit_appendix.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended no register row has changed
+    fails    ['no register row has changed']
+    stderr   empty
+    RESULT   detected (fingerprint-only)
+
+### A12  table value of Gamma_p
+    file     chapters/ch07.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended ch07 table Gamma_p matches
+    fails    ['ch07 table Gamma_p matches']
+    stderr   empty
+    RESULT   detected (supported by the substantive layer)
+
+### A13  frozen bending stress in their own arithmetic appendix
+    file     chapters/appendix.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended appendix sigma_bend frozen matches
+    fails    ['appendix sigma_bend frozen matches']
+    stderr   empty
+    RESULT   detected (supported by the substantive layer)
+
+### A14  circular-arc estimate inside a loose tolerance band
+    file     chapters/appendix.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended appendix circular-arc estimate matches
+    fails    ['appendix circular-arc estimate matches']
+    stderr   empty
+    RESULT   detected (supported by the substantive layer)
+
+### A15  restores the withdrawn few-per-cent stiffening claim
+    file     chapters/ch04.tex
+    note     re-anchored: the original 'few per cent' sentence was withdrawn in Stage 17 (D-26 / NEW-05)
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended ch04 has no stale few-per-cent stiffening claim
+    fails    ['ch04 has no stale few-per-cent stiffening claim', 'ch04 states the measured 0.2 % with its Q8 evidence', 'no stale end-effect percentage survives in the 22 scanned files']
+    stderr   empty
+    RESULT   detected (supported by the substantive layer)
+
+### A16  explanatory 1/d becomes 1/(2d) while eq:weaks is untouched
+    file     chapters/ch08.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended ch08 writes the geometric stress with 1/d
+    fails    ['ch08 writes the geometric stress with 1/d (not 1/(2d))']
+    stderr   empty
+    RESULT   detected (supported by the substantive layer)
+
+### A17  loop closure removed while both Dirichlet/Neumann keywords survive
+    file     chapters/ch08.tex
+    note     re-anchored: the loop sentence was rewritten in Stage 17
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended the loop closes on the extracted interface temperature
+    fails    ['the loop closes on the extracted interface temperature']
+    stderr   empty
+    RESULT   detected (supported by the substantive layer)
+
+### A18  beam-column ODE sign (buckling term becomes stiffening)
+    file     chapters/ch04.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended no display equation has changed
+    fails    ['no display equation has changed']
+    stderr   empty
+    RESULT   detected (fingerprint-only)
+
+### A19  the conservative stress value in the design chapter
+    file     chapters/ch07.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended every stress quoted in ch07 prose is one of the recomputed values
+    fails    ['every stress quoted in ch07 prose is one of the recomputed values']
+    stderr   empty
+    RESULT   detected (supported by the substantive layer)
+
+### A20  mid-span moment in the arithmetic appendix
+    file     chapters/appendix.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended appendix M_mid matches
+    fails    ['appendix M_mid matches']
+    stderr   empty
+    RESULT   detected (supported by the substantive layer)
+
+### A21  pin reverted to a clamp in Assumption A9 only (B7 untouched)
+    file     chapters/ch02.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended A9 states the pin, not a clamp
+    fails    ['A9 states the pin, not a clamp']
+    stderr   empty
+    RESULT   detected (supported by the substantive layer)
+
+### A22  convective term sign in the momentum weak form
+    file     chapters/ch08.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended no display equation has changed
+    fails    ['no display equation has changed']
+    stderr   empty
+    RESULT   detected (fingerprint-only)
+
+### A23  critical load: clamped eigenvalue substituted for the pinned one
+    file     chapters/ch04.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended ch04 critical load is the pinned eigenvalue
+    fails    ['ch04 critical load is the pinned eigenvalue pi^2 D_s/L^2']
+    stderr   empty
+    RESULT   detected (supported by the substantive layer)
+
+### A24  printed beam-column parameter
+    file     chapters/appendix.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended appendix mu*L matches
+    fails    ['appendix mu*L matches']
+    stderr   empty
+    RESULT   detected (supported by the substantive layer)
+
+### A25  benchmark acceptance value
+    file     chapters/ch09.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended ch09 V-C3 amplification matches
+    fails    ['ch09 V-C3 amplification matches']
+    stderr   empty
+    RESULT   detected (supported by the substantive layer)
+
+### B1  reverts step 1 to the flux datum the audit rejected (D-32)
+    file     chapters/ch08.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended step 1 gives the solid T_s = T_Gamma^{(k)} on the interface
+    fails    ['step 1 gives the solid T_s = T_Gamma^{(k)} on the interface', 'the solid interface temperature is imposed as a Dirichlet datum', 'no solid flux datum is imposed on Gamma_if anywhere in the formulation']
+    stderr   empty
+    RESULT   detected (supported by the substantive layer)
+
+### B2  deletes the kernel/compatibility argument
+    file     chapters/ch08.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended the kernel/compatibility argument is spelled out
+    fails    ['the kernel/compatibility argument is spelled out']
+    stderr   empty
+    RESULT   detected (supported by the substantive layer)
+
+### B3  data-model paragraph claims the flux datum is admissible
+    file     chapters/ch05.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended ch05 and ch08 agree that a solid flux datum is inadmissible
+    fails    ['ch05 and ch08 agree that a solid flux datum is inadmissible']
+    stderr   empty
+    RESULT   detected (supported by the substantive layer)
+
+### B4  end-effect magnitude changed by a factor of ten (NEW-05)
+    file     chapters/ch04.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended ch04 states the measured 0.2 % with its Q8 evidence
+    fails    ['ch04 states the measured 0.2 % with its Q8 evidence', 'no stale end-effect percentage survives in the 22 scanned files']
+    stderr   empty
+    RESULT   detected (supported by the substantive layer)
+
+### B5  removes the mixed/like-for-like label from the Gamma_p table row (I-11)
+    file     chapters/ch07.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended ch07 table labels Gamma_p mixed
+    fails    ['ch07 table labels Gamma_p mixed']
+    stderr   empty
+    RESULT   detected (supported by the substantive layer)
+
+### B6  like-for-like Gamma_p in A8
+    file     chapters/appendix.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended appendix A8 like-for-like Gamma_p matches
+    fails    ['appendix A8 like-for-like Gamma_p matches']
+    stderr   empty
+    RESULT   detected (supported by the substantive layer)
+
+### B7  renumbers the D-32 register row (breaks the pointer from ch05/ch08)
+    file     chapters/audit_appendix.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended no equation or register row removed
+    fails    ['no equation or register row removed']
+    stderr   empty
+    RESULT   detected (fingerprint-only)
+
+### B8  geometric stiffness doubled inside eq:weaks (display equation)
+    file     chapters/ch08.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended geometric term present, negative, with N/d
+    fails    ['geometric term present, negative, with N/d', 'no display equation has changed', 'ch08 writes the geometric stress with 1/d (not 1/(2d))']
+    stderr   empty
+    RESULT   detected (supported by the substantive layer)
+
+### B9  dangling register pointer from the data-model paragraph
+    file     chapters/ch05.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended ch05 and ch08 agree that a solid flux datum is inadmissible
+    fails    ['ch05 and ch08 agree that a solid flux datum is inadmissible']
+    stderr   empty
+    RESULT   detected (supported by the substantive layer)
+
+### G1  gauge constraint reinserted in the same sentence as its own explanation
+    file     chapters/ch08.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended a pressure normalisation occurs only as an explicitly rejected counterfactual
+    fails    ['a pressure normalisation occurs only as an explicitly rejected counterfactual']
+    stderr   empty
+    RESULT   detected (supported by the substantive layer)
+
+### G2  equivalent reworded normalisation placed beside 'nothing is imposed'
+    file     chapters/ch05.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended a pressure normalisation occurs only as an explicitly rejected counterfactual
+    fails    ['a pressure normalisation occurs only as an explicitly rejected counterfactual']
+    stderr   empty
+    RESULT   detected (supported by the substantive layer)
+
+### G3  solid interface row carries a Dirichlet AND a Neumann temperature datum
+    file     chapters/ch05.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended no Gamma_if row gives the solid a Dirichlet AND a Neumann temperature datum
+    fails    ['no Gamma_if row prescribes a solid flux datum', 'no Gamma_if row gives the solid a Dirichlet AND a Neumann temperature datum']
+    stderr   empty
+    RESULT   detected (supported by the substantive layer)
+
+### T1  theta-bar components and total no longer follow from their formula
+    file     chapters/ch07.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended each component printed in the theta-bar cell is its recomputed value at 2 dp
+    fails    ['each component printed in the theta-bar cell is its recomputed value at 2 dp', 'the theta-bar cell total is the recomputed theta-bar']
+    stderr   empty
+    RESULT   detected (supported by the substantive layer)
+
+### T2  T_cr halved in eq:tcr while every printed value is untouched
+    file     chapters/ch04.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended bound A-2 (M_b >= 2) is met by the recomputed margin
+    fails    ['no display equation has changed', 'ch07 table T_cr is the recomputed threshold', 'the T_cr versus thickness catalogue matches eq:tcr', 'the M_b numerator is the recomputed T_cr', 'the M_b quotient is T_cr/theta-bar', 'bound A-2 (M_b >= 2) is met by the recomputed margin', 'the M_b = 2 ceiling reproduces the quoted 58.8 K', 'the M_b = 2 ceiling reproduces the quoted 9.1e3 W/m2']
+    stderr   empty
+    RESULT   detected (supported by the substantive layer)
+
+### N1  nomenclature entry reverted to the bare description (dictionary untouched)
+    file     chapters/appendix.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended the Gamma_p nomenclature entry defines the labelled ratio
+    fails    ['the Gamma_p nomenclature entry defines the labelled ratio', 'the Gamma_p nomenclature entry distinguishes the mixed and like-for-like presentations', 'the Gamma_p nomenclature entry is not a bare thermal-to-pressure description']
+    stderr   empty
+    RESULT   detected (supported by the substantive layer)
+
+### S1  reworded stale end-effect magnitude ('about two per cent')
+    file     chapters/ch04.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended no stale end-effect percentage survives
+    fails    ['no stale end-effect percentage survives in the 22 scanned files']
+    stderr   empty
+    RESULT   detected (supported by the substantive layer)
+
+### S2  second reworded stale magnitude ('a couple of per cent')
+    file     chapters/ch04.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended no stale end-effect percentage survives
+    fails    ['no stale end-effect percentage survives in the 22 scanned files']
+    stderr   empty
+    RESULT   detected (supported by the substantive layer)
+
+### F1  eq:wmax corrupted and its fingerprint REGENERATED (--update-fingerprints)
+    file     chapters/ch04.tex
+    command  /usr/bin/python3 audit_stage15/regression.py --update-fingerprints
+    exit     1
+    intended the eq:wmax denominator reproduces the printed linear w_max (appendix A3)
+    fails    ["the parabola's mid-span value equals the w_max of the same equation", 'the eq:wmax denominator reproduces the printed linear w_max (appendix A3)', 'the eq:wmax denominator reproduces the printed linear w_max (ch07 table)', 'eq:wmax is the mu -> 0 limit of eq:beamcolsol']
+    stderr   empty
+    RESULT   detected (supported by a regenerated-fingerprint run)
+
+### V1  proof case for the removed `or True`: a positive claim of visual verification
+    file     chapters/ch09.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended no chapter claims a visual verification of a figure
+    fails    ['no chapter claims a visual verification of a figure (I-15 remains open)']
+    stderr   empty
+    RESULT   detected (supported by the substantive layer)
+
