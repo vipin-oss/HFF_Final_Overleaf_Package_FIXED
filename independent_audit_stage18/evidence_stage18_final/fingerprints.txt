@@ -1,0 +1,7 @@
+# fingerprints: F1 reproduction, fingerprint-only edit, legitimate addition
+F1repro corrupt+regen      rc=1 fails=["the parabola's mid-span value equals the w_max of the same equation", 'the eq:wmax denominator reproduces the printed linear w_max (appendix A3)', 'the eq:wmax denominator reproduces the printed linear w_max (ch07 table)', 'eq:wmax is the mu -> 0 limit of eq:beamcolsol']
+      regen lines: ['WARNING  fingerprints were REGENERATED in this run.  A fingerprint is change detection,', 'INFO  fingerprint comparison SKIPPED: the file was regenerated in this same run.'] | stderr: empty
+FPedit-no-regen            rc=1 fails=['no display equation has changed']
+LEGIT-add-eq (no regen)    rc=0 fails=[]
+LEGIT-add-eq (regen)       rc=0 fails=[]
+      fingerprints: before=76 after=77 added=['eq:eq:auditprobe'] removed=[]

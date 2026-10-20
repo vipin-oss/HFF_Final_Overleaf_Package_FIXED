@@ -1,0 +1,25 @@
+# auditor mesh study of the Q8 pin/clamp evidence (D-26 / NEW-05)
+# shipped script: independent_audit_stage16/evidence/q8_pin_verification.py, NX=12 NY=2 (24 elements)
+# the only change in each variant is the mesh resolution NX,NY; nothing else is edited
+
+mesh       elements                   POINT mid  POINT top  PIN mid    PIN top   
+6x2        12                         1.0025     1.0000     1.0024     0.9999    
+6x4        24                         1.0056     1.0025     1.0054     1.0023    
+12x2       24                         1.0025     1.0000     1.0006     0.9981    
+12x4       48                         1.0056     1.0025     1.0037     1.0006    
+24x2       48                         1.0025     1.0000     1.0004     0.9979    
+24x4       96                         1.0056     1.0025     1.0036     1.0005    
+
+# CLAMP case (manuscript quotes -0.02 to -0.06 of the beam value)
+  6x2 CLAMP mid=-0.0761 top=-0.0803
+  6x4 CLAMP mid=-0.0564 top=-0.0617
+  12x2 CLAMP mid=-0.0408 top=-0.0450
+  12x4 CLAMP mid=-0.0284 top=-0.0336
+  24x2 CLAMP mid=-0.0245 top=-0.0288
+  24x4 CLAMP mid=-0.0159 top=-0.0211
+
+# shipped-script diagnostics
+  shape-derivative check (max abs vs FD): 4.48e-11
+  mesh 24 elements 101 nodes; kappa_th=5.8333e-01 1/m; beam w=6.5625e-05 m
+  FREE case: solved (unexpected: rigid modes not removed)
+  exact-field residual: max|K u_ex - f| = 1.393e-09   (max|f| = 1.875e+04, scale 1.875e+04)

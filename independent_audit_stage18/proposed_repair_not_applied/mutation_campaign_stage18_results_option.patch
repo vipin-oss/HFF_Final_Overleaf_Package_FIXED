@@ -1,0 +1,13 @@
+diff --git a/audit_stage15/mutation_campaign_stage18.py b/audit_stage15/mutation_campaign_stage18.py
+index c4c3a23..552a98f 100644
+--- a/audit_stage15/mutation_campaign_stage18.py
++++ b/audit_stage15/mutation_campaign_stage18.py
+@@ -29,6 +29,8 @@ BS = chr(92)
+ ROOT = os.path.abspath('.')
+ BASE = '/tmp/hff_mut18'
+ RESULTS = os.path.join('audit_stage15', 'stage18_mutation_results.txt')
++if '--results' in sys.argv:                      # keep the committed record intact on re-runs
++    RESULTS = sys.argv[sys.argv.index('--results') + 1]
+ BASE_PASSES = 0
+ 
+ FINGERPRINT_CHECKS = {"no display equation has changed", "no register row has changed",

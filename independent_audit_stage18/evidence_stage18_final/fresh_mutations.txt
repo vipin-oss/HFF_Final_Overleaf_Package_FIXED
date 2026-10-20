@@ -1,0 +1,20 @@
+# auditor fresh mutations, batch 2 (gauge/BC/stale/Gamma_p/T_cr)
+  M6-gauge-reject+gerund         rc=1 fails=['a pressure normalisation occurs only as an explicitly rejected counterfactual']
+  M7-BC-interface-in-condition   rc=0 fails=none
+  M8-prose-double-datum          rc=0 fails=none
+  M9-stale-percentage-points     rc=1 fails=['no stale end-effect percentage survives in the 22 scanned files']
+  M10-stale-pct                  rc=0 fails=none
+  M11-Gamma_p-dictionary         rc=1 fails=['dictionary labels Gamma_p']
+  M12-Gamma_p-ch07-prose         rc=1 fails=['ch07 prose gives both ratios']
+  M14-Tcr-coefficient-consistent rc=1 fails=['no display equation has changed', 'ch07 table T_cr is the recomputed threshold', 'the T_cr versus thickness catalogue matches eq:tcr']
+
+# batch 3 (gauge wording, eq:wmax alternatives + regen, consistent T_cr, input+downstream)
+  M6b-gauge-choose-rather-than           rc=0 nfails=0 fails=none
+  M13-wmax-1/(8(1-nu))+regen             rc=1 nfails=1 fails=['eq:wmax states a parabola and a w_max with explicit constants']
+  M13b-parabola-/(2(1+nu))+regen         rc=1 nfails=1 fails=['eq:wmax states a parabola and a w_max with explicit constants']
+  M14b-Tcr-coef-14-consistent+regen      rc=1 nfails=5 fails=['appendix M_b matches', 'ch07 M_b matches', 'the denominator printed in A4 matches 12 alpha (1+nu) L^2', 'the M_b = 2 ceiling reproduces the quoted 58.8 K']
+  M15-q-6000-consistent-theta            rc=1 nfails=37 fails=['appendix N_theta matches', 'appendix M_b matches', 'ch07 M_b matches', 'appendix mu*L matches']
+
+# batch 4 (theta-bar formula string, numbers kept)
+  M1b-theta-formula-loses-1/2      rc=1 fails=['the theta-bar cell quotes its three components and the total']
+  M1c-theta-terms-swapped          rc=1 fails=['the theta-bar cell quotes its three components and the total']

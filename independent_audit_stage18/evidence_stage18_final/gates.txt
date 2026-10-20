@@ -1,0 +1,48 @@
+# release-gate evidence (frozen commit 5741d36, pristine extraction)
+
+## toolchain
+MISSING: pdflatex
+MISSING: latexmk
+MISSING: bibtex
+MISSING: xelatex
+MISSING: lualatex
+MISSING: pdftoppm
+MISSING: pdftotext
+MISSING: gs
+MISSING: qpdf
+MISSING: magick
+convert: present but refuses PDF (security policy)
+
+## main.pdf provenance
+last commit touching main.pdf : 5a25521 2026-10-19 11:34:19 +0530 Initial Overleaf Import
+last commit touching sources  : 5741d36 2026-10-20 07:00:40 +0000 Stage 18: repair of the verification defects (suite v4, 44-case campaign)
+/Producer (pdfTeX-1.40.29)
+/CreationDate (D:20261019055805Z)
+/ModDate (D:20261019055805Z)
+
+## suite section 7 in a fresh extraction (mtime-based)
+SECTION 7  Build freshness (REPORTED, NOT ASSERTED)
+==============================================================================
+INFO     main.pdf is newer than every source file
+
+
+## convergence claims in the manuscript
+chapters/ch03.tex:154:The fluid problem is posed on the domain $\Om_f$ occupied by the fluid in the converged steady
+chapters/ch05.tex:99:distribution depend on $\bd$, so the decomposition is exact only at the converged state and for
+chapters/ch08.tex:224:\emph{Well-posedness is not convergence.} The argument above establishes only that each of the four
+chapters/ch08.tex:226:alternation that couples them converges, and no contraction argument or energy-stability proof of
+chapters/ch08.tex:244:Section~\ref{sec:quality} is an a-posteriori test on the converged state and does not supply the
+chapters/ch08.tex:250:the two subproblems separately with transferred data, so within an unconverged iterate the interface
+chapters/ch08.tex:259:If it nevertheless stagnates or shows loss of convergence near the buckling margin,
+chapters/ch08.tex:265:\section{Mesh convergence and quality controls}
+chapters/ch08.tex:267:Three nested uniformly refined meshes are used per configuration; observed orders of convergence
+chapters/ch08.tex:268:and grid-convergence indices are reported for the monitored quantities mean Nusselt number, maximum
+chapters/ch09.tex:85:taken as the converged steady solution, or start-up transient reported to stationarity --- rather
+
+## ledger statuses
+69:| RU-01 | Is the strip's outer face **free**, **backed by a vented cavity**, or **in contact** with the rigid casing? No standoff distance is stated anywhere in the source. Under the adopted conven ...
+71:| RU-03 | Should the mid-span passage height be stated? No gap sentence exists in the source. Under the adopted convention the mid-span height is `H₀ + w_max = 1.4377 H₀` (i.e. **the passage wi ...
+124:| I-13 provenance | **IMPLEMENTED** | `README.md` build note | `main.pdf` staleness is *reported* (see §7 of the suite); a rebuild is still required |
+125:| I-15 figure collisions | **IMPLEMENTED** | `figures/fig_geometry.tex` | brace/label structure only — rendering is a visual judgement, not a test |
+153:| I-13 | Provenance / staleness of `main.pdf` | **OPEN** — the PDF still predates the modified sources; no TeX engine here | `08_build_and_packaging_report.md` | suite §7 reports, does not asse ...
+155:| I-15 | Figure collision / visual check | **OPEN** — structure only; no renderer, no visual check | `figures/fig_geometry.tex` | brace/label structure only |

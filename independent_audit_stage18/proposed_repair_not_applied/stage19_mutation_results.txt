@@ -1,0 +1,115 @@
+Stage 19 mutation campaign -- raw results
+repository: /home/user/HFF_Final_Overleaf_Package_FIXED
+suite: audit_stage15/regression.py (Stage 19 additions to version 4)
+baseline: exit 0, 148 checks passed in a fresh isolated copy
+
+summary
+-------
+id    result     intended assertion / first failing check
+base  PASS       148 checks
+M3c   detected   a pressure normalisation occurs only as an explicitly rejected counterfactual | pointwise pressure datum in another notation, beside the explanation
+M7    detected   no tab:bcs row gives any surface a solid Dirichlet AND a solid Neumann thermal datum | double thermal datum in a Condition column whose Boundary cell omits Gamma_if
+M8    detected   no sentence gives the solid a Dirichlet interface temperature AND an interface heat flux | prose double datum written without the 'on <surface>' pattern
+M10   detected   no stale end-effect percentage survives in the 22 scanned files | stale end-effect magnitude spelled 'pct'
+G5    detected   a pressure normalisation occurs only as an explicitly rejected counterfactual | equivalent normalisation, different notation, different chapter, adopting wording
+T3    detected   the theta-bar cell total is the recomputed theta-bar | theta-bar cell: components right, quoted total wrong
+T4    detected   the M_b numerator is the recomputed T_cr       | T_cr changed with the related text updated consistently (numerator and quotient agree)
+W2    detected   the eq:wmax denominator reproduces the printed linear w_max (appendix A3) | plausible but wrong eq:wmax denominator, fingerprint REGENERATED
+
+MUTANTS 8: detected 8, escaped 0, invalid 0, anchor not applied 0
+  of the detections, 8 are substantive and 0 fingerprint-only
+P1    PASS       | legitimate reworded rejection must still PASS (the check is not a keyword ban)
+F2    PASS       | legitimately added display equation must still PASS (a new fingerprint is reported, not failed)
+
+CONTROLS 2: 2 behaved as intended
+
+per-case evidence
+-----------------
+### M3c  pointwise pressure datum in another notation, beside the explanation
+    file     chapters/ch08.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended a pressure normalisation occurs only as an explicitly rejected counterfactual
+    fails    ['a pressure normalisation occurs only as an explicitly rejected counterfactual']
+    stderr   empty
+    RESULT   detected (substantive)
+
+### M7  double thermal datum in a Condition column whose Boundary cell omits Gamma_if
+    file     chapters/ch05.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended no tab:bcs row gives any surface a solid Dirichlet AND a solid Neumann thermal datum
+    fails    ['no tab:bcs row gives any surface a solid Dirichlet AND a solid Neumann thermal datum', 'no tab:bcs row puts a non-zero solid flux datum on a surface other than the heated face']
+    stderr   empty
+    RESULT   detected (substantive)
+
+### M8  prose double datum written without the 'on <surface>' pattern
+    file     chapters/ch08.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended no sentence gives the solid a Dirichlet interface temperature AND an interface heat flux
+    fails    ['no sentence gives the solid a Dirichlet interface temperature AND an interface heat flux']
+    stderr   empty
+    RESULT   detected (substantive)
+
+### M10  stale end-effect magnitude spelled 'pct'
+    file     chapters/ch04.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended no stale end-effect percentage survives
+    fails    ['no stale end-effect percentage survives in the 22 scanned files']
+    stderr   empty
+    RESULT   detected (substantive)
+
+### G5  equivalent normalisation, different notation, different chapter, adopting wording
+    file     chapters/ch05.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended a pressure normalisation occurs only as an explicitly rejected counterfactual
+    fails    ['a pressure normalisation occurs only as an explicitly rejected counterfactual']
+    stderr   empty
+    RESULT   detected (substantive)
+
+### T3  theta-bar cell: components right, quoted total wrong
+    file     chapters/ch07.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended the theta-bar cell total is the recomputed theta-bar
+    fails    ['the theta-bar cell total is the recomputed theta-bar']
+    stderr   empty
+    RESULT   detected (substantive)
+
+### T4  T_cr changed with the related text updated consistently (numerator and quotient agree)
+    file     chapters/appendix.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     1
+    intended the M_b numerator is the recomputed T_cr
+    fails    ['appendix M_b matches', 'the M_b numerator is the recomputed T_cr', 'the M_b quotient is T_cr/theta-bar']
+    stderr   empty
+    RESULT   detected (substantive)
+
+### W2  plausible but wrong eq:wmax denominator, fingerprint REGENERATED
+    file     chapters/ch04.tex
+    command  /usr/bin/python3 audit_stage15/regression.py --update-fingerprints
+    exit     1
+    intended the eq:wmax denominator reproduces the printed linear w_max (appendix A3)
+    fails    ["the parabola's mid-span value equals the w_max of the same equation", 'the eq:wmax denominator reproduces the printed linear w_max (appendix A3)', 'the eq:wmax denominator reproduces the printed linear w_max (ch07 table)', 'eq:wmax is the mu -> 0 limit of eq:beamcolsol']
+    stderr   empty
+    RESULT   detected (substantive)
+
+### control P1  legitimate reworded rejection must still PASS (the check is not a keyword ban)
+    file     chapters/ch08.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     0
+    fails    none
+    added    none
+    RESULT   PASS, as intended
+
+### control F2  legitimately added display equation must still PASS (a new fingerprint is reported, not failed)
+    file     chapters/ch10.tex
+    command  /usr/bin/python3 audit_stage15/regression.py
+    exit     0
+    fails    none
+    added    new fingerprint keys (deliberate additions): ['eq:eq:auditprobe']
+    RESULT   PASS, as intended
+

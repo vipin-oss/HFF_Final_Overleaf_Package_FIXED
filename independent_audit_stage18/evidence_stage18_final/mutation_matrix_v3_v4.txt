@@ -1,0 +1,18 @@
+# auditor matrix: same seven mutations under v3 (a61837e) and v4 (5741d36)
+# each case applied to a fresh isolated copy of 5741d36; v3 runs with the a61837e script + fingerprints
+[v3] baseline rc=0 fails=[]
+  M1-theta-cell          rc=0 fails=none
+  M2-Tcr                 rc=0 fails=none
+  M3a-gauge-gerund       rc=0 fails=none
+  M3b-gauge-we-impose    rc=0 fails=none
+  M3c-gauge-pointwise    rc=0 fails=none
+  M4-B10-double-datum    rc=0 fails=none
+  M5-stale-1.5           rc=0 fails=none
+[v4] baseline rc=0 fails=[]
+  M1-theta-cell          rc=1 fails=['each component printed in the theta-bar cell is its recomputed value at 2 dp', 'the theta-bar cell total is the recomputed theta-bar']
+  M2-Tcr                 rc=1 fails=['ch07 table T_cr is the recomputed threshold']
+  M3a-gauge-gerund       rc=1 fails=['a pressure normalisation occurs only as an explicitly rejected counterfactual']
+  M3b-gauge-we-impose    rc=1 fails=['a pressure normalisation occurs only as an explicitly rejected counterfactual']
+  M3c-gauge-pointwise    rc=0 fails=none
+  M4-B10-double-datum    rc=1 fails=['no Gamma_if row prescribes a solid flux datum', 'no Gamma_if row gives the solid a Dirichlet AND a Neumann temperature datum']
+  M5-stale-1.5           rc=1 fails=['no stale end-effect percentage survives in the 22 scanned files']

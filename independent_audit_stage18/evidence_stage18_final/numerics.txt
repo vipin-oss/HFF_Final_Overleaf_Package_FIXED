@@ -1,0 +1,36 @@
+# auditor independent recomputation from ch02/ch09 inputs and the printed equations
+inputs: q=5000 d=0.003 H0=0.0005 L=0.03 U=0.05 E=3.6e+09 nu=0.4 alpha=5e-05 ks=0.25 kf=0.6 rho=1000 mu=0.001 cp=4180 Nu_H1=5.385
+theta-bar [K]                              computed=      32.26521 printed=        32.3 rel= 1.08e-03  OK   ch07:34, appendix A5
+component dTt/2 [K]                        computed=            30 printed=        30.0 rel= 0.00e+00  OK   ch07:34
+component q''/h [K]                        computed=      1.547509 printed=        1.55 rel= 1.61e-03  OK   ch07:34
+component dTb/2 [K]                        computed=     0.7177033 printed=        0.72 rel= 3.19e-03  OK   ch07:34
+Tcr [K]                                    computed=      117.4953 printed=       117.5 rel= 4.01e-05  OK   A5, ch07:39
+Tcr [K] (3 s.f. cell)                      computed=      117.4953 printed=       117.0 rel= 4.23e-03  OK   ch07:38
+Tcr = Ncr(1-nu)/(E d alpha) [K]            computed=      117.4953 printed=     117.495 rel= 2.47e-06  OK   derivation cross-check
+Mb                                         computed=      3.641547 printed=        3.64 rel= 4.25e-04  OK   ch07:39, A5
+Mb >= 2 : True   (Tcr/2 = 58.7476 K, q'' at ceiling = 9103.9 W/m2)
+Mb=2 ceiling theta [K]                     computed=      58.74765 printed=        58.8 rel= 8.90e-04  ***  ch07:100
+    ceiling at 1 dp from the exact T_cr: 58.7476 -> 58.7 K ; 117.5/2 = 58.75
+Mb=2 ceiling q'' [W/m2]                    computed=      9103.868 printed=      9100.0 rel= 4.25e-04  OK   ch07:101
+w_max beam-column [m]                      computed=  0.0002188579 printed=    0.000219 rel= 6.49e-04  OK   ch04, ch07:31
+w_max/H0                                   computed=     0.4377158 printed=       0.438 rel= 6.49e-04  OK   ch04, ch07:32
+amplification                              computed=      1.389574 printed=        1.39 rel= 3.06e-04  OK   ch04:230
+w_max linear kappa L^2/8 [m]               computed=     0.0001575 printed=   0.0001575 rel= 1.72e-16  OK   appendix A3
+w_max linear (ch07 3 s.f.) [m]             computed=     0.0001575 printed=    0.000158 rel= 3.16e-03  OK   ch07:30
+w_lin/H0                                   computed=         0.315 printed=       0.315 rel= 1.76e-16  OK   ch04, ch07:32
+N_theta [N/m]                              computed=      29038.69 printed=     29100.0 rel= 2.11e-03  OK   A5
+N_cr [N/m]                                 computed=      105745.8 printed=    105700.0 rel= 4.33e-04  OK   A5
+mu L                                       computed=      1.646292 printed=        1.65 rel= 2.25e-03  OK   A5
+Gamma_p mixed                              computed=      2382.127 printed=      2400.0 rel= 7.45e-03  OK   ch04, ch07:41, A8, dictionary
+Gamma_p like-for-like                      computed=      1726.305 printed=      1730.0 rel= 2.14e-03  OK   ch04, A8, dictionary
+Gamma_p linear limit                       computed=      1714.286 printed=      1700.0 rel= 8.40e-03  OK   ch04:312
+w_p [m]                                    computed=    9.1875e-08 printed=     9.2e-08 rel= 1.36e-03  OK   ch07:41, A8
+w_p(N_theta) [m]                           computed=  1.267783e-07 printed=    1.27e-07 rel= 1.75e-03  OK   ch04
+sigma_bend frozen [MPa]                    computed=      4.236898 printed=         4.2 rel= 8.79e-03  OK   ch07:36
+sigma_memb [MPa]                           computed=      9.679564 printed=        9.68 rel= 4.51e-05  OK   appendix D-28 (9.11 self-consistent; -9.6 frozen)
+sigma_max frozen [MPa]                     computed=      13.91646 printed=        13.9 rel= 1.18e-03  OK   ch07:35-36
+
+mid-span identity  : w(L/2) from w(x)=kappa/2 x(L-x) -> 0.0001575 ; kappa L^2/8 -> 0.0001575
+mu->0 limit        : beam-column w_max at muL=1e-4*pi = 0.0001575000018 vs kappa L^2/8 = 0.0001575 (rel 1.12e-08)
+w''=-kappa residual : 3.629e-05 (kappa=1.400 1/m); w(0)=0.0e+00 w(L)=0.0e+00
+Tcr derivation     : Ncr=pi^2 Ds/L^2=105746 ; Ncr(1-nu)/(E d alpha)=117.495290 ; eq:tcr=117.495290

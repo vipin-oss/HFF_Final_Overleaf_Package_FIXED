@@ -1,0 +1,18 @@
+# final tree state and package re-verification (audit tree = 5741d36 + independent_audit_stage18/)
+date: Tue Oct 20 07:28:57 UTC 2026
+HEAD at start of audit: 5741d36d6f0f9911bfe3f338fb5f77ba94e1d7ea
+tracked files modified by the audit: NONE
+
+git status --porcelain:
+?? independent_audit_stage18/HFF_Stage18_Final_Acceptance_Audit.md
+?? independent_audit_stage18/evidence_stage18_final/
+?? independent_audit_stage18/proposed_repair_not_applied/
+
+suite on the final tree:
+==============================================================================
+ALL 144 CHECKS PASSED
+
+rebuild from the final tree (audit directory present):
+d7b80365e090a37095248147cc86139ee41ddfd041fac19eddb236c1b2886e94  HFF_Final_Overleaf_Package.zip
+d7b80365e090a37095248147cc86139ee41ddfd041fac19eddb236c1b2886e94  HFF_Final_Overleaf_Package.zip
+packages byte-identical: True

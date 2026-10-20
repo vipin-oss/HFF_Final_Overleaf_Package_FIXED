@@ -1,0 +1,25 @@
+# independent rebuild from a pristine extraction of 5741d36 (two copies, two invocations)
+$ sha256sum clean/HFF_Final_Overleaf_Package.zip  (committed archive as extracted)
+d7b80365e090a37095248147cc86139ee41ddfd041fac19eddb236c1b2886e94  /tmp/aud18/clean/HFF_Final_Overleaf_Package.zip
+$ python3 audit_stage15/build_package.py   (in b1, b2)
+b1:
+HFF_Final_Overleaf_Package.zip
+sha256 d7b80365e090a37095248147cc86139ee41ddfd041fac19eddb236c1b2886e94
+size   833423 bytes
+members 78
+b2:
+HFF_Final_Overleaf_Package.zip
+sha256 d7b80365e090a37095248147cc86139ee41ddfd041fac19eddb236c1b2886e94
+size   833423 bytes
+members 78
+
+committed manifest sha256/size/members : d7b80365e090a37095248147cc86139ee41ddfd041fac19eddb236c1b2886e94 / 833423 / 78
+rebuilt archive  sha256/size/members   : d7b80365e090a37095248147cc86139ee41ddfd041fac19eddb236c1b2886e94 / 833423 / 78
+archive hash reproduces                : True
+member digests                         : 78/78 match
+member order matches manifest          : True
+CRC                                    : ok
+timestamps                             : [(2026, 10, 19, 0, 0, 0)]
+compression                            : [8]
+byte-code members                      : none
+members differing from the committed tree: none

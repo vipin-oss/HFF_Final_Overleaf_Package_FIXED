@@ -1,0 +1,190 @@
+diff --git a/audit_stage15/regression.py b/audit_stage15/regression.py
+index 5c0dcc1..ad28998 100644
+--- a/audit_stage15/regression.py
++++ b/audit_stage15/regression.py
+@@ -153,15 +153,23 @@ P_NORM = [
+     re.compile(r'\\overline\{\s*p\s*\}[^$]{0,40}?=\s*0'),
+     re.compile(r'\\bar\{?\s*p\s*\}?[^$]{0,40}?=\s*0'),
+     re.compile(r'(zero[- ]mean|mean[- ]zero)[^.$]{0,40}?(?:pressure|\\bp\\b)', re.I),
++    # A pressure fixed at ONE interior point is the same normalisation in another notation
++    # (Stage 18 audit, surviving mutation M3c).  The physical outflow datum is written as the
++    # boundary value $p\to0$ on the exit section (row B2) and is checked separately below.
++    re.compile(r'(?<![A-Za-z])p\s*\(\s*\\mathbf\{?0\}?\s*\)\s*=\s*0'),
++    re.compile(r'(?<![A-Za-z])p\s*\(\s*\\mathbf\{?x\}?_?0\s*\)\s*=\s*0'),
++    re.compile(r'(?<![A-Za-z])p\s*\(\s*0\s*\)\s*=\s*0'),
++    re.compile(r'(?<![A-Za-z])p\s*\|_\{[^}]{0,14}\}\s*=\s*0'),
+ ]
+ REJECT = re.compile(r'(over-determin|overdetermin|would be inadmissible|would inject|spurious|'
+                     r'nothing is imposed|is not imposed|are not imposed|must not be\b|no gauge|'
+                     r'no such freedom|rather than|instead of|unnecessary|redundant|would be wrong|'
+                     r'not required)', re.I)
+-ADOPT = re.compile(r'(we (?:impose|fix|set|enforce|adopt|normalise|normalize|require)|'
+-                   r'(?:is|are) (?:imposed|enforced|fixed|required|normalised|normalized)|'
++ADOPT = re.compile(r'(we (?:impose|fix|set|enforce|adopt|normalise|normalize|require|pin|anchor)|'
++                   r'(?:is|are|was|were) (?:imposed|enforced|fixed|required|normalised|normalized)|'
+                    r'imposes?\b|enforces?\b|adding the|add the|we take|is set to zero|'
+-                   r'is normalised|is normalized|we normalise|we normalize)', re.I)
++                   r'is normalised|is normalized|we normalise|we normalize|'
++                   r'pinn(?:ed|ing)\b|anchors? the|(?:level|pressure)[^.;]{0,40}(?:is|are) set by)', re.I)
+ NEG_ADOPT = re.compile(r'(nothing|not|never|no)\s+(?:is|are|was|were)?\s*'
+                        r'(?:imposed|enforced|required|fixed|added)', re.I)
+ 
+@@ -208,6 +216,9 @@ check("the rejected pressure normalisation is still identified explicitly", bool
+       "normalisation occurrences=%d" % len(gauge_seen))
+ for _f, _s, _ok in gauge_seen:
+     print("INFO  pressure normalisation in %s (%s): %s" % (_f, "rejected" if _ok else "ADOPTED", _s))
++check("the outflow pressure datum is a boundary value, not an interior point constraint",
++      bool(re.search(r'p\\to\s*0', C5)) and ('traction-free' in C5),
++      "B2: the level at the outflow is an output, not an imposed datum")
+ check("register pointer corrected to D-30", 'corrected in D-30' in C8)
+ 
+ check("SUPG stabilised weak form written", 'eq:supgwf' in C8)
+@@ -620,41 +631,77 @@ def bc_rows(txt):
+ 
+ BC = bc_rows(C5)
+ check("tab:bcs is parsed row by row", len(BC) >= 9, sorted(BC))
+-IFACE = {k: v for k, v in BC.items() if v and 'Ga_{\\mathrm{if}}' in v[0]}
++IFACE = {k: v for k, v in BC.items() if v and 'Ga_{\mathrm{if}}' in v[0]}
+ check("tab:bcs has a boundary row for Gamma_if", bool(IFACE), sorted(IFACE))
+ DIR_S = re.compile(r'(?<![A-Za-z])T_s\s*=')
+ NEU_S = re.compile(r'(\\nabla\s*T_s\s*\\cdot|\\partial_n\s*T_s|\\partial_nT_s)')
+-flux_rows, double_rows = [], []
+-for k, v in sorted(IFACE.items()):
++FLUX_NZ = re.compile(r'(\\nabla\s*T_s\s*\\cdot\s*\\bn(?:_\{\\mathrm\{out\}\})?|\\partial_n\s*T_s)'
++                     r'\s*=\s*(?!0)')
++HEATED = re.compile(r'(Ga_h\^0|Ga_\{\\mathrm\{h\}\}|Ga_\{h\}|outer)')
++# Row level, independent of the Boundary cell (Stage 18 audit, surviving mutation M7): the
++# Condition column of ANY row that carries two thermal data of the same side is a double datum,
++# and a non-zero solid flux datum is admissible only on the heated outer face (row B6).  A
++# zero-flux datum (B7 ends, B8 faces) is an adiabatic condition, not a second thermal datum.
++double_rows, flux_rows = [], []
++for k, v in sorted(BC.items()):
+     cond = ' , '.join(v[1:])
+-    if NEU_S.search(cond):
+-        flux_rows.append("%s: %s" % (k, cond[:80]))
++    boundary = v[0] if v else ''
+     if DIR_S.search(cond) and NEU_S.search(cond):
+-        double_rows.append("%s: %s" % (k, cond[:80]))
+-check("no Gamma_if row prescribes a solid flux datum", not flux_rows, flux_rows[:2])
++        double_rows.append("%s [boundary %s]: %s" % (k, boundary[:40], cond[:90]))
++    if FLUX_NZ.search(cond) and not HEATED.search(boundary):
++        flux_rows.append("%s [boundary %s]: %s" % (k, boundary[:40], cond[:90]))
++iface_double = [d for k, d in ((k, "%s [boundary %s]: %s" % (k, (BC[k][0] if BC[k] else '')[:40],
++                                                              ' , '.join(BC[k][1:])[:90]))
++                                for k in sorted(IFACE))
++                if DIR_S.search(' , '.join(BC[k][1:])) and NEU_S.search(' , '.join(BC[k][1:]))]
+ check("no Gamma_if row gives the solid a Dirichlet AND a Neumann temperature datum",
++      not iface_double, iface_double[:2])
++check("no tab:bcs row gives any surface a solid Dirichlet AND a solid Neumann thermal datum",
+       not double_rows, double_rows[:2])
+-
+-# The same condition on the prose: locate each solid datum together with the surface it is
+-# imposed on, and reject a solid flux datum on Gamma_if wherever it appears.
+-DATUM = re.compile(r'(T_s\s*=|\\partial_n\s*T_s\s*=|\\nabla\s*T_s\s*\\cdot\s*\\bn(?:[^=]{0,25})?=)'
+-                   r'\s*([^;,$]{0,40}?)\s*\$?\s+on\s+\$([^$]{0,60})\$')
+-dir_if, neu_if = [], []
++check("no tab:bcs row puts a non-zero solid flux datum on a surface other than the heated face",
++      not flux_rows, flux_rows[:2])
++
++# The same condition in prose, judged sentence by sentence so that a datum is caught even when it
++# is not written in the "<datum> on <surface>" pattern (Stage 18 audit, surviving mutation M8).
++# Tables are removed first: tab:bcs is checked row by row above, and a flattened table would put
++# several surfaces into one "sentence".
++IF_NAME = re.compile(r'Ga_\{\\mathrm\{if\}\}|Ga_\{if\}')
++FLUX_D = re.compile(r'(\\nabla\s*T_s\s*\\cdot\s*\\bn(?:_\{\\mathrm{out}\})?|\\partial_n\s*T_s)'
++                    r'\s*=\s*([^,;\s$]{0,24})')
++dir_if, flux_if, dbl_prose = [], [], []
+ for f in FILES:
+     if f == 'chapters/audit_appendix.tex':
+         continue
+-    flatf = re.sub(r'\s+', ' ', re.sub(r'(?<!\\)%.*', '', SRC[f]))
+-    for m in DATUM.finditer(flatf):
+-        surf = m.group(3)
+-        if not (r'Ga_{\mathrm{if}}' in surf or 'Ga_{if}' in surf):
+-            continue
+-        if m.group(1).startswith('T_s'):
+-            dir_if.append("%s: %s" % (f, m.group(0)[:90]))
+-        else:
+-            neu_if.append("%s: %s" % (f, m.group(0)[:90]))
++    raw = re.sub(r'\\begin\{longtable\}.*?\\end\{longtable\}', ' ', SRC[f], flags=re.S)
++    flatf = re.sub(r'\s+', ' ', re.sub(r'(?<!\\)%.*', '', raw))
++    for sent in re.split(r'(?<=[.;])\s+', flatf):
++        has_if = bool(IF_NAME.search(sent))
++        dir_here = DIR_S.search(sent)
++        if has_if and dir_here:
++            dir_if.append("%s: %s" % (f, sent[:90]))
++        here_if, here_other = [], []
++        for m in FLUX_D.finditer(sent):
++            rhs = m.group(2).strip()
++            tail = sent[m.end():m.end() + 48]
++            if rhs in ('0', '0.', ''):
++                continue                      # adiabatic datum, not a thermal load
++            on_if = bool(IF_NAME.search(tail)) or bool(IF_NAME.search(rhs))
++            on_heated = bool(re.search(r'\$?\s*on\s*\$?\s*\\?(Ga_h\^0|Ga_\{\\mathrm\{h\}\}|Ga_\{h\})',
++                                       tail))
++            if on_if or (has_if and not on_heated):
++                here_if.append(m.group(0)[:70])
++            elif not on_heated:
++                here_other.append(m.group(0)[:70])
++        if here_if:
++            flux_if.append("%s: %s" % (f, here_if[0]))
++        if dir_here and (here_if or here_other):
++            dbl_prose.append("%s: Dirichlet + flux in one sentence: %s"
++                             % (f, (here_if + here_other)[0]))
+ check("the solid interface temperature is imposed as a Dirichlet datum", bool(dir_if), dir_if[:2])
+-check("no solid flux datum is imposed on Gamma_if anywhere in the formulation",
+-      not neu_if, neu_if[:2])
++check("no non-zero solid flux datum is imposed on Gamma_if anywhere in the formulation",
++      not flux_if, flux_if[:2])
++check("no sentence gives the solid a Dirichlet interface temperature AND an interface heat flux",
++      not dbl_prose, dbl_prose[:2])
+ check("the solid problem keeps its flux datum on the outer face, not the interface",
+       (r'\Ga_h^0' in C8) and (r'\Ga_h^0' in C5), "B6/step 1")
+ 
+@@ -678,9 +725,10 @@ SCAN = list(FILES) + [f for f in ('README.md', 'HFF_revision_summary.md',
+                                   'HFF_final_reference_status_notes.txt') if os.path.exists(f)]
+ END_CTX = re.compile(r'(end[- ]effect|end condition|end-compliance|pinned end|pin\b|pins\b|clamp|'
+                      r'stiffen|aspect ratio|B7|A9|D-26|kappa_\{\\mathrm\{th\}\}L\^2/8)', re.I)
+-STALE = re.compile(r'(?:(?:about|approximately|roughly|some|around|nearly|close to|~|≈)\s*)?'
++STALE = re.compile(r'(?:(?:about|approximately|roughly|some|around|nearly|close to|~|approx)\s*)?'
+                    r'(?<![\d.])(?:one|two|three|few|couple|[123])(?:\.\d+)?\s*'
+-                   r'(?:of\s+)?(?:per[\s~]*cent|\\?%|\$?\s*per~cent)', re.I)
++                   r'(?:of\s+)?(?:per[\s~-]*cent|per[\s~-]*cent|pct\b|percentage\s+points?|\\?%)',
++                   re.I)
+ SUPERSEDED = re.compile(r'(supersed|withdrawn|earlier|previously|no longer|replaced|obsolete)', re.I)
+ stale_hits, scanned = [], []
+ for f in SCAN:
+@@ -709,6 +757,9 @@ readme = read('README.md') if os.path.exists('README.md') else ''
+ named = re.findall(r'`([A-Za-z0-9_\-/.]+\.zip)`', readme)
+ missing = [z for z in named if not os.path.exists(z)]
+ check("every package filename in README.md exists", not missing, missing)
++check("README records that the tracked main.pdf predates the current sources (I-13)",
++      bool(re.search(r'predates the Stage 1[5-9]', readme)) and 'does not yet reflect' in readme,
++      "build note")
+ 
+ # ----------------------------------------------------------------------------------
+ print(); print("=" * 78); print("SECTION 7  Build freshness (REPORTED, NOT ASSERTED)"); print("=" * 78)
+@@ -719,6 +770,23 @@ if _stale:
+     print("WARNING  main.pdf predates %d source file(s); a LaTeX rebuild is REQUIRED." % len(_stale))
+     print("WARNING  No TeX engine is available in this environment, so no rebuild is executed or")
+     print("WARNING  claimed. The tracked main.pdf does NOT contain the Stage 18 corrections.")
++else:
++    print("INFO     main.pdf is newer than every source file in THIS checkout.")
++    print("INFO     Filesystem mtimes are set by git checkout/extraction, so this comparison cannot")
++    print("INFO     establish that the PDF was built from these sources.  It is REPORTED, never")
++    print("INFO     asserted; provenance is decided by the embedded CreationDate below (I-13).")
++# Provenance independent of mtimes: pdfTeX stamps its build time into the file.
++try:
++    _cd = re.search(rb'/CreationDate\s*\(D:(\d{14})', open('main.pdf', 'rb').read())
++except OSError:
++    _cd = None
++if _cd:
++    g = _cd.group(1).decode()
++    print("INFO     embedded PDF CreationDate: %s-%s-%s %s:%s:%s UTC"
++          % (g[:4], g[4:6], g[6:8], g[8:10], g[10:12], g[12:14]))
++    print("WARNING  I-13 provenance stays OPEN: the PDF build predates the Stage 18 source edits, so")
++    print("WARNING  the tracked PDF cannot contain them.  A LaTeX rebuild and a visual check (I-15)")
++    print("WARNING  are still required before the PDF is circulated.")
+ else:
+     print("INFO     main.pdf is newer than every source file")
+ 
