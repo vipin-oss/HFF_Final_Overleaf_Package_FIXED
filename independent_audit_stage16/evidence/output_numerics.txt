@@ -1,0 +1,41 @@
+quantity                       recomputed   printed
+theta_bar                         32.2652   32.27 K
+Delta p                               120   48 Pa
+p(0)                                  120   120 Pa
+pbar                                   84   84 Pa
+D_s                               9.64286   9.64-9.6 N m
+kappa_th                              1.4   1.4 1/m
+N_theta                          -29038.7   -2.91e4 N/m
+N_cr                               105746   1.057e5 N/m
+M_b                               3.64169   3.64
+muL                               1.64629   1.65
+w_max frozen                  0.000218858   2.19e-4 m
+w_max/H0 frozen                  0.437716   0.438
+w_max lin                       0.0001575   1.575e-4 m
+amplification                     1.38957   1.39
+1/(1-N/Ncr)                       1.37857   1.38
+M_mid frozen                     -6.35535   -6.4 N m
+sigma_bend frozen                  4.2369   4.2 MPa
+w'_max                          0.0275145   0.027 rad
+fibre strain                   0.00098861   9.9e-4
+arc term                      0.000138785   1.39e-4
+arc (circular)                0.000158992   1.6e-4
+relaxation 1st it                 6.14485   6.1 %
+e0                             0.00225856   2.26e-3
+max|eps_mech|                  0.00324717   3.25e-3
+envelope                       0.00534717   5.35e-3
+kappa_geo d/2                  0.00308861   3.09e-3
+w_max self-cons               0.000213988   2.14e-4 m
+w_max/H0 self-cons               0.427975   0.428
+frozen overpredict                2.27598   2.3 %
+N_c self-cons                     27330.6   2.733e4 N/m
+M_mid self-cons                  -5.84841   -5.9 N m
+sigma_bend self-cons              3.89894   3.9 MPa
+sigma_memb frozen                 9.67956   9.68 MPa
+sigma_memb self-cons              9.11021   9.11 MPa
+sigma_max frozen                  13.9165   13.9 MPa
+sigma_max self-cons               13.0091   13.0 MPa
+w_p linear                     9.1875e-08   9.2e-8 m
+Gamma_p mixed                     2382.13   2.4e3
+w_p like-for-like             1.26778e-07   1.27e-7 m
+Gamma_p like-for-like              1726.3   1.73e3

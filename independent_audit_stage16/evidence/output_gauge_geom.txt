@@ -1,0 +1,13 @@
+max |(B^T 1)| over all nodes = 1.666667e-03  (element size 2.500e-03 m)
+  inflow nodes: max|(B^T1).n| = 1.0000e-03
+  outflow nodes: max|(B^T1).n| = 1.0000e-03
+  values at the outflow nodes (== edge flux weights): ['2.500e-04', '1.000e-03', '5.000e-04', '1.000e-03', '2.500e-04']
+  interior nodes: max |(B^T 1)| = 4.906e-18  (cancellation of interior element integrals)
+  -> constant pressure is NOT annihilated by b(.,1): the outflow test functions see it.
+  -> if Gamma_out were Dirichlet, every test function would vanish there and the
+     outflow weights above would be zero, i.e. constants WOULD be in the kernel.
+
+geometric term: 2-D assembly = 1.10772021e+03   N * 1-D integral = 1.10771840e+03   ratio = 1.0000016344
+  -> the /d factor is exactly what makes the 2-D term equal N times the 1-D term
+     (without it the 2-D term would be d = %.1e times the intended value, i.e. the
+      geometric stiffness would be lost)

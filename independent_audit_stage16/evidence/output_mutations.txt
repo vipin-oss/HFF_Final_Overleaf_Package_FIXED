@@ -1,0 +1,52 @@
+id   result   first failing check / note
+A1   ESCAPED  SURVIVED -- moment BC: half the thermal curvature at the pins
+A2   ESCAPED  SURVIVED -- closed-form solution: particular integral halved
+A3   ESCAPED  SURVIVED -- compatibility update: factor 2 lost
+A4   ESCAPED  SURVIVED -- linear bow formula: 1/8 -> 1/12
+A5   ESCAPED  SURVIVED -- printed mean temperature
+A6   ESCAPED  SURVIVED -- water viscosity (feeds the whole pressure chain)
+A7   ESCAPED  SURVIVED -- imposed heat flux (feeds every thermal result)
+A8   ESCAPED  SURVIVED -- reintroduces a gauge constraint in different notation
+A9   ESCAPED  SURVIVED -- function space: non-homogeneous integral condition (not a subspace)
+A10  ESCAPED  SURVIVED -- SUPG term sign
+A11  ESCAPED  SURVIVED -- register D-31 reverts to the withdrawn false claim
+A12  ESCAPED  SURVIVED -- table value of Gamma_p
+A13  ESCAPED  SURVIVED -- frozen bending stress in their own arithmetic appendix
+A14  ESCAPED  SURVIVED -- circular-arc estimate (14.6 % high, so 1.9e-4 is inside the 'tolerance' band)
+A15  ESCAPED  SURVIVED -- claim reversed in the wrong direction
+A16  ESCAPED  SURVIVED -- explanatory 1/d becomes 1/(2d) while eq:weaks is untouched
+A17  ESCAPED  SURVIVED -- loop closure removed while both Dirichlet/Neumann keywords survive
+A18  ESCAPED  SURVIVED -- beam-column ODE sign (buckling term becomes stiffening)
+A19  ESCAPED  SURVIVED -- the conservative stress value in the design chapter
+A20  ESCAPED  SURVIVED -- mid-span moment in the arithmetic appendix
+A21  ESCAPED  SURVIVED -- pin reverted to a clamp in Assumption A9 only (B7 untouched)
+A22  ESCAPED  SURVIVED -- convective term sign in the momentum weak form
+A23  ESCAPED  SURVIVED -- critical load: clamped eigenvalue substituted for the pinned one
+A24  ESCAPED  SURVIVED -- printed beam-column parameter
+A25  caught   ch09 V-C3 amplification matches                            | benchmark acceptance value (expected to be caught)
+
+SURVIVORS: 24 of 25
+   ('A1', 'moment BC: half the thermal curvature at the pins', 'survived')
+   ('A2', 'closed-form solution: particular integral halved', 'survived')
+   ('A3', 'compatibility update: factor 2 lost', 'survived')
+   ('A4', 'linear bow formula: 1/8 -> 1/12', 'survived')
+   ('A5', 'printed mean temperature', 'survived')
+   ('A6', 'water viscosity (feeds the whole pressure chain)', 'survived')
+   ('A7', 'imposed heat flux (feeds every thermal result)', 'survived')
+   ('A8', 'reintroduces a gauge constraint in different notation', 'survived')
+   ('A9', 'function space: non-homogeneous integral condition (not a subspace)', 'survived')
+   ('A10', 'SUPG term sign', 'survived')
+   ('A11', 'register D-31 reverts to the withdrawn false claim', 'survived')
+   ('A12', 'table value of Gamma_p', 'survived')
+   ('A13', 'frozen bending stress in their own arithmetic appendix', 'survived')
+   ('A14', "circular-arc estimate (14.6 % high, so 1.9e-4 is inside the 'tolerance' band)", 'survived')
+   ('A15', 'claim reversed in the wrong direction', 'survived')
+   ('A16', 'explanatory 1/d becomes 1/(2d) while eq:weaks is untouched', 'survived')
+   ('A17', 'loop closure removed while both Dirichlet/Neumann keywords survive', 'survived')
+   ('A18', 'beam-column ODE sign (buckling term becomes stiffening)', 'survived')
+   ('A19', 'the conservative stress value in the design chapter', 'survived')
+   ('A20', 'mid-span moment in the arithmetic appendix', 'survived')
+   ('A21', 'pin reverted to a clamp in Assumption A9 only (B7 untouched)', 'survived')
+   ('A22', 'convective term sign in the momentum weak form', 'survived')
+   ('A23', 'critical load: clamped eigenvalue substituted for the pinned one', 'survived')
+   ('A24', 'printed beam-column parameter', 'survived')
