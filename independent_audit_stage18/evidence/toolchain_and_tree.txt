@@ -1,0 +1,19 @@
+toolchain probe 2026-10-20T06:35:54Z
+pdflatex   MISSING
+latex      MISSING
+lualatex   MISSING
+xelatex    MISSING
+latexmk    MISSING
+tectonic   MISSING
+pdftoppm   MISSING
+pdftotext  MISSING
+gs         MISSING
+qpdf       MISSING
+inkscape   MISSING
+bibtex     MISSING
+biber      MISSING
+
+python: Python 3.11.2
+
+git status after all runs (should show only the new audit dir):
+?? independent_audit_stage18/

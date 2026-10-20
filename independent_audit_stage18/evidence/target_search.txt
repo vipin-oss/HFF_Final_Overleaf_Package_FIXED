@@ -1,0 +1,49 @@
+target search, 2026-10-20T06:34:53Z
+branch: arena/c875f9b3-hff-final-overleaf-package-fix
+HEAD: 4f54aa88e1b605f8f37645254ca57d56f34f5f2c
+HEAD subject: Independent Stage 17 audit of 211f751: report + reproducible evidence
+origin/session: 4f54aa88e1b605f8f37645254ca57d56f34f5f2c
+origin/main: 5a255212a51374f7eb178647eb12b0a9c2b67ded
+ls-remote:
+5a255212a51374f7eb178647eb12b0a9c2b67ded	HEAD
+4f54aa88e1b605f8f37645254ca57d56f34f5f2c	refs/heads/arena/c875f9b3-hff-final-overleaf-package-fix
+227f749d161c7e29034c99ab91b068efa554968d	refs/heads/claude/independent-audit-7c9749f
+5a255212a51374f7eb178647eb12b0a9c2b67ded	refs/heads/main
+
+commits mentioning Stage 18 (all refs):
+(none)
+
+paths matching *18* outside .git:
+./independent_audit_stage18
+(none)
+
+files containing 'Stage 18':
+(none)
+
+audit_stage15/ listing:
+01_master_issue_ledger.md
+02_derivation_and_sign_convention.md
+03_numerical_register.md
+04_weak_form_and_bc_verification.md
+05_correction_log.md
+06_regression_results.md
+07_final_consistency_audit.md
+08_build_and_packaging_report.md
+09_solver_ready_specification.md
+10_final_readiness_report.md
+11_stage16_audit_request.md
+12_stage17_repair_report.md
+13_stage17_audit_request.md
+build_package.py
+calc_register.py
+equation_fingerprints.json
+mutation_campaign_stage17.py
+mutation_stage17_results.txt
+mutation_test.py
+package_manifest.txt
+regression.py
+
+suite version line: """HFF regression suite, version 3 (Stage 17).
+campaign version line: """Stage 17 mutation campaign for regression.py v3.
+zip: 8f67ef7c03e8d4e138383d87e9b7237c994c51125f959dc3981c77f5d6f5d5d1  HFF_Final_Overleaf_Package.zip
+manifest: sha256 8f67ef7c03e8d4e138383d87e9b7237c994c51125f959dc3981c77f5d6f5d5d1 size   802932 bytes members 75 

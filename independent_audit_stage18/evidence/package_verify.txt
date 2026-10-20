@@ -1,0 +1,9 @@
+zip sha256 = 8f67ef7c03e8d4e138383d87e9b7237c994c51125f959dc3981c77f5d6f5d5d1
+size = 802932 bytes ; members = 75
+zip comment / CRS: b'' | [8]
+manifest rows = 75
+member-digest mismatches: none
+members not in manifest: []
+testzip (CRC): ok
+first 3 members: ['main.tex', 'references.bib', 'main.pdf']
+timestamps: [(2026, 10, 19, 0, 0, 0)]

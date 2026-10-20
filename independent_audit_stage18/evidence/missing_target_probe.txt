@@ -1,0 +1,6 @@
+== empty_appendix: exit=1 PASS=89 FAIL=20
+FAIL  no dangling references  | ['app:arith', 'app:symbols']
+FAIL  A8 labels the mixed ratio
+FAIL  A8 gives the like-for-like value
+== del_ch08: exit=1 PASS=0 FAIL=0
+KeyError: 'chapters/ch08.tex'

@@ -1,0 +1,15 @@
+dTt=60.000 K  q''/h=1.5475 K  dTb=1.4354 K  thbar=32.2652 K  h=3231.0000 W/m2K
+Tbar_cr = pi^2 d^2/(12 alpha (1+nu) L^2) = 117.495 K (printed 117 in ch07:38, 117.5 in the M_b quotient)
+  sweep d=1,1.5,2,2.5,3 mm -> ['13.1', '29.4', '52.2', '81.6', '117.5'] (printed 13,29,52,82,117)
+M_b = Tcr/thbar = 3.6415 (printed 3.64) ; 117.5/32.3 = 3.6378
+Ncr = 105745.8 N/m (printed 1.06e5)
+sigma_memb = -E alpha thbar/(1-nu) = -9.6796 MPa (printed -9.6)
+sigma_max = memb+bend = 13.9165 MPa ; ratio to sigma_y=90 MPa = 0.1546 (printed 0.15)
+0.2 sigma_y cap = 18.0 MPa ; frozen 13.9 < cap: True
+linear-limit Gamma_p = 48 kth Ds/(5 pbar L^2) = 1714.3 (printed 1.7e3)
+w_max^lin = kth L^2/8 = 1.5750e-04 m ; wmax/lin = 1.3896 ; 1/(1-N0/Ncr) = 1.3786
+kappa_th = (1+nu) alpha q''/k_s = 1.4000 1/m (printed 1.4)
+kappa_geo d/2 = 3.0886e-03 ; (kgeo-kth)d/2 = 9.8861e-04 (printed 9.9e-4)
+mid-span passage height 1 + wmax/H0 = 1.437716 (register 1.437740946)
+Gr = g beta dT* H0^3/nu^2 with beta=2.1e-4, nu=1e-6: 1.073 (printed 1.07)
+Ri = Gr/Re_H0^2, Re=U H0/nu=25 -> 1.717e-03

@@ -1,0 +1,14 @@
+baseline: exit=0 PASS=109 FAIL=0  clean
+G1  exit=0 PASS=109 ESCAPE    first FAIL: (none)                                                       | gauge constraint beside its explanation
+G2  exit=0 PASS=109 ESCAPE    first FAIL: (none)                                                       | gauge constraint invented in ch05
+G3  exit=0 PASS=109 ESCAPE    first FAIL: (none)                                                       | Gamma_if over-determined (Dirichlet + Neumann)
+T1  exit=0 PASS=109 ESCAPE    first FAIL: (none)                                                       | theta-bar formula cell corrupted
+T2  exit=0 PASS=109 ESCAPE    first FAIL: (none)                                                       | T_cr 117 K -> 130 K (M_b >= 2 depends on it)
+N1  exit=0 PASS=109 ESCAPE    first FAIL: (none)                                                       | Gamma_p nomenclature label removed
+S1  exit=0 PASS=109 ESCAPE    first FAIL: (none)                                                       | stale end claim in alternative wording
+
+F1 anchor count: 1
+F1  step 1 (edit eq:wmax 1/8 -> 1/12): exit=1 PASS=108 FAIL=1 first FAIL: no display equation has changed  | ['eq:eq:wmax']
+F1  step 2 (after --update-fingerprints): exit=0 PASS=109 FAIL=0  -> STILL ACCEPTED (escape)
+
+summary: escapes 7 / 7 cases; F1 accepted-after-regen=True

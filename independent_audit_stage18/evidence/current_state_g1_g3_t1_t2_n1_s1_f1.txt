@@ -1,0 +1,15 @@
+baseline: PASS (109/109)
+G1  ESCAPED   109/109 pass -- gauge constraint re-inserted next to its own explanation (keeps the D-30 pointer)
+G2  ESCAPED   109/109 pass -- gauge constraint invented in ch05 (contradicts B2 and ch08)
+G3  ESCAPED   109/109 pass -- step 1 over-determined: Dirichlet and Neumann on the same surface
+T1  ESCAPED   109/109 pass -- theta-bar formula cell corrupted (both coefficients), printed total untouched
+T2  ESCAPED   109/109 pass -- critical temperature 117 K -> 130 K (underpins M_b >= 2)
+N1  ESCAPED   109/109 pass -- nomenclature entry left unlabelled (mixed vs like-for-like)
+S1  ESCAPED   109/109 pass -- a NEW stale end-stiffening claim re-added in different words
+C1  detected  printed theta-bar equals the recomputed value to its | positive control: printed theta-bar shifted by 0.1 K
+C2  detected  appendix N_theta matches                             | positive control: membrane force changed by 7 %
+C3  detected  no display equation has changed                      | positive control: interface flux-continuity sign flipped (display equation)
+
+F1  linear bow 1/8 -> 1/12 : before regeneration rc=1 (no display equation has changed) ; after --update-fingerprints rc=0 (109/109 PASS)
+
+escaped 7 ; detected 3 ; skipped 0
