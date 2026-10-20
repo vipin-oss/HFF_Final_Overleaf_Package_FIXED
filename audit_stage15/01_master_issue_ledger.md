@@ -191,3 +191,53 @@ missing. Unchanged and still **OPEN**: RU-01, RU-03, heater mounting/heated-face
 contact law, the intended headline definition of `Γ_p`, **I-13** (no TeX engine; `main.pdf` stale),
 **I-15** (no renderer; no visual check). The coupled production solver remains **NOT READY**; no
 convergence of the staggered iteration is claimed or demonstrated.
+
+---
+
+## Stage 19 — targeted verification hardening after conditional acceptance (implementation, not audit)
+
+Parent on entry: `39ef118` (the independent Stage 18 acceptance audit, verdict *conditional
+acceptance*, five suite blind spots and two manuscript defects). Stage commit: the commit that adds
+this section (its hash is in the commit message; it cannot be written into a file that the shipped
+ZIP contains — see `15_stage19_repair_report.md` §12). Full detail:
+`15_stage19_repair_report.md`; raw mutation evidence: `stage19_mutation_results.txt`; before/after
+evidence for the five blind spots: `stage19_before_after.txt`.
+
+The five blind spots were **reproduced first** on `5741d36` with the new campaign (5 escapes,
+0 false detections), and only then closed. Suite v4 (144 assertions) → **v5 (156 assertions)**.
+Fingerprints were regenerated once, deliberately: 78 entries, `reg:D-26` changed, `reg:D-33` and
+`reg:D-34` added, nothing removed, and **no display-equation fingerprint changed**.
+
+| ID | Original claim / defect | Why it needed repair | Old source | New source | Dependencies | Recalculation / check | Mutation |
+|---|---|---|---|---|---|---|---|
+| S19-1 | The gauge test matched integral/mean forms only | `p(\mathbf 0)=0` is the same normalisation in another notation; it passed suite v4 | `P_NORM` without pointwise forms | `P_NORM` adds `p(\mathbf 0)=0`, `p(0)=0`, `p(\mathbf x_0)=0`, `p\big|_{x_0}=0`; clause-scoped verdict | `ch08` gauge paragraph; D-30 row | `a pressure normalisation occurs only as an explicitly rejected counterfactual`; positive control that the legitimate outflow datum is the boundary value `p\to0` (B2) | M3c (`p(\mathbf 0)=0`) → detected (was ESCAPED) |
+| S19-2 | Rejection was judged on the whole sentence, and adoption by a fixed verb list | "we choose X for the level **rather than** rely on the outflow condition" passed v4: "rather than" excused the adoption, and "choose" was not in the vocabulary | sentence-scoped `REJECT`, `ADOPT` without `choose/pin/anchor` | clause-scoped verdict: `CLAUSE_SPLIT` treats `rather than`, `instead of`, `although`, `but`, `while`, `;`, `:` as boundaries; negation may now reach the verb across a noun ("no normalisation is imposed") | `ch08`, `ch05` | same check name; the rejecting alternative is no longer part of the clause that carries the constraint | M6b ("we choose … rather than …") → detected (was ESCAPED); control P1 (legitimate "no normalisation is imposed: … would over-determine") → now PASSES (v4 wrongly rejected it) |
+| S19-3 | `tab:bcs` rows were selected by the Boundary cell before being tested | a double thermal datum in a Condition column of a row whose Boundary cell omits `Γ_if` was never looked at | `IFACE = rows containing 'Ga_{\mathrm{if}}'` | every row is tested: solid Dirichlet + solid Neumann ⇒ double datum; a non-zero solid flux datum is admissible only on the heated face (zero flux stays admissible on ends/faces); the `Γ_if`-row check is kept under its Stage 18 name | `ch05` `tab:bcs` | `no tab:bcs row gives any surface a solid Dirichlet AND a solid Neumann thermal datum`; `no Gamma_if row gives …` (unchanged); `no tab:bcs row puts a non-zero solid flux datum on a surface other than the heated face` | M7 (B9 = `T_s=T_h` on `Γ_h^0` **plus** `∂_nT_s=q''/k_s`) → detected (was ESCAPED) |
+| S19-4 | The prose datum test required the phrase `<datum> … on <surface>` | a double datum written "together with its interface temperature" passed v4 | `DATUM` regex requiring `on $Γ$` | datum-shape rule per sentence: solid Dirichlet (`T_s=`) **and** a non-zero solid flux (`∇T_s·n=`, `∂_nT_s=`) that is not placed on `Γ_h^0` ⇒ failure; tables removed before scanning; zero-flux (adiabatic) data ignored | `ch08` steps 1–2 | `no prose datum gives the solid a temperature AND a non-heated-face heat flux in one sentence`; `no prose sentence puts a non-zero solid flux datum on a surface other than the heated face`; Stage 18 names kept | M8 (flux "together with its interface temperature", no "on") → detected (was ESCAPED); control P2 (Dirichlet + heated-face flux in one sentence) → passes |
+| S19-5 | The stale-magnitude scan accepted `per cent` and `%` only | "about two pct" passed v4 | `STALE` without `pct` | `STALE` adds `pct`, `percentage points`, hyphenated `per-cent` | `ch04`, `ch11`, 20 other scanned files | `no stale end-effect percentage survives in the 22 scanned files` | M10 ("two pct") → detected (was ESCAPED) |
+| S19-6 | An expression the parser could not read caused the dependent numeric checks to be **skipped** (`if _w1 and _wq:`) | a format mismatch, not a wrong value, was the only reason for failure — the audit's A2 weakness | `if _w1 and _wq:` / `if _tcr:` | explicit failing assertions `the eq:wmax constants are parseable …` and `the eq:tcr denominator coefficient is parseable …` before the conditional block | `eq:wmax`, `eq:tcr` | the parse guard fails, and the substantive check names stay in the output | W3 (`eq:wmax` → `/(2(1−ν))` with regenerated fingerprints) → detected |
+| S19-7 | `ch06` claimed `T_ref` and `T_in` enter "exclusively through property values" | false for `T_in`, which is the inflow Dirichlet datum; the quoted `θ̄` silently assumes `T_ref = T_in` | `Only temperature differences … exclusively through property values` | `T_ref` enters through properties and through `T_in − T_ref`; `T_in` is the B1 datum and the anchor of the level via `eq:iftemp`; the convention `T_ref = T_in` behind the quoted `θ̄` is stated, with the offset a solver must carry if it differs (D-33) | `ch06`, `eq:iftemp`, `ch02` table row | `ch06 states that T_in is the inflow datum, not a property input`; `ch06 states the T_ref = T_in convention behind the quoted theta-bar` | none needed (prose); no printed value changes |
+| S19-8 | The `M_b = 2` ceiling was printed `58.8 K` | double rounding: `117.5/2 = 58.75 → 58.8`, while the exact `117.4953/2 = 58.7476 → 58.7` | `\bar\theta\le58.8` K | `\bar\theta\le58.7` K (register D-34) | `ch07` ceiling sentence, `eq:tcr` | `the M_b = 2 ceiling is the correctly rounded T_cr/2 (58.7 K)` — exact `abs(printed − round(T_cr/2,1)) < 1e-12`, i.e. **no tolerance**; the dependent `q'' ≈ 9.1×10³` is unchanged | reverting to 58.8 fails the rounding assertion |
+| S19-9 | The single 24-element Q8 comparison was described as if it settled the strip solution | the six-mesh study shows the point-pin ratio is independent of axial refinement while the clamp magnitude falls under refinement; absolute ratios move with the through-thickness discretisation | `… the check is complete …`, `D-26 … resolved (Stage 16)` | `ch04`, `ch11`, `ch02` A9 and `D-26` state: values on **one** 24-element mesh, the `0.2 %` pin difference reproduced at two and four elements through the thickness, clamp band is finite-mesh evidence only, not a converged penalty. Measured values (`1.0000`, `0.998`, `−0.02…−0.06`) preserved | `independent_audit_stage16/evidence/q8_pin_verification.py`, six-mesh study (`15_stage19_repair_report.md` §5) | `ch04 scopes the Q8 values to one finite mesh …`, `ch11 scopes …`, `the D-26 register row states the Q8 finite-mesh scope` | scope-text removal is caught by the three pins |
+
+**Positive controls (permanent, in `mutation_campaign_stage19.py`).** P1 a legitimately reworded
+rejection ("No normalisation is imposed: constraining `∫p ds=0` would over-determine the system")
+must pass — it is valid because the constraint is named and rejected in the same clause with no
+adopting verb, and it exposed a **v4 false positive** that Stage 19 fixes. P2 a sentence that states
+the interface Dirichlet datum and the heated-face flux together must pass — it is valid because the
+flux is explicitly placed on `Γ_h^0`, which is exactly the distinction the M8 rule relies on. P3 a
+legitimately added display equation must pass — a fingerprint **addition** is reported, never failed.
+
+**Tally after Stage 19.** Suite v5 = **156 assertions, all passing**. Stage 18 campaign: **44/44
+detected (36 substantive, 8 fingerprint-only)**, 0 escapes, 0 invalid, 0 anchor. Stage 19 campaign:
+**10/10 detected** (the five required classes + G5, T3, T4, W2, W3), 0 escapes, 0 invalid, 0
+anchor, **all substantive**; **3/3 positive controls pass**. Non-vacuity probes 6/6. Fingerprints:
+78 entries, stable on a clean tree. Package rebuilt deterministically; archive SHA-256 in
+`package_manifest.txt`.
+
+**Unchanged and still OPEN:** RU-01 (casing clearance / contact interpretation / vented-or-sealed
+cavity), RU-03 (`1.4377 H₀`), heater mounting and heated-face interpretation, the contact law, and
+the intended headline definition of `Γ_p`. **I-13** (no TeX engine: `main.pdf` predates the sources)
+and **I-15** (no renderer: no figure check) remain **OPEN**. The coupled production solver remains
+**NOT READY**: no convergence of the staggered iteration is demonstrated, and no interface
+temperature history has been computed.

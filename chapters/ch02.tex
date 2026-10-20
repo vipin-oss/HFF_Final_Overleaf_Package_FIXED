@@ -119,8 +119,9 @@ bowing altogether, since a clamped strip at uniform $\kappa_{\mathrm{th}}$ has $
 (Section~\ref{sec:deriv:curvature}). An independent plane-strain Q8 computation, reported in
 Appendix~B (register D-26), gives $1.0000$ of the beam value $\kappa_{\mathrm{th}}L^2/8$ for point
 pins, $0.998$ for a full-edge vertical support with a free axial mean, and $-0.02$ to $-0.06$ for
-$d_1=d_2=0$ on the whole edge --- so the full-edge vertical support costs $0.2\%$, while the axial
-restraint of a clamp destroys the mechanism.
+$d_1=d_2=0$ on the whole edge. That comparison is a finite-mesh result on one $24$-element mesh,
+not a converged strip solution (register D-26); it shows that the full-edge vertical support costs
+$0.2\%$, while the axial restraint of a clamp destroys the mechanism.
 The surrounding casing is taken rigid and adiabatic, and its interior pressure equals the outlet
 datum of condition~B2, which fixes the load reference of Section~\ref{sec:deriv:pressure}.
 \item[\textbf{A10}] \emph{Uniform imposed flux as the baseline thermal load (regime N).} A uniform

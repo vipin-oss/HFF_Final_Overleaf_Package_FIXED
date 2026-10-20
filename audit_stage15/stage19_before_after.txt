@@ -1,0 +1,55 @@
+STAGE 19 — BEFORE / AFTER, identical case definitions
+=====================================================
+
+BEFORE: audited baseline 5741d36 (suite v4 = 144 assertions, manuscript as delivered)
+        the campaign script is the Stage 19 one, copied into a pristine 5741d36 tree
+        command: python3 audit_stage15/mutation_campaign_stage19.py --results /tmp/s19/before_block.txt
+
+  id    result    layer     intended assertion / first failing check
+  base  PASS                144 checks, exit 0
+  M3c   ESCAPED   not a valid detection - | pointwise pressure datum in another notation, in the same sentence as its own explanation
+  M6b   ESCAPED   not a valid detection - | adopting statement phrased 'we choose ... rather than ...' (verb outside any vocabulary)
+  M7    ESCAPED   not a valid detection - | double thermal datum in a Condition column whose Boundary cell omits Gamma_if
+  M8    ESCAPED   not a valid detection - | prose double datum written without the 'on <surface>' pattern
+  M10   ESCAPED   not a valid detection - | stale end-effect magnitude spelled 'pct'
+  G5    detected  substantive a pressure normalisation occurs only as an explicitly rejected counterfactual | mean over Om_f with adopting wording, in another chapter
+  T3    detected  substantive the theta-bar cell total is the recomputed theta-bar | theta-bar cell: components right, quoted total wrong
+  T4    detected  substantive the M_b numerator is the recomputed T_cr | T_cr changed with numerator and quotient made internally consistent
+  W2    detected  substantive the eq:wmax denominator reproduces the printed linear w_max (appendix A3) | plausible but wrong eq:wmax denominator, fingerprint REGENERATED
+  W3    detected  substantive eq:wmax states a parabola and a w_max with explicit constants | eq:wmax replaced by a form the constants parser cannot read (must fail, not skip)
+  
+  REQUIRED CLASSES 5 (M3c M6b M7 M8 M10): detected 0 of 5
+  ALL MUTANTS 10: detected 5, escaped 5, invalid 0, anchor not applied 0
+    of the detections: 5 substantive, 0 fingerprint-only
+  P1    REJECTED            | legitimate reworded rejection of the normalisation: the constraint is named and rejected in the same clause by 'would over-determine', with no adopting verb
+  P2    PASS                | legitimate sentence carrying an interface Dirichlet datum AND a heated-face flux, explicitly on Gamma_h^0: the double-datum test must not fire
+  P3    PASS                | legitimately added display equation: an addition is reported by the fingerprint layer, never failed, and the suite must still exit 0
+  
+  CONTROLS 3: 2 passed as intended
+  raw evidence written to /tmp/s19/before_block.txt
+
+AFTER: Stage 19 tree (suite v5 = 156 assertions, manuscript corrected)
+       command: python3 audit_stage15/mutation_campaign_stage19.py
+
+  id    result    layer     intended assertion / first failing check
+  base  PASS                156 checks, exit 0
+  M3c   detected  substantive a pressure normalisation occurs only as an explicitly rejected counterfactual | pointwise pressure datum in another notation, in the same sentence as its own explanation
+  M6b   detected  substantive a pressure normalisation occurs only as an explicitly rejected counterfactual | adopting statement phrased 'we choose ... rather than ...' (verb outside any vocabulary)
+  M7    detected  substantive no tab:bcs row gives any surface a solid Dirichlet AND a solid Neumann thermal datum | double thermal datum in a Condition column whose Boundary cell omits Gamma_if
+  M8    detected  substantive no prose datum gives the solid a temperature AND a non-heated-face heat flux in one sentence | prose double datum written without the 'on <surface>' pattern
+  M10   detected  substantive no stale end-effect percentage survives in the 22 scanned files | stale end-effect magnitude spelled 'pct'
+  G5    detected  substantive a pressure normalisation occurs only as an explicitly rejected counterfactual | mean over Om_f with adopting wording, in another chapter
+  T3    detected  substantive the theta-bar cell total is the recomputed theta-bar | theta-bar cell: components right, quoted total wrong
+  T4    detected  substantive the M_b numerator is the recomputed T_cr | T_cr changed with numerator and quotient made internally consistent
+  W2    detected  substantive the eq:wmax denominator reproduces the printed linear w_max (appendix A3) | plausible but wrong eq:wmax denominator, fingerprint REGENERATED
+  W3    detected  substantive eq:wmax states a parabola and a w_max with explicit constants | eq:wmax replaced by a form the constants parser cannot read (must fail, not skip)
+  
+  REQUIRED CLASSES 5 (M3c M6b M7 M8 M10): detected 5 of 5
+  ALL MUTANTS 10: detected 10, escaped 0, invalid 0, anchor not applied 0
+    of the detections: 10 substantive, 0 fingerprint-only
+  P1    PASS                | legitimate reworded rejection of the normalisation: the constraint is named and rejected in the same clause by 'would over-determine', with no adopting verb
+  P2    PASS                | legitimate sentence carrying an interface Dirichlet datum AND a heated-face flux, explicitly on Gamma_h^0: the double-datum test must not fire
+  P3    PASS                | legitimately added display equation: an addition is reported by the fingerprint layer, never failed, and the suite must still exit 0
+  
+  CONTROLS 3: 3 passed as intended
+  raw evidence written to audit_stage15/stage19_mutation_results.txt

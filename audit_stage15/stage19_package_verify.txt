@@ -1,0 +1,48 @@
+Stage 19 package verification
+=============================
+
+The authoritative numbers for the shipped archive - its SHA-256, size in bytes, member count and the
+SHA-256 of every member - are recorded in `audit_stage15/package_manifest.txt`, which sits BESIDE the
+archive and is not a member of it (a file cannot contain the hash of the archive that contains it).
+They are deliberately not repeated here: this file is itself a member, so any number written into it
+would describe a different build.
+
+What was verified on the final build, and how
+---------------------------------------------
+1. Determinism. `python3 audit_stage15/build_package.py` was run twice, from two independent clean
+   copies of the tree (`tar` of the working tree, excluding `.git` and `__pycache__`). The two
+   archives are byte-identical (compared with `cmp`), so the build is reproducible from the tree.
+
+2. Manifest vs archive. The archive was re-opened and, for every row of
+   `audit_stage15/package_manifest.txt`:
+     * the member exists in the archive;
+     * sha256(member bytes) equals the digest recorded for it;
+     * the member order equals the manifest order;
+     * the archive SHA-256 and byte size equal the header of the manifest;
+     * the member count equals the manifest's `members` line.
+
+3. Integrity. `zipfile.ZipFile(...).testzip()` returns None (no CRC error in any member).
+
+4. Determinism of metadata. Every member carries the fixed timestamp 2026-10-19 00:00:00 and is
+   deflated at level 9, so timestamps and compression contribute nothing to run-to-run variation.
+
+5. Intended file set. Every member is byte-identical to the file of the same name in the tree, and no
+   byte-code cache is shipped (`__pycache__` and `*.pyc` are excluded by the builder).
+
+6. Member-set change against the Stage 18 package (78 members): the Stage 19 build ADDS the Stage 19
+   artefacts in `audit_stage15/` (this report's outputs: the repair report, the Stage 19 campaign and
+   its raw results, the before/after record, the non-vacuity log, the fingerprint-stability log, the
+   regression log, the 44-case re-run and this file) and removes NOTHING. Verified by comparing the
+   member lists of the two archives; the removed-set is empty.
+
+7. The audited commit `5741d36` and the audit commit `39ef118` are unchanged: the Stage 19 commit
+   only adds and edits the files listed in `15_stage19_repair_report.md` section 14.
+
+How to re-verify
+----------------
+    git archive HEAD | tar -x -C /tmp/hff_check
+    cd /tmp/hff_check && python3 audit_stage15/build_package.py
+    sha256sum HFF_Final_Overleaf_Package.zip
+    head -4 audit_stage15/package_manifest.txt
+
+The two hashes must agree, and the file must be byte-identical to the shipped archive.

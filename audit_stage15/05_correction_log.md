@@ -365,3 +365,82 @@ current specification**. The current specification is D-32 below and §12 of `09
 - Honest limitation: 9 of the 34 are caught **only** by the fingerprint layer, which is a change
   detector — it would also fire on a legitimate edit. The 25 remaining are caught by a numeric or
   identity check that recomputes the quantity from the inputs.
+
+## Stage 19 — the five surviving mutation classes, the reference-temperature clause, the ceiling display, and the Q8 scope
+
+Supersedes nothing above; this section records four changes made after the independent Stage 18 audit
+(`independent_audit_stage18/HFF_Stage18_Final_Acceptance_Audit.md`, commit `39ef118`). Implementation
+report: `15_stage19_repair_report.md`.
+
+### S19-A. Five blind spots in the verification suite (reproduced, then closed)
+
+The five classes below were **first reproduced on `5741d36`**: the new campaign reported
+`REQUIRED CLASSES 5 (M3c M6b M7 M8 M10): detected 0 of 5`, each surviving with the unmodified suite
+(`stage19_before_after.txt`, first block). They are now permanent cases in
+`mutation_campaign_stage19.py`, and all five fail for their intended assertion.
+
+| Class | v4 behaviour | v5 rule | Evidence |
+|---|---|---|---|
+| pointwise gauge `p(\mathbf 0)=0` | not recognised | pointwise notations added to `P_NORM`; verdict clause-scoped | M3c → detected |
+| "we choose … rather than …" | "rather than" excused the adoption | contrastive connectives are clause boundaries; negation may cross a noun | M6b → detected; P1 control now passes |
+| double datum in a `Condition` column whose Boundary cell omits `Γ_if` | row never inspected | every `tab:bcs` row tested; non-zero solid flux only on the heated face | M7 → detected |
+| prose double datum without "on surface" | required the phrase | datum-shape rule (solid Dirichlet + non-heated solid flux in one sentence) | M8 → detected |
+| stale magnitude written `pct` | not in the pattern | `pct`, `percentage points`, `per-cent` added | M10 → detected |
+
+No tolerance was loosened and no check was removed. The Stage 18 check names are retained, which is
+why the 44-case campaign still declares and finds the same intended assertions.
+
+**A fixed false positive, not only a closed hole.** Control P1 — "No normalisation is imposed:
+constraining `∫_{Γ_out} p ds=0` would over-determine the system" — was **rejected by suite v4**,
+because the negation reached "is imposed" across the noun "normalisation". The clause-scoped test
+accepts it, so the hardening is not a one-way ratchet.
+
+**Deliberate fingerprint regeneration.** Editing the `D-26` register row (scope) and adding `D-33`
+(reference-temperature convention) and `D-34` (ceiling display) changes the register fingerprints, so
+`equation_fingerprints.json` was regenerated once: 78 entries, `reg:D-26` changed, `reg:D-33` and
+`reg:D-34` added, **nothing removed, no display-equation fingerprint changed**. This is a content
+change recorded here and in the ledger, not a suppression of a failing check: the suite's substantive
+layer still fails on any corrupted expression, and F1 (`eq:wmax` corrupted **with**
+`--update-fingerprints`) is still detected by four substantive assertions.
+
+### S19-B. `ch06` — `T_in` is a datum, not a property input (register D-33)
+
+The sentence "Only temperature differences appear in the equations, so `T_ref` and `T_in` enter the
+solution exclusively through property values" is true for `T_ref` and false for `T_in`. `T_in` is the
+inflow Dirichlet datum of B1 and, through `eq:iftemp`, the anchor of the interface temperature level;
+it enters as `T_in − T_ref`. The quoted `θ̄ = 32.3 K` is measured from the inlet bulk temperature
+(`ΔT_t/2 + q''/h + ΔT_b/2`, with `ΔT_b` the rise from the inlet plane), so the baseline uses
+`T_ref = T_in`. Both facts are now stated, with the offset a solver must carry if the two differ.
+**No physical model changes and no printed value changes.**
+
+### S19-C. `ch07` — the `M_b = 2` ceiling is 58.7 K, not 58.8 K (register D-34)
+
+Recomputed from the parsed inputs (`d = 3 mm`, `α = 5×10⁻⁵ K⁻¹`, `ν = 0.4`, `L = 9 mm`):
+`T̄_cr = 117.495290 K`, `T̄_cr/2 = 58.747645 K`, one-decimal rounding **58.7 K**. The printed 58.8 K
+came from rounding the already-rounded `117.5/2 = 58.75`. The dependent flux ceiling
+`q'' ≈ 9.1×10³ W/m²` is unchanged, as are `M_b = 3.64`, the thickness catalogue and every other
+printed number. The regression assertion now compares the displayed value with
+`round(T_cr/2, 1)` at `1e-12`, i.e. with **no tolerance**, so reverting to 58.8 fails.
+
+### S19-D. Q8 evidence scope (ch04, ch11, ch02 A9, register D-26)
+
+The six-mesh study (re-run in Stage 19, `15_stage19_repair_report.md` §5) gives, as a ratio to
+`κ_th L²/8`:
+
+| mesh | elements | POINT mid/top | PIN mid/top | CLAMP mid/top |
+|---|---|---|---|---|
+| 6×2 | 12 | 1.0025 / 1.0000 | 1.0024 / 0.9999 | −0.0761 / −0.0803 |
+| 12×2 | 24 | 1.0025 / 1.0000 | 1.0006 / 0.9981 | −0.0408 / −0.0450 |
+| 24×2 | 48 | 1.0025 / 1.0000 | 1.0004 / 0.9979 | −0.0245 / −0.0288 |
+| 6×4 | 24 | 1.0056 / 1.0025 | 1.0054 / 1.0023 | −0.0564 / −0.0617 |
+| 12×4 | 48 | 1.0056 / 1.0025 | 1.0037 / 1.0006 | −0.0284 / −0.0336 |
+| 24×4 | 96 | 1.0056 / 1.0025 | 1.0036 / 1.0005 | −0.0159 / −0.0211 |
+
+The point-pin ratio is independent of the axial refinement and depends only on the through-thickness
+discretisation; the pin ratio approaches 1 as the axial mesh is refined; the clamp magnitude falls
+monotonically under every refinement. The measured values (`1.0000`, `0.998`, `−0.02` to `−0.06`)
+are **preserved**, and are now described as values on one 24-element mesh: finite-mesh evidence that
+the clamped alternative is not the measured configuration, **not** a converged strip solution and not
+a converged clamp penalty. The `0.2 %` difference between the two pin idealizations is reproduced at
+two and four elements through the thickness, which is why the *difference* is quoted while the
+absolute ratios are not.

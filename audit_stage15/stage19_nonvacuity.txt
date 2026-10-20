@@ -1,0 +1,10 @@
+clean checkout: /home/user/HFF_Final_Overleaf_Package_FIXED
+probe                                      exit  PASS?  first failures
+required file deleted                      1     no     ['required source files missing: chapters/ch07.tex', 'the suite cannot run; NO check below this line was executed']
+table row for theta-bar blanked            1     no     ['the theta-bar cell quotes its three components and the total']
+eq:tcr coefficient made unparseable        1     no     ['no display equation has changed', 'eq:tcr carries an explicit analytic denominator coefficient']
+eq:wmax denominator made unparseable       1     no     ['no display equation has changed', 'eq:wmax states a parabola and a w_max with explicit constants']
+imposed pressure normalisation, no explanation 1     no     ['a pressure normalisation occurs only as an explicitly rejected counterfactual']
+stress prose quotes an unrelated value     1     no     ['every stress quoted in ch07 prose is one of the recomputed values']
+
+vacuous probes: 0

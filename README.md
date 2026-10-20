@@ -31,13 +31,13 @@ HFF_Final_Overleaf_Package.zip
 ```
 
 **Build note (read before submission).** The bundled `main.pdf` is the last *successful*
-compilation and predates the Stage 16 source corrections (D-26 to D-31: pin-vs-clamp boundary
+compilation and predates the Stage 16-19 source corrections (D-26 to D-34: pin-vs-clamp boundary
 condition, the `1/d` factor in the geometric-stiffness term, removal of the pressure gauge,
-the staggered thermal data flow, the SUPG stabilised weak form, and the corrected stress/strain
-values). **The PDF therefore does not yet reflect the current sources.** Recompiling requires a
-LaTeX toolchain, which was not available in the environment where the Stage 16 corrections were
-made, so no rebuild is claimed. Run the four passes above (or upload to Overleaf) before
-circulating the PDF or citing its page count.
+the staggered thermal data flow, the SUPG stabilised weak form, the corrected stress/strain
+values, the `T_ref = T_in` convention and the `M_b = 2` ceiling display). **The PDF therefore does
+not yet reflect the current sources.** Recompiling requires a LaTeX toolchain, which was not
+available in the environment where these corrections were made, so no rebuild is claimed. Run the
+four passes above (or upload to Overleaf) before circulating the PDF or citing its page count.
 
 ### Package integrity
 

@@ -1,0 +1,227 @@
+==============================================================================
+SECTION 1  Structural integrity
+==============================================================================
+PASS  braces balanced in all 16 files
+PASS  environments balanced
+PASS  labels unique  | 89 labels, dups=none
+PASS  no dangling references
+PASS  all cited keys resolve
+PASS  no uncited bib entries
+PASS  no undefined shorthand macros
+PASS  register rows present and counted  | 34 rows
+
+==============================================================================
+SECTION 2  Claims: sign, boundary conditions, units, model
+==============================================================================
+PASS  deflection convention w = +d_2
+PASS  pressure term is D_s w'''' = +p
+PASS  pressure term is not -p
+PASS  geometric term present, negative, with N/d
+PASS  old no-1/d geometric form removed
+PASS  geometric term sign not flipped
+PASS  no halved 1/(2d) coefficient anywhere
+PASS  B7 found
+PASS  B7 is not a full-edge clamp  | B7 & strip ends $X=0,L$ & $d_2=0$, $\langle d_1\rangle=0$ (e
+PASS  B7 imposes d_2=0  | B7 & strip ends $X=0,L$ & $d_2=0$, $\langle d_1\rangle=0$ (e
+PASS  B7 blocks mean axial displacement  | B7 & strip ends $X=0,L$ & $d_2=0$, $\langle d_1\rangle=0$ (e
+PASS  A9 found
+PASS  A9 states the pin, not a clamp
+PASS  A9 no longer says the ends have zero displacement
+PASS  A9 is not a clamp
+PASS  A9 carries the measured 0.998
+PASS  V_s defined with phi_2 = 0 on end edges
+PASS  V_s is not a clamp
+PASS  V_s integral condition is homogeneous
+PASS  solid receives the interface temperature (Dirichlet)
+PASS  fluid receives the interface flux (Neumann)
+PASS  the false 'temperature level is fixed' claim is gone
+PASS  the pure-Neumann argument is stated
+PASS  the level is traced into theta-bar and N_theta
+PASS  ch05 and ch08 agree that a solid flux datum is inadmissible
+PASS  step 1 gives the solid T_s = T_Gamma^{(k)} on the interface  | Dirichlet datum in the iteration step
+PASS  the flux-datum alternative is marked as the rejected one  | the paragraph must not read as a description of the adopted solid problem
+PASS  the kernel/compatibility argument is spelled out
+PASS  the loop closes on the extracted interface temperature
+PASS  a pressure normalisation occurs only as an explicitly rejected counterfactual
+PASS  the rejected pressure normalisation is still identified explicitly  | normalisation occurrences=2
+INFO  pressure normalisation in chapters/audit_appendix.tex (register row) (rejected): edom of $Q=L^2(\Om_f)$ by constraining $\int_{\Ga_{\mathrm{out}}}p\,\mathrm ds=0$. There is no such 
+INFO  pressure normalisation in chapters/ch08.tex (rejected): \int_{\Ga_{\mathrm{out}}}p\, \mathrm ds=0$ as an extra equat
+PASS  the outflow pressure datum is a boundary value, not an interior point constraint  | B2: the level at the outflow is an output, not an imposed datum
+PASS  register pointer corrected to D-30
+PASS  SUPG stabilised weak form written
+PASS  SUPG P2 length scale addressed
+PASS  no reversed-bow phrasing in body text
+PASS  ch04 has no stale few-per-cent stiffening claim
+PASS  ch11 has no stale few-per-cent stiffening claim
+PASS  ch04 states the measured 0.2 % with its Q8 evidence
+PASS  ch11 states the measured 0.2 % with its Q8 evidence
+PASS  no 'one-time numerical check' left in the pin context
+PASS  A8 labels the mixed ratio
+PASS  A8 gives the like-for-like value
+PASS  dictionary labels Gamma_p
+PASS  ch07 table labels Gamma_p mixed
+PASS  ch07 prose gives both ratios
+PASS  A-5 is defined on the like-for-like ratio
+PASS  no chapter claims a visual verification of a figure (I-15 remains open)
+PASS  the ledger still records I-15 as OPEN  | I-15 row
+PASS  ch06 states that T_in is the inflow datum, not a property input
+PASS  ch06 states the T_ref = T_in convention behind the quoted theta-bar
+PASS  ch04 scopes the Q8 values to one finite mesh, not a converged strip solution
+PASS  ch11 scopes the Q8 comparison to a finite mesh, not a converged strip solution
+PASS  the D-26 register row states the Q8 finite-mesh scope
+PASS  the ledger records the Stage 19 repairs
+
+==============================================================================
+SECTION 2b Fingerprints of every display equation and register row
+==============================================================================
+PASS  no display equation has changed
+PASS  no register row has changed
+PASS  no equation or register row removed
+INFO  78 fingerprints checked (44 equations, 34 register rows)
+
+==============================================================================
+SECTION 3  Inputs parsed from the manuscript
+==============================================================================
+  geometry: L=0.03 d=0.003 H0=0.0005 U=0.05 q=5000 Lo=0.02 Nu=5.385
+PASS  L/d = 10 at the baseline  | 10.0
+PASS  nu in (0,0.5)  | 0.4
+PASS  all parsed inputs positive and finite
+  theta_bar=32.26521 K  p0=120.00 pL=48.00 pbar=84.00 Pa  w_max=2.188579e-04 m
+
+==============================================================================
+SECTION 4  Printed results vs recomputation
+==============================================================================
+PASS  printed theta-bar equals the recomputed value to its 3-s.f. rounding  | printed=32.3 computed=32.2652
+PASS  appendix N_theta matches  | printed=-29100 computed=-29038.7 rel=2.11e-03
+PASS  appendix N_cr matches  | printed=105700 computed=105746 rel=4.33e-04
+PASS  appendix M_b matches  | printed=3.64 computed=3.64169 rel=4.65e-04
+PASS  ch07 M_b matches  | printed=3.64 computed=3.64169 rel=4.65e-04
+PASS  appendix mu*L matches  | printed=1.65 computed=1.64629 rel=2.25e-03
+PASS  ch04 printed w_max matches recomputation  | printed=0.000219 computed=0.000218858 rel=6.49e-04
+PASS  ch04 printed w_max/H0 matches  | printed=0.438 computed=0.437716 rel=6.49e-04
+PASS  ch04 printed linear w/H0 matches  | printed=0.315 computed=0.315 rel=1.76e-16
+PASS  ch04 amplification matches  | printed=1.39 computed=1.38957 rel=3.06e-04
+PASS  ch04 fibre strain matches  | printed=0.00099 computed=0.00098861 rel=1.40e-03
+PASS  ch04 arc term matches quadrature  | printed=0.000139 computed=0.000138785 rel=1.54e-03
+PASS  ch04 relaxation matches arcterm/e0  | printed=6.1 computed=6.14485 rel=7.35e-03
+PASS  circular-arc estimate is an upper bound, 10-20% above exact  | ratio 1.1456
+PASS  appendix circular-arc estimate matches  | printed=0.00016 computed=0.000158992 rel=6.30e-03
+PASS  appendix w'_max matches  | printed=0.027 computed=0.0275145 rel=1.91e-02
+PASS  appendix M_mid matches  | printed=6.4 computed=6.35535 rel=6.98e-03
+PASS  appendix sigma_bend frozen matches  | printed=4.2 computed=4.2369 rel=8.79e-03
+PASS  ch07 table sigma_bend matches  | printed=4.2e+06 computed=4.2369e+06 rel=8.79e-03
+PASS  ch07 table w_max matches  | printed=0.000219 computed=0.000218858 rel=6.49e-04
+PASS  ch07 conservative stress 13.9 matches  | printed=13.9 computed=13.9165 rel=1.18e-03
+PASS  ch09 V-C3 amplification matches  | printed=1.39 computed=1.38957 rel=3.06e-04
+PASS  ch04 Gamma_p = w_max/w_p matches  | printed=2400 computed=2382.13 rel=7.45e-03
+PASS  ch04 linear-limit closed form matches  | printed=1700 computed=1714.29 rel=8.40e-03
+PASS  ch04 like-for-like w_p matches beam-column pressure solution  | printed=1.27e-07 computed=1.26778e-07 rel=1.75e-03
+PASS  ch04 like-for-like Gamma_p matches  | printed=1730 computed=1726.3 rel=2.14e-03
+PASS  appendix A8 w_p matches  | printed=9.2e-08 computed=9.1875e-08 rel=1.36e-03
+PASS  appendix A8 Gamma_p matches  | printed=2400 computed=2382.13 rel=7.45e-03
+PASS  appendix A8 like-for-like Gamma_p matches  | printed=1730 computed=1726.3 rel=2.14e-03
+PASS  ch07 table w_p matches  | printed=9.2e-08 computed=9.1875e-08 rel=1.36e-03
+PASS  ch07 table Gamma_p matches  | printed=2400 computed=2382.13 rel=7.45e-03
+PASS  appendix self-consistent w_max matches  | printed=0.000214 computed=0.000213988 rel=5.80e-05
+PASS  appendix self-consistent sigma_bend matches  | printed=3.9 computed=3.89894 rel=2.71e-04
+PASS  frozen stress exceeds self-consistent (conservative)  | 13.9165 > 13.0091
+PASS  frozen stress below 0.2 sigma_y cap  | 13.916461667720068
+PASS  E/(1-nu^2)*max|eps_mech| reproduces frozen sigma_max  | 13.916462 vs 13.916462
+PASS  ch04 printed mechanical surface strain matches  | printed=0.00325 computed=0.00324717 rel=8.69e-04
+PASS  appendix envelope matches  | printed=0.00535 computed=0.00534717 rel=5.28e-04
+PASS  appendix e0 matches  | printed=0.00226 computed=0.00225856 rel=6.35e-04
+PASS  ch08 writes the geometric stress with 1/d (not 1/(2d))  | prose factor must match eq:weaks
+PASS  ch04 critical load is the pinned eigenvalue pi^2 D_s/L^2  | the assignment must stay pinned; 4pi^2 is only the rejected clamped alternative
+PASS  ch07 table quotes the pinned critical load  | table row
+PASS  every stress quoted in ch07 prose is one of the recomputed values  | seen=[13.9] allowed=[13.0, 13.9, 18.0, 90.0]
+PASS  the theta-bar cell quotes its three components and the total
+PASS  each component printed in the theta-bar cell is its recomputed value at 2 dp  | printed=(30.00, 1.55, 0.72) recomputed=(30.0000, 1.5475, 0.7177) maxerr=0.0025
+PASS  the theta-bar cell total is the recomputed theta-bar  | quoted=32.30 sum=32.27 recomputed=32.2652
+PASS  eq:tcr carries an explicit analytic denominator coefficient
+PASS  the eq:tcr denominator coefficient is parseable (so T_cr can be checked at all)  | a form the parser cannot read must fail, not skip the T_cr checks
+INFO  eq:tcr coefficient 12 -> T_cr=117.4953 K
+PASS  the denominator printed in A4 matches 12 alpha (1+nu) L^2  | printed=7.56e-07 computed=7.56e-07 rel=0.00e+00
+PASS  ch07 table T_cr is the recomputed threshold  | printed=117 computed=117.495 rel=4.23e-03
+PASS  the T_cr versus thickness catalogue is present
+PASS  the T_cr versus thickness catalogue matches eq:tcr  | printed=[13.0, 29.0, 52.0, 82.0, 117.0] recomputed=['13.06', '29.37', '52.22', '81.59', '117.50']
+PASS  the M_b row carries numerator, denominator and quotient
+PASS  the M_b numerator is the recomputed T_cr  | printed 117.50 recomputed 117.4953
+PASS  the M_b denominator is the recomputed theta-bar  | printed 32.30 recomputed 32.2652
+PASS  the M_b quotient is T_cr/theta-bar  | printed 3.64 recomputed 3.6415
+PASS  bound A-2 (M_b >= 2) is met by the recomputed margin  | computed M_b=3.6415, printed 3.64
+PASS  the M_b = 2 ceiling is the correctly rounded T_cr/2 (58.7 K)  | printed=58.7 exact=58.747645 one-dp=58.7
+PASS  the M_b = 2 ceiling reproduces the quoted 9.1e3 W/m2  | printed=9100 computed=9103.87 rel=4.25e-04
+PASS  eq:wmax states a parabola and a w_max with explicit constants
+PASS  the eq:wmax constants are parseable (so the value can be checked at all)  | a form the parser cannot read must fail, not skip the numerator/denominator checks
+PASS  the parabola's mid-span value equals the w_max of the same equation  | 1/(4*2) vs 1/8
+PASS  the eq:wmax denominator reproduces the printed linear w_max (appendix A3)  | printed=0.0001575 computed=0.0001575 rel=1.72e-16
+PASS  the eq:wmax denominator reproduces the printed linear w_max (ch07 table)  | printed=0.000158 computed=0.0001575 rel=3.16e-03
+PASS  eq:wmax is the mu -> 0 limit of eq:beamcolsol  | ratio-1=1.12e-08
+PASS  the eq:wmax parabola satisfies w'' = -kappa_th with w(0) = w(L) = 0  | residual=1.53e-07
+
+==============================================================================
+SECTION 5  Exact identities
+==============================================================================
+PASS  kappa_geo = kappa_th*sec(muL/2)
+PASS  (kgeo+kth)/(kgeo-kth) = cot^2(muL/4)  | 5.248391048
+PASS  eq:beamcolsol satisfies the printed ODE  | 1.46e-11
+PASS  eq:beamcolsol satisfies all four BCs
+
+==============================================================================
+SECTION 5b  Interface data set, Gamma_p nomenclature, stale-claim scan
+==============================================================================
+PASS  tab:bcs is parsed row by row  | ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B9']
+PASS  tab:bcs has a boundary row for Gamma_if  | ['B5']
+PASS  no Gamma_if row gives the solid a Dirichlet AND a Neumann temperature datum
+PASS  no tab:bcs row gives any surface a solid Dirichlet AND a solid Neumann thermal datum
+PASS  no tab:bcs row puts a non-zero solid flux datum on a surface other than the heated face
+PASS  the solid interface temperature is imposed as a Dirichlet datum  | ['chapters/ch08.tex: The steady coupled state is obtained by the following fixed-point iteration on the geometr']
+PASS  no solid flux datum is imposed on Gamma_if anywhere in the formulation
+PASS  no prose datum gives the solid a temperature AND a non-heated-face heat flux in one sentence
+PASS  no prose sentence puts a non-zero solid flux datum on a surface other than the heated face
+PASS  the solid problem keeps its flux datum on the outer face, not the interface  | B6/step 1
+PASS  the Gamma_p nomenclature entry exists
+PASS  the Gamma_p nomenclature entry defines the labelled ratio  | deflection ratio $w_{\max}/w_p$, \eqref{eq:gammap}; mixed and like-for-like presentations
+PASS  the Gamma_p nomenclature entry distinguishes the mixed and like-for-like presentations  | deflection ratio $w_{\max}/w_p$, \eqref{eq:gammap}; mixed and like-for-like presentations
+PASS  the Gamma_p nomenclature entry is not a bare thermal-to-pressure description  | deflection ratio $w_{\max}/w_p$, \eqref{eq:gammap}; mixed and like-for-like presentations
+PASS  no stale end-effect percentage survives in the 22 scanned files
+INFO  files scanned for stale end-effect claims, with end-effect sentences counted:
+INFO    main.tex(0)
+INFO    chapters/appendix.tex(2)
+INFO    chapters/audit_appendix.tex(14)
+INFO    chapters/ch01.tex(0)
+INFO    chapters/ch02.tex(8)
+INFO    chapters/ch03.tex(0)
+INFO    chapters/ch04.tex(15)
+INFO    chapters/ch05.tex(2)
+INFO    chapters/ch06.tex(0)
+INFO    chapters/ch07.tex(1)
+INFO    chapters/ch08.tex(2)
+INFO    chapters/ch09.tex(1)
+INFO    chapters/ch10.tex(0)
+INFO    chapters/ch11.tex(4)
+INFO    figures/fig_geometry.tex(2)
+INFO    figures/fig_signs.tex(0)
+INFO    README.md(2)
+INFO    HFF_revision_summary.md(0)
+INFO    HFF_source_pdf_consistency_report.md(1)
+INFO    HFF_final_packaging_report.md(1)
+INFO    HFF_final_pre_coding_checklist.md(0)
+INFO    HFF_final_reference_status_notes.txt(0)
+INFO  correct end-effect magnitude present in ch04 and ch11: True
+
+==============================================================================
+SECTION 6  Package provenance
+==============================================================================
+PASS  tracked main.pdf exists  | 469859 bytes
+PASS  every package filename in README.md exists
+
+==============================================================================
+SECTION 7  Build freshness (REPORTED, NOT ASSERTED)
+==============================================================================
+WARNING  main.pdf predates 15 source file(s); a LaTeX rebuild is REQUIRED.
+WARNING  No TeX engine is available in this environment, so no rebuild is executed or
+WARNING  claimed. The tracked main.pdf does NOT contain the Stage 18 corrections.
+
+==============================================================================
+ALL 156 CHECKS PASSED

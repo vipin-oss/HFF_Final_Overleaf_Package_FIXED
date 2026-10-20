@@ -1,0 +1,17 @@
+Stage 19 fingerprint stability check
+date: Tue Oct 20 08:41:44 UTC 2026
+
+committed file : audit_stage15/equation_fingerprints.json
+b5e9be8e7b717f641dee472cf26c1859b205f44a909593e33f54978c4ba5a1f4  audit_stage15/equation_fingerprints.json
+
+regeneration on a pristine copy of the tree:
+  $ python3 audit_stage15/regression.py --update-fingerprints
+WROTE  audit_stage15/equation_fingerprints.json (78 entries)
+ALL 153 CHECKS PASSED
+  byte comparison against the committed file:
+  BYTE-IDENTICAL
+b5e9be8e7b717f641dee472cf26c1859b205f44a909593e33f54978c4ba5a1f4  /tmp/s19/fpstable/audit_stage15/equation_fingerprints.json
+
+78 entries = 44 display equations + 34 register rows.
+Regenerated once in Stage 19 for content reasons: reg:D-26 changed, reg:D-33 and reg:D-34 added,
+nothing removed, no display-equation fingerprint changed (see the repair report section 7).

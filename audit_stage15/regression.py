@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""HFF regression suite, version 4 (Stage 18).
+"""HFF regression suite, version 5 (Stage 19).
 
 Version 3 answers the Stage 16 audit finding that the suite was blind to equation-level
 faults.  It has three independent layers:
@@ -16,6 +16,16 @@ faults.  It has three independent layers:
      regenerating its fingerprint cannot turn a wrong expression into a passing suite;
   C. numeric checks that parse BOTH the printed inputs and the printed results out of the
      manuscript and recompute.
+
+Stage 19 makes three existing semantic tests structural, because the Stage 18 audit showed each
+could be satisfied by the same statement in another notation: the pressure gauge is judged by the
+CLAUSE carrying the constraint (contrastive connectives are clause boundaries) and recognises a
+datum at a single point, p(\mathbf 0)=0; tab:bcs is tested row by row for any surface, so the
+Boundary cell no longer decides whether a row is looked at; and the prose datum test is a shape test
+(a solid Dirichlet datum together with a non-zero solid flux datum that is not placed on the heated
+face) rather than a search for "on <surface>".  Stale end-effect magnitudes written "pct" or
+"percentage points" are included in the scan.  An expression the parser cannot read now fails the
+run instead of skipping the numeric checks that depend on it.
 
 Run from the repository root:  python3 audit_stage15/regression.py
 """
@@ -86,7 +96,7 @@ defined = set(re.findall(r'\\(?:newcommand|renewcommand|DeclareMathOperator|def)
 undefined = [m for m in ('ie','eg','cf','etal','wrt') if (BS+m) in ALL and m not in defined]
 check("no undefined shorthand macros", not undefined, undefined)
 REG_ROWS = [l for l in SRC['chapters/audit_appendix.tex'].split('\n') if re.match(r'^D-\d+ &', l)]
-check("register rows present and counted", len(REG_ROWS) == 32, "%d rows" % len(REG_ROWS))
+check("register rows present and counted", len(REG_ROWS) == 34, "%d rows" % len(REG_ROWS))
 
 # ----------------------------------------------------------------------------------
 print(); print("=" * 78); print("SECTION 2  Claims: sign, boundary conditions, units, model"); print("=" * 78)
@@ -141,29 +151,51 @@ check("the kernel/compatibility argument is spelled out",
 check("the loop closes on the extracted interface temperature",
       "which closes the thermal loop" in C8)
 
-# --- pressure gauge (Stage 18, G1/G2): the *mathematical condition* is tested, not a keyword ---
-# A pressure normalisation may appear ONLY as an explicitly rejected counterfactual.  The test is
-# applied to the sentence that contains the integral or mean condition itself, so a constraint
-# cannot be smuggled in beside its own explanation, in another notation, or in another chapter.
-# There is no character-window exemption: the sentence must carry rejecting language AND must not
-# carry adopting language.
+# --- pressure gauge (Stage 18 G1/G2, hardened in Stage 19) -----------------------------------
+# A pressure normalisation may appear ONLY as an explicitly rejected counterfactual.  Two things
+# decide the verdict, and neither is a character window:
+#   (a) NOTATION: the constraint is recognised as an integral, a mean, a zero-mean claim, or a datum
+#       at a single point (p(\mathbf 0)=0, p|_{x_0}=0).  A pointwise datum is the same gauge choice
+#       in another notation, and it is what suite v4 missed;
+#   (b) CLAUSE: the rejecting language must be in the clause that carries the constraint, and that
+#       clause must not carry adopting language.  Contrastive connectives are clause boundaries, so
+#       "we choose X for the level rather than rely on the outflow condition" is judged on
+#       "we choose X for the level" and fails.  A sentence-level test let "rather than" excuse the
+#       adoption elsewhere in the sentence, which is what suite v4 missed.
 P_NORM = [
     re.compile(r'\\int[^$]{0,140}?(?<![A-Za-z\\\\])p(?![A-Za-z])[^$]{0,80}?=\s*0'),
     re.compile(r'\\langle\s*p\s*\\rangle[^$]{0,40}?=\s*0'),
     re.compile(r'\\overline\{\s*p\s*\}[^$]{0,40}?=\s*0'),
     re.compile(r'\\bar\{?\s*p\s*\}?[^$]{0,40}?=\s*0'),
-    re.compile(r'(zero[- ]mean|mean[- ]zero)[^.$]{0,40}?(?:pressure|\\bp\\b)', re.I),
+    re.compile(r'(zero[- ]mean|mean[- ]zero)[^.$]{0,40}?(?:pressure|\bp\b)', re.I),
+    # a datum at one point is a normalisation too (suite v4 blind spot M3c)
+    re.compile(r'(?<![A-Za-z])p\s*\(\s*(?:\\mathbf\s*\{?\s*0\s*\}?|\\boldsymbol\s*\{?\s*0\s*\}?|'
+               r'0|x_0|\\mathbf\{x\}_0)\s*\)\s*=\s*0'),
+    re.compile(r'(?<![A-Za-z])p\s*(?:\\big|\\Big|\\left)?\s*\\?\|_\{[^{}]{1,24}\}\s*=\s*0'),
 ]
 REJECT = re.compile(r'(over-determin|overdetermin|would be inadmissible|would inject|spurious|'
-                    r'nothing is imposed|is not imposed|are not imposed|must not be\b|no gauge|'
-                    r'no such freedom|rather than|instead of|unnecessary|redundant|would be wrong|'
-                    r'not required)', re.I)
-ADOPT = re.compile(r'(we (?:impose|fix|set|enforce|adopt|normalise|normalize|require)|'
-                   r'(?:is|are) (?:imposed|enforced|fixed|required|normalised|normalized)|'
-                   r'imposes?\b|enforces?\b|adding the|add the|we take|is set to zero|'
-                   r'is normalised|is normalized|we normalise|we normalize)', re.I)
-NEG_ADOPT = re.compile(r'(nothing|not|never|no)\s+(?:is|are|was|were)?\s*'
-                       r'(?:imposed|enforced|required|fixed|added)', re.I)
+                    r'nothing is imposed|is not imposed|are not imposed|not imposed|must not be\b|'
+                    r'no gauge|no such freedom|rather than|instead of|unnecessary|redundant|'
+                    r'would be wrong|not required|no freedom|no normalis|no normaliz)', re.I)
+ADOPT = re.compile(r'(we (?:impose|fix|set|enforce|adopt|normalise|normalize|require|pin|anchor|'
+                   r'choose|use|take|add|append|supplement|close)|'
+                   r'(?:is|are|was|were) (?:imposed|enforced|fixed|required|normalised|normalized|'
+                   r'pinned|anchored|chosen|added)|'
+                   r'imposes?\b|enforces?\b|adding the|adding a|add the|we take|is set to zero|'
+                   r'is normalised|is normalized|we normalise|we normalize|we choose|'
+                   r'pinn(?:ed|ing)\b|anchors? the|normalis(?:ed|ing)\s+(?:to|by)|'
+                   r'normaliz(?:ed|ing)\s+(?:to|by)|closes? the system)', re.I)
+# "nothing is imposed", "no normalisation is needed": the negation may reach the verb across a noun.
+NEG_ADOPT = re.compile(r'(nothing|not|never|no)\b[^.;]{0,40}?\b(?:is|are|was|were|be)?\s*'
+                       r'(?:imposed|enforced|required|fixed|added|normalised|normalized|needed)',
+                       re.I)
+# Clause boundaries: punctuation and the contrastive connectives that introduce an ALTERNATIVE.
+# Splitting at "rather than" is the point: the rejected alternative is not the clause that carries
+# the constraint, so its rejection cannot launder the adoption clause.
+CLAUSE_SPLIT = re.compile(r'(?<=[;:])\s+|\s*(?:---|--)\s*|'
+                          r'\s*,?\s*\b(?:rather than|instead of|although|though|whereas|but|'
+                          r'while)\b\s*', re.I)
+
 
 def _flat_sentences(txt):
     flat = re.sub(r'\s+', ' ', re.sub(r'(?<!\\)%.*', '', txt))
@@ -173,11 +205,31 @@ def _flat_sentences(txt):
     spans.append((start, len(flat)))
     return flat, spans
 
+
 def _sentence_at(spans, flat, i):
     for a, b in spans:
         if a <= i < b:
-            return flat[a:b]
-    return flat[max(0, i-160):i+160]
+            return flat[a:b], a
+    return flat[max(0, i-160):i+160], max(0, i-160)
+
+
+def _clauses(sent):
+    """(start, end) spans of the clauses of one sentence."""
+    spans, start = [], 0
+    for m in CLAUSE_SPLIT.finditer(sent):
+        if m.start() > start:
+            spans.append((start, m.start()))
+        start = m.end()
+    spans.append((start, len(sent)))
+    return spans
+
+
+def _clause_at(sent, i):
+    for a, b in _clauses(sent):
+        if a <= i < b:
+            return sent[a:b]
+    return sent
+
 
 # The formulation must not impose a normalisation; the historical register (audit_appendix)
 # *describes* the removed constraint, so there the whole register row must call it an error.
@@ -196,20 +248,25 @@ for f in FILES:
     flat, spans = _flat_sentences(SRC[f])
     for pat in P_NORM:
         for m in pat.finditer(flat):
-            sent = _sentence_at(spans, flat, m.start())
-            adopt = ADOPT.search(NEG_ADOPT.sub(' ', sent))
-            ok = bool(REJECT.search(sent)) and not adopt
+            sent, s0 = _sentence_at(spans, flat, m.start())
+            clause = _clause_at(sent, m.start() - s0)
+            adopt = ADOPT.search(NEG_ADOPT.sub(' ', clause))
+            ok = bool(REJECT.search(clause)) and not adopt
             gauge_seen.append((f, flat[m.start():m.start()+60], ok))
             if not ok:
-                gauge_bad.append("%s: %s" % (f, sent[:120]))
+                gauge_bad.append("%s: %s" % (f, clause[:120]))
 check("a pressure normalisation occurs only as an explicitly rejected counterfactual",
       not gauge_bad, gauge_bad[:2])
 check("the rejected pressure normalisation is still identified explicitly", bool(gauge_seen),
       "normalisation occurrences=%d" % len(gauge_seen))
 for _f, _s, _ok in gauge_seen:
     print("INFO  pressure normalisation in %s (%s): %s" % (_f, "rejected" if _ok else "ADOPTED", _s))
+# Positive control: the legitimate datum is a boundary value on the outflow section, so the test
+# above checks the absence of a normalisation, not the absence of any pressure datum.
+check("the outflow pressure datum is a boundary value, not an interior point constraint",
+      bool(re.search(r'p\\to\s*0', C5)) and ('traction-free' in C5),
+      "B2: the level at the outflow is an output, not an imposed datum")
 check("register pointer corrected to D-30", 'corrected in D-30' in C8)
-
 check("SUPG stabilised weak form written", 'eq:supgwf' in C8)
 check("SUPG P2 length scale addressed", ('h_K'+BS+'to h_K/p') in C8)
 
@@ -257,6 +314,31 @@ check("no chapter claims a visual verification of a figure (I-15 remains open)",
 LEDGER = read('audit_stage15/01_master_issue_ledger.md')
 check("the ledger still records I-15 as OPEN",
       bool(re.search(r'\|\s*I-15\s*\|[^|]*\|\s*\*\*OPEN\*\*', LEDGER)), "I-15 row")
+
+# --- Stage 19 corrections: reference-temperature convention and Q8 evidence scope -------------
+# These are pins on the corrected statements, not semantic proofs: each asserts that the caveat is
+# still present where the claim it qualifies is made.
+def _flat(f):
+    # '$' and '~' carry no meaning here: '$24$-element' must read as '24-element', so they are
+    # removed BEFORE whitespace is collapsed (otherwise they would leave a space behind).
+    s = re.sub(r'(?<!\\)%.*', '', SRC[f]).replace('$', '').replace('~', ' ')
+    return re.sub(r'\s+', ' ', s)
+
+_D26 = [l for l in SRC['chapters/audit_appendix.tex'].split('\n') if l.startswith('D-26 &')]
+_F06, _F04, _F11 = _flat('chapters/ch06.tex'), _flat('chapters/ch04.tex'), _flat('chapters/ch11.tex')
+check("ch06 states that T_in is the inflow datum, not a property input",
+      ('is \\emph{not} a property input' in _F06) and ('inflow Dirichlet datum' in _F06))
+check("ch06 states the T_ref = T_in convention behind the quoted theta-bar",
+      (P("T_{@mathrm{ref}}=T_{@mathrm{in}}") in _F06) and ('measured from the inlet bulk' in _F06))
+check("ch04 scopes the Q8 values to one finite mesh, not a converged strip solution",
+      ('24-element' in _F04) and ('finite-mesh' in _F04) and ('not a converged strip solution' in _F04))
+check("ch11 scopes the Q8 comparison to a finite mesh, not a converged strip solution",
+      ('24-element' in _F11) and ('finite-mesh' in _F11) and ('not a' in _F11 and 'converged' in _F11))
+_D26F = _D26[0].replace('$', '') if _D26 else ''
+check("the D-26 register row states the Q8 finite-mesh scope",
+      bool(_D26) and ('24-element' in _D26F) and ('finite-mesh' in _D26F)
+      and ('not a converged strip solution' in _D26F))
+check("the ledger records the Stage 19 repairs", 'Stage 19' in LEDGER)
 
 # ----------------------------------------------------------------------------------
 print(); print("=" * 78); print("SECTION 2b Fingerprints of every display equation and register row"); print("=" * 78)
@@ -509,6 +591,8 @@ if _cell:
 # --- T2: T_cr and the M_b margin, recomputed from eq:tcr and from theta-bar ---
 _tcr = re.search(r'\\frac\{\\pi\^2d\^2\}\{([0-9]+)[^}]*\\alpha\(1\+\\nu\)L\^2\}', re.sub(r'\s+', ' ', C4))
 check("eq:tcr carries an explicit analytic denominator coefficient", bool(_tcr))
+check("the eq:tcr denominator coefficient is parseable (so T_cr can be checked at all)",
+      bool(_tcr), "a form the parser cannot read must fail, not skip the T_cr checks")
 if _tcr:
     Tcr = pi**2*d*d/(float(_tcr.group(1))*alpha*(1+nu)*L*L)
     print("INFO  eq:tcr coefficient %s -> T_cr=%.4f K" % (_tcr.group(1), Tcr))
@@ -536,8 +620,12 @@ if _tcr:
         check("bound A-2 (M_b >= 2) is met by the recomputed margin",
               Tcr/thbar >= 2.0 and qq_ >= 2.0,
               "computed M_b=%.4f, printed %.2f" % (Tcr/thbar, qq_))
-        cmp("the M_b = 2 ceiling reproduces the quoted 58.8 K",
-            val(C7, "restricting $@bar@theta@le", "$ K"), Tcr/2.0, 0.005)
+        _ceil = val(C7, "restricting $@bar@theta@le", "$ K")
+        # The displayed value must be the one-decimal rounding OF THE EXACT VALUE, not the rounding
+        # of an already-rounded 117.5 (Stage 19 correction: 58.75 -> 58.8 was a double rounding).
+        check("the M_b = 2 ceiling is the correctly rounded T_cr/2 (58.7 K)",
+              _ceil is not None and abs(_ceil - round(Tcr/2.0, 1)) < 1e-12,
+              "printed=%s exact=%.6f one-dp=%.1f" % (_ceil, Tcr/2.0, round(Tcr/2.0, 1)))
         cmp("the M_b = 2 ceiling reproduces the quoted 9.1e3 W/m2",
             val(C7, "$q^{''}@approx", "@times10^{3}$", 3, span="restricting $@bar@theta@le"),
             q*(Tcr/2.0)/thbar, 0.01)
@@ -547,6 +635,9 @@ if _tcr:
 _w1 = re.search(r'w_\{\\max\}=\\frac\{\\kappa_\{\\mathrm\{th\}\}L\^2\}\{([0-9]+)\}', C4)
 _wq = re.search(r'w\(x\)=\\frac\{\\kappa_\{\\mathrm\{th\}\}\}\{([0-9]+)\}\\,?x\(L-x\)', C4)
 check("eq:wmax states a parabola and a w_max with explicit constants", bool(_w1 and _wq))
+check("the eq:wmax constants are parseable (so the value can be checked at all)",
+      bool(_w1 and _wq),
+      "a form the parser cannot read must fail, not skip the numerator/denominator checks")
 if _w1 and _wq:
     nden, nquad = float(_w1.group(1)), float(_wq.group(1))
     implied = kth*L*L/nden
@@ -620,44 +711,84 @@ def bc_rows(txt):
 
 BC = bc_rows(C5)
 check("tab:bcs is parsed row by row", len(BC) >= 9, sorted(BC))
-IFACE = {k: v for k, v in BC.items() if v and 'Ga_{\\mathrm{if}}' in v[0]}
+IFACE = {k: v for k, v in BC.items() if v and 'Ga_{\mathrm{if}}' in v[0]}
 check("tab:bcs has a boundary row for Gamma_if", bool(IFACE), sorted(IFACE))
 DIR_S = re.compile(r'(?<![A-Za-z])T_s\s*=')
 NEU_S = re.compile(r'(\\nabla\s*T_s\s*\\cdot|\\partial_n\s*T_s|\\partial_nT_s)')
-flux_rows, double_rows = [], []
-for k, v in sorted(IFACE.items()):
+# A NON-ZERO flux datum: an adiabatic condition ($\partial_nT_s=0$) is not a thermal load and is
+# therefore not a second datum (rows B7 and B8 legitimately carry it).
+FLUX_NZ = re.compile(r'(\\nabla\s*T_s\s*\\cdot\s*\\bn(?:_\{\\mathrm\{out\}\})?|\\partial_n\s*T_s)'
+                     r'\s*=\s*(?!0(?![0-9.]))')
+HEATED = re.compile(r'(\\Ga_h\^0|\\Gamma_h\^0|Ga_\{\\mathrm\{h\}\}|Ga_\{h\})')
+# Row-level test, independent of the Boundary cell (suite v4 blind spot M7): any row whose Condition
+# carries a solid Dirichlet datum AND a solid Neumann datum is a double datum, and a non-zero solid
+# flux datum is admissible only on the heated outer face (B6, regime N).
+double_rows, flux_rows = [], []
+for k, v in sorted(BC.items()):
     cond = ' , '.join(v[1:])
-    if NEU_S.search(cond):
-        flux_rows.append("%s: %s" % (k, cond[:80]))
+    boundary = v[0] if v else ''
     if DIR_S.search(cond) and NEU_S.search(cond):
-        double_rows.append("%s: %s" % (k, cond[:80]))
-check("no Gamma_if row prescribes a solid flux datum", not flux_rows, flux_rows[:2])
+        double_rows.append("%s [boundary %s]: %s" % (k, boundary[:40], cond[:90]))
+    if FLUX_NZ.search(cond) and not HEATED.search(boundary):
+        flux_rows.append("%s [boundary %s]: %s" % (k, boundary[:40], cond[:90]))
 check("no Gamma_if row gives the solid a Dirichlet AND a Neumann temperature datum",
+      not [d for d in double_rows if d.split()[0] in IFACE], double_rows[:2])
+check("no tab:bcs row gives any surface a solid Dirichlet AND a solid Neumann thermal datum",
       not double_rows, double_rows[:2])
-
-# The same condition on the prose: locate each solid datum together with the surface it is
-# imposed on, and reject a solid flux datum on Gamma_if wherever it appears.
-DATUM = re.compile(r'(T_s\s*=|\\partial_n\s*T_s\s*=|\\nabla\s*T_s\s*\\cdot\s*\\bn(?:[^=]{0,25})?=)'
-                   r'\s*([^;,$]{0,40}?)\s*\$?\s+on\s+\$([^$]{0,60})\$')
-dir_if, neu_if = [], []
+check("no tab:bcs row puts a non-zero solid flux datum on a surface other than the heated face",
+      not flux_rows, flux_rows[:2])
+# The same condition in prose, judged sentence by sentence and by the SHAPE of the data rather than
+# by one phrasing (suite v4 blind spot M8).  Tables are removed first: tab:bcs is tested row by row
+# above, and a flattened table would put several surfaces into one "sentence".
+#   * a solid Dirichlet datum is "T_s = ...";
+#   * a solid flux datum is "grad T_s . n = ..." or "partial_n T_s = ...", and only a NON-ZERO
+#     right-hand side is a datum (zero flux is an adiabatic condition);
+#   * such a flux is admissible only where the sentence places it on the heated outer face.
+# The test is shape-based, so "together with its interface temperature" is caught even though it
+# never says "on Gamma_if".
+IF_NAME = re.compile(r'Ga_\{\\mathrm\{if\}\}|Ga_\{if\}')
+FLUX_D = re.compile(r'(\\nabla\s*T_s\s*\\cdot\s*\\bn(?:_\{\\mathrm\{out\}\})?|\\partial_n\s*T_s)'
+                    r'\s*=\s*([^,;\s$]{0,24})')
+ON_HEATED = re.compile(r',?\s*on\s*\$?\s*\\?(?:Ga_h\^0|Gamma_h\^0|Ga_\{\\mathrm\{h\}\}|Ga_\{h\})')
+DIR_IF = re.compile(r'T_s\s*=\s*T_\\?(?:\\Ga|\\Gamma)')
+dir_if, flux_if, dbl_prose, flux_elsewhere = [], [], [], []
 for f in FILES:
     if f == 'chapters/audit_appendix.tex':
         continue
-    flatf = re.sub(r'\s+', ' ', re.sub(r'(?<!\\)%.*', '', SRC[f]))
-    for m in DATUM.finditer(flatf):
-        surf = m.group(3)
-        if not (r'Ga_{\mathrm{if}}' in surf or 'Ga_{if}' in surf):
-            continue
-        if m.group(1).startswith('T_s'):
-            dir_if.append("%s: %s" % (f, m.group(0)[:90]))
-        else:
-            neu_if.append("%s: %s" % (f, m.group(0)[:90]))
+    raw = re.sub(r'\\begin\{longtable\}.*?\\end\{longtable\}', ' ', SRC[f], flags=re.S)
+    flatf = re.sub(r'\s+', ' ', re.sub(r'(?<!\\)%.*', '', raw))
+    for sent in re.split(r'(?<=[.;])\s+', flatf):
+        has_if = bool(IF_NAME.search(sent))
+        dir_here = DIR_S.search(sent)
+        if has_if and dir_here:
+            dir_if.append("%s: %s" % (f, sent[:90]))
+        here_if, here_other = [], []
+        for m in FLUX_D.finditer(sent):
+            rhs = m.group(2).strip()
+            if rhs in ('0', '0.', ''):
+                continue                       # adiabatic datum, not a thermal load
+            tail = sent[m.end():m.end() + 90]
+            on_if = bool(IF_NAME.search(tail)) or bool(IF_NAME.search(rhs))
+            on_heated = bool(ON_HEATED.search(tail)) or bool(ON_HEATED.search(rhs))
+            if on_if:
+                here_if.append(m.group(0)[:70])
+            elif not on_heated:
+                here_other.append(m.group(0)[:70])
+        if here_if:
+            flux_if.append("%s: %s" % (f, here_if[0]))
+        if here_other:
+            flux_elsewhere.append("%s: %s" % (f, here_other[0]))
+        if dir_here and (here_if or here_other):
+            dbl_prose.append("%s: %s" % (f, sent[:90]))
 check("the solid interface temperature is imposed as a Dirichlet datum", bool(dir_if), dir_if[:2])
 check("no solid flux datum is imposed on Gamma_if anywhere in the formulation",
-      not neu_if, neu_if[:2])
+      not flux_if, flux_if[:2])
+check("no prose datum gives the solid a temperature AND a non-heated-face heat flux in one sentence",
+      not dbl_prose, dbl_prose[:2])
+check("no prose sentence puts a non-zero solid flux datum on a surface other than the heated face",
+      not flux_elsewhere, flux_elsewhere[:2])
 check("the solid problem keeps its flux datum on the outer face, not the interface",
       (r'\Ga_h^0' in C8) and (r'\Ga_h^0' in C5), "B6/step 1")
-
 # --- N1: the Gamma_p nomenclature entry itself (not the dictionary, not a neighbouring row) ---
 _nom = re.search(r'^\$\\Gamma_p\$ & (.*?) & (.*?) \\\\ *$', APP, re.M)
 check("the Gamma_p nomenclature entry exists", bool(_nom))
@@ -678,9 +809,10 @@ SCAN = list(FILES) + [f for f in ('README.md', 'HFF_revision_summary.md',
                                   'HFF_final_reference_status_notes.txt') if os.path.exists(f)]
 END_CTX = re.compile(r'(end[- ]effect|end condition|end-compliance|pinned end|pin\b|pins\b|clamp|'
                      r'stiffen|aspect ratio|B7|A9|D-26|kappa_\{\\mathrm\{th\}\}L\^2/8)', re.I)
-STALE = re.compile(r'(?:(?:about|approximately|roughly|some|around|nearly|close to|~|≈)\s*)?'
+STALE = re.compile(r'(?:(?:about|approximately|roughly|some|around|nearly|close to|~|approx)\s*)?'
                    r'(?<![\d.])(?:one|two|three|few|couple|[123])(?:\.\d+)?\s*'
-                   r'(?:of\s+)?(?:per[\s~]*cent|\\?%|\$?\s*per~cent)', re.I)
+                   r'(?:of\s+)?(?:per[\s~-]*cent|pct\b|percentage\s*points?|\\?%)',
+                   re.I)
 SUPERSEDED = re.compile(r'(supersed|withdrawn|earlier|previously|no longer|replaced|obsolete)', re.I)
 stale_hits, scanned = [], []
 for f in SCAN:

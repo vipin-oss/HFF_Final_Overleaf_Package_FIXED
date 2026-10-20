@@ -108,8 +108,15 @@ wording).
 \end{itemize}
 
 \section{Dependence on yet-unfrozen data}
-Only temperature differences appear in the equations, so $T_{\mathrm{ref}}$ and $T_{\mathrm{in}}$
-enter the solution exclusively through property values; both are to be fixed at the property-data
-freeze (Appendix~B, C-6), as is the value of $\beta_f$ entering $\mathrm{Gr}$. No dimensionless
+Only temperature differences appear in the equations, so $T_{\mathrm{ref}}$ enters through
+property values and through the difference $T_{\mathrm{in}}-T_{\mathrm{ref}}$. $T_{\mathrm{in}}$ is
+\emph{not} a property input: it is the inflow Dirichlet datum of condition~B1 and, through
+\eqref{eq:iftemp}, the quantity that anchors the interface temperature level. The mean wall rise
+$\bar\theta$ quoted in this chapter and in Chapter~\ref{ch:baseline} is measured from the inlet bulk
+temperature, so the baseline adopts the convention $T_{\mathrm{ref}}=T_{\mathrm{in}}$, under which
+that difference vanishes and $\bar\theta$ is fixed by the flux chain alone (register D-33); a solver
+that takes $T_{\mathrm{in}}\ne T_{\mathrm{ref}}$ must carry the offset explicitly. Both are to be
+fixed at the property-data freeze (Appendix~B, C-6), as is the value of $\beta_f$ entering
+$\mathrm{Gr}$. No dimensionless
 number above depends on an invented constant: groups whose inputs are still datasheet-conditional
 are listed with that dependency in Table~\ref{tab:baseline}.

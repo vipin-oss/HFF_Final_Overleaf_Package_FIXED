@@ -29,6 +29,8 @@ BS = chr(92)
 ROOT = os.path.abspath('.')
 BASE = '/tmp/hff_mut18'
 RESULTS = os.path.join('audit_stage15', 'stage18_mutation_results.txt')
+if '--results' in sys.argv:                      # keep the committed Stage 18 record intact
+    RESULTS = sys.argv[sys.argv.index('--results') + 1]
 BASE_PASSES = 0
 
 FINGERPRINT_CHECKS = {"no display equation has changed", "no register row has changed",

@@ -165,9 +165,17 @@ rule is $\bar\theta_{\max}\le\bar T_{\mathrm{cr}}/M$, with margin $M=2$ used in
 Chapter~\ref{ch:baseline}. The full-edge pin idealization of Assumption~A9 stiffens the ends relative to ideal point pins by
 $0.2\%$ at the baseline aspect ratio ($L/d=10$): the plane-strain Q8 computation of register D-26
 gives $1.0000$ of $\kappa_{\mathrm{th}}L^2/8$ for point pins and $0.998$ for the full-edge pin,
-against $-0.02$ to $-0.06$ for a clamp. The earlier reading of this end effect as ``a few per cent''
-is superseded by that measurement, the check is complete, and no separate end-compliance correction
-is applied to the catalogue.
+against $-0.02$ to $-0.06$ for a clamp. These are values on \emph{one} $24$-element mesh (twelve
+elements along the strip, two through the thickness), not a converged strip solution: in the
+six-mesh refinement study of register D-26 the difference between the two pin idealizations
+($0.0019$ of $\kappa_{\mathrm{th}}L^2/8$) is reproduced with two and with four elements through the
+thickness, while the absolute ratios shift
+with the through-thickness discretisation and the clamp magnitude falls under axial refinement
+($-0.041$ at $24$ elements and $-0.025$ at $48$, both with two elements through the thickness). The
+clamp band is therefore finite-mesh evidence that the clamped alternative is not the measured
+configuration, not a converged penalty. The earlier reading of this end effect as ``a few per cent''
+is superseded by that measurement; the end-effect check is complete at the level of a finite-mesh
+comparison, and no separate end-compliance correction is applied to the catalogue.
 
 \section{Beam--column bowing at finite membrane force}
 \label{sec:deriv:beamcolumn}
