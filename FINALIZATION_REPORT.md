@@ -4,8 +4,9 @@
 **Branch** `arena/c875f9b3-hff-final-overleaf-package-fix`
 **Final implementation commit** `3d58e775a7d71966fe3d50e11541c08994b02eff` (parent `90b237f`, Stage 19)
 **Working tree at the time of writing** clean, except the untracked audit deliverable
-`independent_audit_stage19/` (which is not part of the package, by design) and this report, which is
-committed on top of the implementation commit with no other change. There is no commit after it.
+`independent_audit_stage19/` (which is not part of the package, by design) and this report. The only
+commit after `3d58e77` contains this file and nothing else, so `3d58e77` is the full content change of
+Stage 20.
 
 **Status: BLOCKED — AUTHOR DECISION REQUIRED.**
 
