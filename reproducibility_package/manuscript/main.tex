@@ -731,9 +731,11 @@ with the strip length and no single Nusselt number characterises the wall.
 \subsection{Reduced wall model and its derivation}
 \label{sec:wall}
 
-This subsection derives the wall model actually solved in the coupled
-computation. The derivation is given in full because the model-form error of
-its most common simplification is one of the results of the paper
+This subsection states the wall model actually solved in the coupled computation,
+together with the support for its hypotheses; its derivation from the
+three-dimensional virtual work is given in \S\ref{sec:variational} and its closed-form
+solution in \S\ref{sec:analytical}. The statements are set out here because the model-form
+error of the model's most common simplification is one of the results of the paper
 (\S\ref{sec:modform}), and because the eigen-curvature and blocked-force
 relations are easy to mis-state by a factor $(1+\nu)/(1-\nu)$ if the
 plane-strain closure is applied carelessly.
@@ -861,9 +863,12 @@ stiffness in \eqref{eq:beam} increases as the bow grows. The relief is
 $907$~N/m at the design point, that is $2.9\%$ of $N_\theta$ and $0.86\%$ of
 $N_{cr}$. Equations \eqref{eq:beam} and \eqref{eq:nupdate} are a coupled
 nonlinear problem in $(w,N)$ even though each is linear in its own unknown;
-their solution is the structure sub-problem of \S\ref{sec:wallsolver}.
+their solution is the structure sub-problem of \S\ref{sec:wallsolver}, the
+existence and uniqueness of that solution are established in
+Theorem~\ref{thm:contraction} of \S\ref{sec:contraction}, and its closed form is
+\eqref{eq:Wclosed} of \S\ref{sec:stripclosed}.
 
-\subsubsection{Non-dimensional form and closed-form solution}
+\subsubsection{Non-dimensional form}
 \label{sec:closedform}
 
 With $\xi=x/L$, $W=w/H_0$, $\lambda^2=NL^2/D_s$, $\beta=\kappa_{th}L^2/H_0$
@@ -895,7 +900,8 @@ which is the Euler load.
 
 Setting $\lambda=\pi$ in \eqref{eq:closed} gives the Euler load of the pinned
 strip and, through \eqref{eq:ntheta}, the mean wall temperature rise at which
-the axially restrained strip buckles:
+the axially restrained strip buckles (the same limits are recovered from
+\eqref{eq:Tcr} in \S\ref{sec:stripclosed}):
 \begin{equation}
 N_{cr}=\frac{\pi^2D_s}{L^2},
 \qquad
