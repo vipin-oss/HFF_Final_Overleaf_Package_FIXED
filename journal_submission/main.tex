@@ -20,7 +20,19 @@
 \usepackage[hidelinks]{hyperref}
 
 \sisetup{detect-all=true,group-digits=false}
-\graphicspath{{figures/}}
+
+% ---- path handling ---------------------------------------------------------
+% This file is meant to compile in two layouts:
+%   (a) ZIP upload / local build: main.tex at the project root, with figures/ and tables/
+%       beneath it;
+%   (b) GitHub sync: the whole repository is the project, so this file sits in
+%       journal_submission/ while the project root is one level above it.
+% Both figure directories are searched and the table directory is chosen at compile
+% time, so no path has to be edited in either case.
+\graphicspath{{figures/}{journal_submission/figures/}}
+\newcommand{\tabdir}{tables/}
+\IfFileExists{tables/table_parameters.tex}{}{%
+  \renewcommand{\tabdir}{journal_submission/tables/}}
 
 % ---- notation -------------------------------------------------------------
 \newcommand{\bu}{\mathbf u}
@@ -168,7 +180,7 @@ passage is thinner where the strip bows.}
 \label{fig:geometry}
 \end{figure}
 
-\input{tables/table_parameters.tex}
+\input{\tabdir table_parameters.tex}
 
 The interface deflection $w(x)$ is measured from the reference interface into the channel;
 the deformed passage is therefore
@@ -541,7 +553,7 @@ to $0.438\,H_0$ at the frozen force. The buckling margin is $M_b=3.64$ on the es
 temperature, so the strip is well below thermal buckling, but the geometric amplification is
 already worth $39\,\%$ of the linear bow.
 
-\input{tables/table_baseline.tex}
+\input{\tabdir table_baseline.tex}
 
 \subsection{Flow in the deformed passage}
 \label{sec:flowresults}
@@ -638,7 +650,7 @@ the kinematic ceiling $|w|/H_0=0.5$ of the formulation. (b) Bending moment per u
 \label{fig:wall}
 \end{figure}
 
-\input{tables/table_coupled.tex}
+\input{\tabdir table_coupled.tex}
 
 The relative importance of the two driving mechanisms is decisive for the interpretation. The
 pressure-only bow of the same strip under the datum-consistent mean pressure of
@@ -737,7 +749,7 @@ at those points by the validity guard. (b) Maximum bow (left axis) and peak bend
 \label{fig:sensitivity}
 \end{figure}
 
-\input{tables/table_sweep.tex}
+\input{\tabdir table_sweep.tex}
 
 % ===========================================================================
 \section{Verification and convergence}
@@ -772,7 +784,7 @@ solution reproduces $5pL^4/(384D_s)$ to $2.5\times10^{-9}$, and the zero-membran
 reproduces the parabolic bow to $1.8\times10^{-9}$.
 \end{itemize}
 
-\input{tables/table_verification.tex}
+\input{\tabdir table_verification.tex}
 
 \begin{figure}[t]
 \centering
@@ -801,7 +813,7 @@ Table~\ref{tab:mesh}; the discretisation uncertainty of the deflection is theref
 $\pm0.3\,\%$, and the corresponding uncertainty of the stresses, which involve a second
 derivative, is of order $1\,\%$ and is stated as such.
 
-\input{tables/table_mesh.tex}
+\input{\tabdir table_mesh.tex}
 
 \subsection{Conservation and reproducibility checks}
 \label{sec:conservation}
@@ -942,6 +954,7 @@ No specific funding is reported for this work.
 To be completed at submission.
 
 \bibliographystyle{plainnat}
-\bibliography{references}
+\IfFileExists{references.bib}{\bibliography{references}}%
+  {\bibliography{journal_submission/references}}
 
 \end{document}

@@ -33,6 +33,10 @@ or MiKTeX installation. `\graphicspath{{figures/}}` is set, so figures resolve f
 
 ## Import into Overleaf
 
+Two routes work; the first needs no paid feature.
+
+### Route A — ZIP upload (recommended, works on every Overleaf plan)
+
 1. Zip the contents of this folder **so that `main.tex` sits at the root of the archive**
    (not inside an extra directory):
 
@@ -52,6 +56,35 @@ or MiKTeX installation. `\graphicspath{{figures/}}` is set, so figures resolve f
 
 Nothing in the package points outside the archive: every `\input` target is in `tables/`,
 every figure is in `figures/`, and the bibliography is `references.bib`.
+
+### Route B — GitHub sync
+
+The repository is laid out so that a synced project also compiles, with no path editing:
+
+* **Repository:** `vipin-oss/HFF_Final_Overleaf_Package_FIXED`
+* **Branch:** `arena/fcb0dec3-hff-final-overleaf-package-fix` (the work is proposed in
+  pull request #1 and is *not* merged into `main`)
+* **Main document:** `main.tex` at the repository root, or `journal_submission/main.tex`.
+  Both compile.
+
+The repository root holds a four-line `main.tex` that inputs the manuscript, and
+`journal_submission/main.tex` contains a *path-handling* block that makes the same file work
+in both layouts: it searches `figures/` and `journal_submission/figures/`, selects
+`tables/` or `journal_submission/tables/` at compile time with `\IfFileExists`, and does the
+same for `references.bib`. So:
+
+| project layout | root document | tables resolved from | bibliography |
+|---|---|---|---|
+| ZIP upload (this folder at the project root) | `main.tex` | `tables/` | `references.bib` |
+| GitHub sync (repository at the project root) | `main.tex` or `journal_submission/main.tex` | `journal_submission/tables/` | `journal_submission/references.bib` |
+
+GitHub sync is an Overleaf plan feature; if the repository or the branch is not listed, use
+Route A. If only `main` is offered and not the branch above, the pull request has to be merged
+first — the branch is deliberately unmerged, so that `main` is untouched until you decide.
+
+The superseded report-class document, with its chapters and TikZ figures, was moved to
+`legacy_report/` so that it cannot be mistaken for the submission and cannot shadow the
+figure or bibliography search paths. `legacy_report/README.md` explains what it is.
 
 ## Before submission
 

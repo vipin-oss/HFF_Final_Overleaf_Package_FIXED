@@ -81,7 +81,7 @@ What was done instead — mechanical checks of the LaTeX source:
 | duplicate labels | none |
 | every `\cite` key present in `references.bib`; every bib entry cited | pass (18/18) |
 | every `\includegraphics` target exists | pass: all 9 PDFs are present in `figures/` and are resolved through `\graphicspath{{figures/}}` (the checker reports them as "missing" only because it does not expand `\graphicspath`) |
-| every `\input` target exists | pass (6 table fragments) |
+| every `\input` target exists | pass (6 table fragments; the directory is selected at compile time, see §4.1) |
 | control sequences used | all standard `amsmath`/`amssymb`/`graphicx`/`booktabs`/`siunitx`/`longtable`/`caption`/`natbib`/`hyperref` commands plus locally defined macros |
 | packages required | only those in a standard TeX Live/MiKTeX; no shell escape, no `biber`, no external fonts |
 | numbers in tables | every numeric cell goes through `siunitx`'s `\num{}`; no math command is used in text mode, so the tables cannot raise "Missing $ inserted" |
@@ -89,6 +89,29 @@ What was done instead — mechanical checks of the LaTeX source:
 The `plainnat` bibliography style and `natbib` are used, so the sequence
 `pdflatex → bibtex → pdflatex → pdflatex` is sufficient. This is the standard Overleaf flow and
 requires no configuration.
+
+### 4.1 Path handling (two project layouts)
+
+The same `main.tex` must compile both from a ZIP whose root is this folder and from a
+GitHub-synced project whose root is the repository (one level above this folder). Instead of
+maintaining two copies, the file carries a five-line path block:
+
+```latex
+\graphicspath{{figures/}{journal_submission/figures/}}
+\newcommand{\tabdir}{tables/}
+\IfFileExists{tables/table_parameters.tex}{}{%
+  \renewcommand{\tabdir}{journal_submission/tables/}}
+```
+
+the six table includes are written `\input{\tabdir table_*.tex}`, and the bibliography is
+selected the same way with `\IfFileExists{references.bib}`. In the ZIP layout the tests
+succeed on the local paths; in a synced repository they fail and fall back to the prefixed
+ones. Nothing outside the archive/repository is ever referenced.
+
+The repository root additionally contains a four-line `main.tex` that inputs
+`journal_submission/main.tex`, so a synced project can use the root document it finds
+automatically. The superseded report-class document and its TikZ figures were moved to
+`legacy_report/` (unchanged) so that its `figures/` directory cannot shadow the search path.
 
 The remaining risk is a LaTeX error that a mechanical check cannot see (for example a
 `siunitx` version difference in a unit expression). A first compile in Overleaf is therefore

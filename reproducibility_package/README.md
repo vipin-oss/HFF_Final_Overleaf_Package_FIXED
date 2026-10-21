@@ -24,6 +24,12 @@ reproducibility_package/
 └── manuscript/                the manuscript as submitted, with its figures/tables
 ```
 
+`manuscript/main.tex` compiles both from this folder (ZIP layout) and from the repository
+root (GitHub-sync layout, where it sits one level deeper); the path block near its top selects
+`tables/` or `journal_submission/tables/` and the bibliography at compile time, so no path has
+to be edited. The superseded report-class document is not part of this package; it is kept in
+the repository under `legacy_report/`.
+
 ## 1. Environment
 
 Python 3.9 or newer; the reported results were produced with Python 3.11.2, NumPy 2.4.6,
