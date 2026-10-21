@@ -17,7 +17,8 @@ fed**, and attributes the residual of every comparison to a named mechanism rath
 | §5.1.5 | **Theorem (thermal closure)** — Sturm–Liouville eigenfunction solution of the thermal entry problem (`Nu→70/13=5.3846`), followed by an exact statement for the wall: with uniform outer flux, arbitrary interface shape and arbitrary interface temperature, the horizontal mean `Θ(y)` is affine with slope `−q″/k_s` (D.6). Consequences: exact 1-D closure in the flat limit; the **deformed** closure `θ̄=θ_i+q″[d+w]/2k_s`, whose deficit against the reference-thickness closure is exactly `q″w/2k_s`, i.e. the relative amount `w/d`. |
 | §5.1.6 | Five particular cases with their closed-form limits. |
 | §5.2 | Comparison with the coupled finite-element solution, resolved into **law / shape / truncation** for the hydraulics and **path / mid-surface convention** for the wall temperature.
-| §5.3 | **Collapse across the parameter space.** One shape integral, evaluated once on the design-point profile and containing no fitted coefficient, reproduces the strip resistance of all 24 converged runs of the five sweeps (Re 25–100, d 2.5–5 mm, conductivity, expansion) to 0.40 %, mean 0.11 %; the same runs depart from the `sin²` law by up to 19.7 %. Table `tab:collapse`, Figure 16. `Nu/Nu_Graetz ≈ (H₀/H)^p`, `p = 0.79` (`R² = 0.81`), bracketed by ½ and 1. |
+| §5.3 | **Collapse across the parameter space.** One shape integral, evaluated once on the design-point profile and containing no fitted coefficient, reproduces the strip resistance of all 19 distinct parameter sets of the five sweeps to 0.40 % (mean 0.14 %); the same runs depart from the `sin²` law by up to 19.7 %. `Nu/Nu_Graetz ≈ (H₀/H)^p`, `p = 0.79` (`R² = 0.81`), bracketed by ½ and 1. Table `tab:collapse`, Figure 16. |
+| §5.3 | **Certificate, not assertion.** |Π(a;ŵ) − Π(a;ŵ₀)| ≤ ∫₀¹ 3a(1−a·max(ŵ,ŵ₀))⁻⁴|ŵ−ŵ₀| dξ, evaluated on every run from the two profiles alone: bound ≤ 1.17 %, observed ≤ 0.40 %, bound sharp to 0.5 %. Substituting each run's own bow reproduces its coupled Δp to 0.085 %. Table `tab:certificate`. |
 | §5.7.1 | **Neumann-wall benchmark** — the one test whose answer needs no modelling assumption: `θ̄=q″d/2k_s=30 K`, `Γ=q″/k_s=20 000 K/m`, `Q′=150 W/m`, reproduced to round-off. |
 | Appendix D | Proofs D.1–D.6. |
 
@@ -39,7 +40,7 @@ fed**, and attributes the residual of every comparison to a named mechanism rath
 | Least-squares mid-surface value used in the loop | 34.259 K (**+3.38 %** of the average; conservative for `N_θ`) |
 | Path term `q″w/2k_s` / curvature residual | 1.442 K / 1.121 K; `w_max/d = 7.36 %` |
 | 1-D Neumann benchmark | `θ̄=30.000000 K`, `Γ=20 000.00 K/m`, `Q′=150.000 W/m`, residual 5.2×10⁻¹⁴ |
-| Collapse over the five sweeps (24 runs) | master integral: max 0.40 %, mean 0.11 %; `sin²` law: max 19.7 % (strip) / 15.1 % (total Δp); truncated series: max 15.2 % |
+| Collapse over the five sweeps (19 distinct parameter sets) | master integral: max 0.40 %, mean 0.14 %; `sin²` law: max 19.7 % (strip) / 15.1 % (total Δp); truncated series: max 15.2 % |
 | Contraction | bound `q=0.757<1`; measured `|𝓕′|=1.6×10⁻⁵` |
 | Test suite | **45 tests pass** (`test_asymptotics.py` 7, `test_thermal_path.py` 5, `test_collapse.py` 4 new) |
 
@@ -71,4 +72,4 @@ cd program
   re-run with the averaged quantity, and the paper says which of the two it reports.
 * No PDF is compiled here (no TeX engine in the environment). Validation is structural:
   `python3 tools/check_tex.py` reports 180 labels, 132 references, 55 citations against 55 keys,
-  16 figures and 18 tables.
+  16 figures and 19 tables.

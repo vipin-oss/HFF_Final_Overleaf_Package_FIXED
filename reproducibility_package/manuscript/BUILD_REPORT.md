@@ -205,9 +205,9 @@ conclusions gained four "It is shown that …" items corresponding to the new th
 8. **Test suite** grows from 30 to 45 tests (`test_asymptotics.py` 7, `test_thermal_path.py` 5,
    `test_collapse.py` 4, which guards the collapse against regression).
 9. **Collapse across the parameter space** (new §5.3, Table `tab:collapse`, Figure 16):
-   `tools/collapse_analysis.py` reads all 24 converged coupled runs of the five sweeps and
+   `tools/collapse_analysis.py` reads all 19 distinct parameter sets of the five sweeps and
    shows that one shape integral, evaluated once and containing no fitted coefficient,
-   reproduces the strip resistance to 0.40 % (mean 0.11 %), against 19.7 % for the kinematic
+   reproduces the strip resistance to 0.40 % (mean 0.14 %), against 19.7 % for the kinematic
    `sin²` law. This is the result that turns the design rule from a formula checked at a point
    into a chart with a measured error bar, and it is the answer to the obvious referee
    objection that the study is anchored at a single design point.
