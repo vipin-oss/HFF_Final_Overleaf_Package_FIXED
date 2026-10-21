@@ -219,6 +219,11 @@ for f in figs:
     ok((ROOT / "figures" / f"{stem}.pdf").exists() and (ROOT / "figures" / f"{stem}.eps").exists(),
        f"C6 figure {stem}: PDF and EPS present")
 
+# C8 every figure/table label is referenced in the text
+labels = re.findall(r"\\label\{((?:fig|tab):[^}]+)\}", BODY)
+unref = [l for l in labels if not re.search(r"\\(?:ref|eqref)\{" + re.escape(l) + r"\}", BODY)]
+ok(not unref, f"C8 every figure/table label is referenced in the text (unreferenced: {unref})")
+
 # ---------------------------------------------------------------------------------------------
 # C7 length
 ab = SRC.get("sections/abstract.tex", "")
