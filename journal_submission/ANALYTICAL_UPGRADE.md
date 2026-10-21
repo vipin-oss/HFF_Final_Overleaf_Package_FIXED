@@ -71,4 +71,4 @@ cd program
   re-run with the averaged quantity, and the paper says which of the two it reports.
 * No PDF is compiled here (no TeX engine in the environment). Validation is structural:
   `python3 tools/check_tex.py` reports 180 labels, 132 references, 55 citations against 55 keys,
-  16 figures and 17 tables.
+  16 figures and 18 tables.
