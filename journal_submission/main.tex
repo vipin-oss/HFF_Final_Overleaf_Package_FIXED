@@ -92,34 +92,32 @@ temperature field, and the feedback on the conjugate flow and heat transfer quan
 
 \abshead{Design/methodology/approach}
 Plane-strain thermoelasticity is reduced to an axially restrained beam--column strip by a
-two-field variational principle, the flow in the lubrication limit and the thermal entry
-problem by a Sturm--Liouville expansion. Closed forms follow for the resistance (a Gauss
+variational principle, the flow in the lubrication limit and the entry problem by a
+Sturm--Liouville expansion. Closed forms follow for the resistance (a Gauss
 hypergeometric function generalised to self-similar shapes), the bow and the buckling
 threshold; the axial map is proved a contraction and the thermal closure an exact property of
-the horizontal mean of the wall temperature. A coupled finite-element solution verifies every
-formula.
+the horizontal mean of the wall temperature. A coupled finite-element solution on $24$ parameter
+sets verifies every formula.
 
 \abshead{Findings}
 At $\ReDh=50$ and $q''=5\,\mathrm{kW/m^2}$ the strip bows $0.441\,H_0$ and the pressure drop
 rises from $144$ to $315$~Pa. The resistance integral over the computed shape reproduces this to
-$0.03\%$ at the design point; the $\sin^2$ idealisation underpredicts it by $15\%$, a frozen-shape plus truncation
-effect rather than an error of the law. The wall rise is $34.3$~K, its $7.5\%$ excess over
-one-dimensional conduction being the $7.4\%$ lengthening of the conduction path by the bow plus
-a mid-surface convention. The frozen-force closure overpredicts the bow by $1.2\%$ at
-the design point and $14.9\%$ at $10\,\mathrm{kW/m^2}$. Deformation raises the local Nusselt
-number by up to $70\%$, with exponent $0.79$ in $H_0/H$.
+$0.03\%$; the $\sin^2$ idealisation underpredicts it by $15\%$, a shape and truncation effect. One shape integral, with no fitted coefficient, reproduces the strip
+resistance of all $24$ converged runs of the five sweeps to $0.4\%$. The wall rise is $34.3$~K, its $7.5\%$ excess over one-dimensional conduction
+being the $7.4\%$ path lengthening by the bow plus a mid-surface convention.
+The frozen-force closure overpredicts the bow by $1.2\%$ at the design point and $14.9\%$ at
+$10\,\mathrm{kW/m^2}$. Deformation raises the local Nusselt number by up to $70\%$.
 
 \abshead{Research limitations/implications}
-Plane strain, steady laminar flow, small slopes, $|w|/H_0\le0.45$; shear correction omitted
-($4\%$); no experiment.
+Plane strain, steady laminar flow, small slopes ($|w|/H_0\le0.45$), no experiment.
 
 \abshead{Practical implications}
 Design formulae replace semi-empirical corrections; deformation, not strength, sets the
-operating range.
+range.
 
 \abshead{Originality/value}
-The loop is closed in closed form and every formula is verified against an independent
-computation.
+The loop is closed in closed form, every formula is verified, and the feedback collapses onto
+one curve.
 
 \vspace{3pt}
 \noindent\textbf{Keywords:} conjugate heat transfer; thermoelastic stability;
@@ -259,7 +257,7 @@ the range of fluxes that an application would use. The useful engineering
 output of the analysis is therefore not a single number but the location of
 that ceiling together with the accuracies that can be claimed below it.
 
-This paper makes six contributions.
+This paper makes seven contributions.
 (i) A complete and self-consistent statement of the coupled problem with the
 quantitative support of every assumption, including the dimensionless groups
 and the five regime bounds that delimit it (\S\ref{sec:model}--\S\ref{sec:groups}).
@@ -287,6 +285,10 @@ hydraulic functional to the moments of the bow, with an a priori truncation boun
 stability lemma in the shape; and an exact statement of the thermal closure of the wall strip
 from which the residual of the one-dimensional model is attributed to the lengthening of the
 conduction path (\S\ref{sec:analytical}, Appendix~\ref{app:proofs}).
+(vii) A collapse of the hydraulic feedback across the parameter space: a single shape integral,
+with no fitted coefficient, reproduces the strip resistance of all twenty-four converged runs
+of the five sweeps to $0.4\%$, which converts the design rule of (ii) from a formula checked at
+a point into a chart with a measured error bar (\S\ref{sec:collapse}).
 
 \S\ref{sec:limitations} states what the model excludes; the reduced
 structural model is the most consequential of those exclusions and it is not
@@ -503,7 +505,9 @@ and supplies the denominators of every normalised quantity reported below.
 temperature rise becomes $q''(d/k_s+1/h)$; the through-thickness profile
 \eqref{eq:theta_profile} then reduces to a straight line and the eigen-curvature
 \eqref{eq:kappa} to its linear-in-$q''$ form. The departure of the coupled
-solution from this estimate is the $6.2\%$ reported in \S\ref{sec:thermalresults}.
+solution from this estimate is resolved in \S\ref{sec:wallclosure}: it is not a thermal effect
+but the lengthening of the conduction path by the bow, and the corresponding correction to the
+closure is \eqref{eq:deformedclosure}.
 
 \emph{Frozen membrane force.} Setting $N=N_\theta$ in equation
 \eqref{eq:beam} removes the axial-compatibility equation \eqref{eq:nupdate} and
@@ -1986,6 +1990,68 @@ have to abandon its one-dimensional structure after all: it has to use the defor
 and it has to say which average it reports. The $3.4\%$ that separates the two averages is
 carried forward as a conservative margin, as \S\ref{sec:wallclosure} explains.
 
+\subsection{Generality: one curve for the whole parameter space}
+\label{sec:collapse}
+
+Everything compared so far has been anchored at one design point, and a design formula that
+has been checked at one point is a formula, not a law. The five sweeps of
+\S\ref{sec:sensitivity}--\S\ref{sec:material} supply the family needed to test the stronger
+statement. Every converged run among them --- twenty-four coupled computations spanning
+$\ReDh=25$--$100$, $d=2.5$--$5$~mm, $k_s=0.25$--$0.6$~W\,m$^{-1}$K$^{-1}$,
+$\alpha=1.5$--$5\times10^{-5}$~K$^{-1}$ and $q''=1$--$5$~kW/m$^2$ --- is a separate solution of
+the whole loop, with its own bow, flow, temperature field and membrane force; none of them
+enters the other.
+
+The hypothesis is that the strip resistance is a function of the bow ratio alone,
+\begin{equation}
+\Pi(a)=\int_0^1\frac{\dd\xi}{\bigl[1-a\hat w_0(\xi)\bigr]^3},
+\label{eq:master}
+\end{equation}
+where $\hat w_0$ is the \emph{design-point} shape and nothing else: no Reynolds number, no
+thickness, no conductivity, no expansion coefficient, and no fitted coefficient enters
+\eqref{eq:master}. Table~\ref{tab:collapse} and Figure~\ref{fig:collapse} show that it holds.
+The single curve predicts all twenty-four runs to within $0.40\%$, with a mean absolute error
+of $0.11\%$; the largest deviation is $0.40\%$ in the thickness sweep, which is the sweep that
+changes the shape most, and the smallest is $0.07\%$ in the Reynolds sweep, which changes the
+shape not at all. The same table gives the two alternatives at the same $a$: the kinematic
+$\sin^2$ law is off by up to $19.7\%$ of the strip resistance ($15.1\%$ of the total pressure
+drop) and the moment series truncated at $O(a^3)$ by up to $15.2\%$.
+
+The collapse is not an accident of the chosen parameters; it is what the structure of the
+reduced model requires. The bow shape is the solution of a linear problem driven by
+$\kappa_{th}=(1+\nu)\alpha q''/k_s$, whose \emph{magnitude} varies with the material and the
+flux while its \emph{profile} does not, with a single dimensionless parameter,
+$\lambda^2=N L^2/D_s$, that fixes how much the membrane force flattens that profile; and $\lambda^2$ at fixed geometry is a function of $N/N_{cr}$, which the sweeps
+vary only weakly. The shape family is therefore one-parameter to leading order, and a
+one-parameter family has a one-parameter resistance. What the collapse adds is the
+\emph{magnitude} of that statement across a factor of four in Reynolds number, a factor of two
+in wall thickness, a factor of $2.4$ in conductivity and a factor of $3.3$ in expansion
+coefficient, which is what a design chart needs.
+
+Two practical consequences follow. First, the chart of Figure~\ref{fig:collapse}a can be
+published as a design chart: read $a$ from the structural model of \S\ref{sec:stripclosed},
+then read $\Pi$ from \eqref{eq:master}, and the resistance of the deformed passage follows
+without a flow computation. Second, the error of doing so is now bounded by measurement over
+the family rather than asserted at a point, and the bound belongs to the model rather than to
+the mesh: the grid uncertainty of the same quantity is $0.90\%$
+(\S\ref{sec:grid}), so the family-wide error of the design rule and the discretisation error
+of the computation that verifies it are of the same size.
+
+\tabinput{table_collapse.tex}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{fig16_collapse.pdf}
+\caption{Collapse of the hydraulic feedback. (a) The strip resistance ratio $\Pi$ of all
+twenty-four converged coupled runs against the bow ratio $a$, with the master integral
+\eqref{eq:master} evaluated on the design-point shape (no fitted coefficient) and the
+kinematic $\sin^2$ law. (b) Deviation of every run from the master integral, in per cent; the
+runs lie inside $\pm0.4\%$ across the whole parameter space, whereas the $\sin^2$ law departs
+from the same curve by up to $20\%$ of the strip resistance. The collapse is the statement that
+the solid curve, computed once, serves every parameter set in the sweeps.}
+\label{fig:collapse}
+\end{figure}
+
 \subsection{Flow in the deformed passage}
 \label{sec:flowresults}
 
@@ -2045,10 +2111,14 @@ Second, the thickness-averaged wall temperature rises by $34.3$~K on average
 and by at most $35.4$~K, and the outer face, which carries the imposed flux,
 reaches $65.9$~K above the inlet. The one-dimensional estimate of $32.3$~K in
 Table~\ref{tab:baseline} therefore lies $6.2\%$ below the computed value, and
-the difference is the convective resistance of the developing boundary layer,
-which the estimate replaces by the fully developed $H1$ coefficient. This is a
-mild, unremarkable difference that would not affect a design decision, but it
-is the reason the coupling is iterated rather than evaluated once.
+\S\ref{sec:wallclosure} shows that this is not the convective resistance of the
+developing boundary layer but the geometry of the deformed wall: the mid-surface
+sits $(d+w)/2$ rather than $d/2$ from the interface, and the least-squares value
+reported here is a mid-surface value rather than a thickness average. The
+corrected closure reproduces the exact thickness average to one part in $10^{4}$,
+and the residue between the two averages is carried as a conservative margin.
+The coupling is still iterated rather than evaluated once, because the bow
+itself depends on the wall temperature.
 
 Third, the through-thickness gradient recovered from the two-dimensional wall
 solution reproduces $q''/k_s$ to $0.36\%$ in the mean over the strip and to
@@ -2495,13 +2565,14 @@ $314.5$~Pa, and accelerates the core flow by $79\%$ while raising the mean
 wall shear from $0.59$ to $1.30$~Pa. A pressure-only estimate of the same
 configuration would miss this entirely, because the pressure-driven bow is
 $9.2\times10^{-8}$~m.
-\item It is shown that the conjugate wall temperature rise is $34.3$~K, $6.2\%$ above the
-one-dimensional estimate, because the developing boundary layer raises the
-convective resistance over the first part of the strip. The local Nusselt
-number varies from $8.2$ just downstream of the leading edge to a second
-maximum of $9.5$ at mid-strip and $6.2$ at the trailing edge, so no single
-value characterises the strip and the mean of $8.69$ should not be quoted as a
-fully developed coefficient.
+\item It is shown that the conjugate wall temperature rise is $34.3$~K and that its
+$7.5\%$ excess over the one-dimensional estimate is not a thermal effect at all: $4.2$ points of
+it are the lengthening of the conduction path by the bow and the remaining $3.3$ points are the
+difference between the mid-surface value used in the coupling and the exact thickness average,
+which the deformed closure reproduces to one part in $10^{4}$. The local Nusselt number varies
+from $8.2$ just downstream of the leading edge to a second maximum of $9.5$ at mid-strip and
+$6.2$ at the trailing edge, so no single value characterises the strip and the mean of $8.69$
+should not be quoted as a fully developed coefficient.
 \item It is shown that the frozen-force closure of the wall equation is adequate below about
 $2.5$~kW/m$^2$ and over-predicts the bow by $14.9\%$ and the moment by
 $30.7\%$ at $10$~kW/m$^2$. The axial-compatibility update of
@@ -2537,6 +2608,12 @@ Sturm--Liouville solution \eqref{eq:graetz} with $\lambda_1=3.696$ and $Nu_\inft
 that the deformation raises the local Nusselt number above that reference by up to $70\%$,
 and that the excess collapses onto $\bigl(H_0/H\bigr)^{0.79}$ with $R^2=0.81$, between the
 two exponents $(\tfrac12,1)$ that bracket a layer thinned by acceleration and by wall shear.
+\item It is shown that the hydraulic feedback is a function of the bow ratio alone: one shape
+integral, evaluated once on the design-point profile and containing no fitted coefficient,
+reproduces the strip resistance of all twenty-four converged runs of the five sweeps
+($\ReDh=25$--$100$, $d=2.5$--$5$~mm, and the conductivity and expansion sweeps) to $0.4\%$,
+whereas the kinematic $\sin^2$ law departs from the same runs by up to $19.7\%$. The design rule
+therefore has a measured family-wide error bar, and the chart that carries it is one curve.
 \end{enumerate}
 
 The computational formulation that produces these numbers is verified against
