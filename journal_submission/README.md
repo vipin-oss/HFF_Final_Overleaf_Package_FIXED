@@ -1,8 +1,13 @@
 # Manuscript package — `journal_submission/`
 
 Journal research article in the layout of the *International Journal of Numerical Methods
-for Heat & Fluid Flow* (Emerald): single-column, structured abstract, nomenclature,
-twelve figures, eleven tables, three appendices and 55 references. Everything needed to
+for Heat & Fluid Flow* (Emerald): single-column, structured abstract, nomenclature placed
+after the field equations, twelve figures, eleven tables, three appendices and 55
+references. The section tree follows the journal's 2023 pattern (Gupta, Kumar, Kumar and
+Barak, HFF 33(6), 2250-2277): Introduction -> Field equations (with limiting cases) ->
+Nomenclature -> Problem formulation -> Solution of the problem -> Numerical results and
+discussion -> Discussion -> Limitations -> Conclusions -> References -> Appendices ->
+Corresponding author. Everything needed to
 compile it and to reproduce every number is in this folder or in `../program`.
 
 **The LaTeX was not compiled in the environment where the package was assembled** — no TeX
@@ -15,6 +20,7 @@ for both build layouts); the first real compile will happen in Overleaf. See
 
 ```
 main.tex                 the manuscript (article class, 11 pt, A4, single column)
+references.tex           generated bibliography (thebibliography, 55 entries)
 references.bib           55 entries: 46 articles, 7 books, 2 book chapters
 figures/fig01..fig12     PDF (vector) and PNG (400 dpi) of every figure
 tables/table_*.tex       nine generated LaTeX tables (\tabinput by main.tex)
@@ -60,10 +66,20 @@ Figure and table inventory (all produced by `../program/run_all.py` from
 ```bash
 cd journal_submission
 pdflatex main
-bibtex   main
-pdflatex main
 pdflatex main
 ```
+
+Two passes, no BibTeX run: the bibliography is read from `references.tex`, which is
+generated once from `references.bib` by
+
+```bash
+python3 tools/make_references.py          # writes journal_submission/references.tex
+python3 tools/make_references.py --check  # fails if the file is stale
+```
+
+The generator sorts the entries alphabetically and emits Emerald (Harvard) style with
+natbib-compatible `\bibitem[Surname et al.(Year)]{key}` labels, so `\citep`/`\citet`
+keep working unchanged.
 
 Required packages: `amsmath`, `amssymb`, `graphicx`, `booktabs`, `siunitx`, `longtable`,
 `array`, `enumitem`, `caption`, `natbib`, `hyperref`, `mathptmx`, `helvet` — all part of a
@@ -81,9 +97,8 @@ from the repository root without edits.
    `references.bib`, `figures/` and `tables/` at its **root**.
 2. Overleaf → *New Project* → *Upload Project* → choose the ZIP.
 3. The project opens with `main.tex` as the root document; press *Recompile*. The first pass
-   reports undefined references and citations, which is expected before BibTeX has run:
-   Overleaf runs `pdflatex`, `bibtex`, `pdflatex`, `pdflatex` automatically once
-   `references.bib` is present, so a second *Recompile* clears them.
+   reports undefined references; a second pass resolves them. No BibTeX run is needed,
+   because `references.tex` is part of the upload.
 
 ### Route B — GitHub synchronization (Overleaf premium)
 

@@ -73,13 +73,21 @@ def main() -> int:
         issues.append(f"references without a label: {missing}")
 
     # citations
+    bib_tex = (SUB / "references.tex")
+    if bib_tex.exists():
+        bib_items = set(re.findall(r"\\bibitem\[[^\]]*\]\{([^}]+)\}",
+                                   bib_tex.read_text()))
+    else:
+        bib_items = set()
+        issues.append("missing references.tex (run tools/make_references.py)")
     keys = set(re.findall(r"@\w+\{([^,]+),", (SUB / "references.bib").read_text()))
+    keys |= bib_items
     cited: set[str] = set()
     for m in re.finditer(r"\\cite[pt]?\{([^}]+)\}", body):
         cited.update(k.strip() for k in m.group(1).split(","))
     bad = sorted(cited - keys)
     if bad:
-        issues.append(f"cited keys missing from references.bib: {bad}")
+        issues.append(f"cited keys missing from the bibliography: {bad}")
     uncited = sorted(keys - cited)
 
     # figures and table fragments
