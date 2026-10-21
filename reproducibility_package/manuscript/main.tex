@@ -1257,10 +1257,13 @@ integral of a bounded perturbation is bounded by its supremum.
 \end{proof}
 
 Lemma~\ref{lem:lipschitz} is the quantitative statement of the separation: the law is stable,
-with a modulus that grows as $a\to1$ but stays finite at the design point ($13.6$ for
-$a=0.4415$), whereas the substitution of one shape for another is not a small perturbation at
-all, because $\|\hat w_{\rm comp}-\sin^2\|_\infty=O(1)$, the computed profile being much
-fuller than the sine squared near the ends.
+with a modulus that grows as $a\to1$ but stays finite at the design point ($3a/(1-a)^4=13.6$
+for $a=0.4415$), whereas the substitution of one shape for another is not a small perturbation
+at all: the computed profile differs from the sine squared by
+$\|\hat w_{\rm comp}-\sin^2\|_\infty=0.29$, so the lemma --- which is a stability statement,
+not an error estimate --- would bound the induced change in $\Pi$ by $3.9$, i.e. by more than
+$\Pi$ itself. The error of a frozen shape must therefore be measured (Table~\ref{tab:pressure_series})
+rather than bounded, and it is $24\%$ in $\Pi$ at the design point.
 
 The moments of the computed bow, evaluated from the converged interface profile at the design
 point, are
