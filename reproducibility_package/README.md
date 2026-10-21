@@ -39,7 +39,7 @@ pip install -r program/requirements.txt
 
 ```bash
 cd program
-python run_all.py                # full study, ~400 s on 2 vCPU
+python run_all.py                # full study, 402 s (measured) on 2 vCPU
 python -m pytest -q              # 30 tests, ~5 s
 ```
 
@@ -47,8 +47,9 @@ The run writes `outputs/data/*.json`, `outputs/figures/*.pdf|png` and `outputs/t
 and records the parameter file, library versions and per-stage runtimes in
 `outputs/data/run_metadata.json`.
 
-A faster smoke run (`--quick`, coarse meshes, ~1 min) exercises every stage but produces
-figures of lower quality; it is not the run used in the paper.
+A faster smoke run (`--quick`, coarse meshes and shortened sweeps) exercises every stage in
+about 84 s; it was executed here as a consistency check, but it produces lower-quality figures
+and is not the run used in the paper.
 
 ## 3. Regenerate the manuscript artefacts without re-solving
 

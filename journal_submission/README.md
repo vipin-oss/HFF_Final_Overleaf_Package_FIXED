@@ -46,8 +46,9 @@ or MiKTeX installation. `\graphicspath{{figures/}}` is set, so figures resolve f
 4. The compiler setting *pdfLaTeX* (the default) is the one used here. No shell escape, no
    external font, and no `biber` are required — the bibliography uses BibTeX with the
    `plainnat` style.
-5. Press *Recompile*. The expected output is a single-column article of roughly 18–20 pages
-   with 9 figures and 6 tables.
+5. Press *Recompile*. The expected output is a single-column article containing 9 figures and
+   6 tables; the page count depends on float placement and is not pre-stated here because the
+   document has not been compiled yet in this environment.
 
 Nothing in the package points outside the archive: every `\input` target is in `tables/`,
 every figure is in `figures/`, and the bibliography is `references.bib`.
