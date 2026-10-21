@@ -1,0 +1,36 @@
+symbol,value,unit,expression,kind
+Re_Dh,50,-,2 rho U H0 / mu,analytic
+Re_H0,25,-,rho U H0 / mu,analytic
+Pr,6.966666667,-,mu cp / kf,analytic
+Pe,348.3333333,-,Re_Dh Pr,analytic
+f_D,1.92,-,96 / Re_Dh (Darcy, Dh basis),analytic
+dp,72,Pa,12 mu U L / H0^2,analytic
+tau_w,0.6,Pa,6 mu U / H0,analytic
+p_mean,84,Pa,[p(0)+p(L)]/2 with p(L+Lo)=0,analytic
+dT_star,4.166666667,K,q'' H0 / kf,analytic
+dT_t,60,K,q'' d / ks,analytic
+kappa_th,1.4,1/m,(1+nu) alpha q'' / ks,analytic
+w_lin,0.0001575,m,kappa_th L^2 / 8,analytic
+w_lin_over_H0,0.315,-,kappa_th L^2 / (8 H0),analytic
+theta_bar,32.26521186,K,mean wall rise (1D estimate or computed),estimate
+N_theta,-29038.69067,N/m,-E d alpha theta_bar/(1-nu),estimate
+Ds,9.642857143,N m,E d^3/[12(1-nu^2)],analytic
+N_cr,105745.7614,N/m,pi^2 Ds / L^2,analytic
+N_over_Ncr,0.2746085543,-,|N_theta| / N_cr,estimate
+T_cr,117.4952905,K,pi^2 d^2/[12 alpha (1+nu) L^2],analytic
+M_b,3.641547156,-,T_cr / theta_bar,estimate
+w_p,9.1875e-08,m,5 p_mean L^4/(384 Ds),analytic
+Gamma_p,1714.285714,-,w_th / w_p (linear limit),derived
+sigma_memb,-9679563.558,Pa,-E alpha theta_bar/(1-nu),estimate
+Gr,1.07296875,-,g beta_f dT* H0^3/nu_kin^2,analytic
+Ri_H0,0.00171675,-,Gr / Re_H0^2,analytic
+Ri_Dh,0.0034335,-,Gr_Dh / Re_Dh^2,analytic
+Br,1e-06,-,mu U^2 / (kf dT*),analytic
+dT_b,1.435406699,K,q'' L /(rho U H0 cp),analytic
+h_rigid,3231,W/(m2 K),Nu_H1 kf / Dh,analytic
+q_over_h,1.547508511,K,q'' / h_rigid,estimate
+t_wave,1.802775638e-06,s,d sqrt(rho_s/E),analytic
+t_s,51.48,s,d^2/alpha_s,analytic
+t_f,1.741666667,s,H0^2/alpha_f,analytic
+xi,0.021525,-,beta^2 T0/[(lam+2muL) rho_s c_s],analytic
+sigma_bend_scale,9000000,Pa,E kappa_th (d/2)/(1-nu^2) (unrestrained scale),derived

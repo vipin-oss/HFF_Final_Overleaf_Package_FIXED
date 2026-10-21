@@ -1,0 +1,298 @@
+{
+  "rows": [
+    {
+      "symbol": "Re_Dh",
+      "value": 50.0,
+      "unit": "-",
+      "expression": "2 rho U H0 / mu",
+      "kind": "analytic"
+    },
+    {
+      "symbol": "Re_H0",
+      "value": 25.0,
+      "unit": "-",
+      "expression": "rho U H0 / mu",
+      "kind": "analytic"
+    },
+    {
+      "symbol": "Pr",
+      "value": 6.966666666666667,
+      "unit": "-",
+      "expression": "mu cp / kf",
+      "kind": "analytic"
+    },
+    {
+      "symbol": "Pe",
+      "value": 348.3333333333333,
+      "unit": "-",
+      "expression": "Re_Dh Pr",
+      "kind": "analytic"
+    },
+    {
+      "symbol": "f_D",
+      "value": 1.92,
+      "unit": "-",
+      "expression": "96 / Re_Dh (Darcy, Dh basis)",
+      "kind": "analytic"
+    },
+    {
+      "symbol": "dp",
+      "value": 72.0,
+      "unit": "Pa",
+      "expression": "12 mu U L / H0^2",
+      "kind": "analytic"
+    },
+    {
+      "symbol": "tau_w",
+      "value": 0.6000000000000001,
+      "unit": "Pa",
+      "expression": "6 mu U / H0",
+      "kind": "analytic"
+    },
+    {
+      "symbol": "p_mean",
+      "value": 84.00000000000001,
+      "unit": "Pa",
+      "expression": "[p(0)+p(L)]/2 with p(L+Lo)=0",
+      "kind": "analytic"
+    },
+    {
+      "symbol": "dT_star",
+      "value": 4.166666666666667,
+      "unit": "K",
+      "expression": "q'' H0 / kf",
+      "kind": "analytic"
+    },
+    {
+      "symbol": "dT_t",
+      "value": 60.0,
+      "unit": "K",
+      "expression": "q'' d / ks",
+      "kind": "analytic"
+    },
+    {
+      "symbol": "kappa_th",
+      "value": 1.4,
+      "unit": "1/m",
+      "expression": "(1+nu) alpha q'' / ks",
+      "kind": "analytic"
+    },
+    {
+      "symbol": "w_lin",
+      "value": 0.00015749999999999998,
+      "unit": "m",
+      "expression": "kappa_th L^2 / 8",
+      "kind": "analytic"
+    },
+    {
+      "symbol": "w_lin_over_H0",
+      "value": 0.31499999999999995,
+      "unit": "-",
+      "expression": "kappa_th L^2 / (8 H0)",
+      "kind": "analytic"
+    },
+    {
+      "symbol": "theta_bar",
+      "value": 32.26521186057911,
+      "unit": "K",
+      "expression": "mean wall rise (1D estimate or computed)",
+      "kind": "estimate"
+    },
+    {
+      "symbol": "N_theta",
+      "value": -29038.6906745212,
+      "unit": "N/m",
+      "expression": "-E d alpha theta_bar/(1-nu)",
+      "kind": "estimate"
+    },
+    {
+      "symbol": "Ds",
+      "value": 9.642857142857142,
+      "unit": "N m",
+      "expression": "E d^3/[12(1-nu^2)]",
+      "kind": "analytic"
+    },
+    {
+      "symbol": "N_cr",
+      "value": 105745.76144024312,
+      "unit": "N/m",
+      "expression": "pi^2 Ds / L^2",
+      "kind": "analytic"
+    },
+    {
+      "symbol": "N_over_Ncr",
+      "value": 0.27460855431951237,
+      "unit": "-",
+      "expression": "|N_theta| / N_cr",
+      "kind": "estimate"
+    },
+    {
+      "symbol": "T_cr",
+      "value": 117.49529048915902,
+      "unit": "K",
+      "expression": "pi^2 d^2/[12 alpha (1+nu) L^2]",
+      "kind": "analytic"
+    },
+    {
+      "symbol": "M_b",
+      "value": 3.641547156016417,
+      "unit": "-",
+      "expression": "T_cr / theta_bar",
+      "kind": "estimate"
+    },
+    {
+      "symbol": "w_p",
+      "value": 9.1875e-08,
+      "unit": "m",
+      "expression": "5 p_mean L^4/(384 Ds)",
+      "kind": "analytic"
+    },
+    {
+      "symbol": "Gamma_p",
+      "value": 1714.2857142857142,
+      "unit": "-",
+      "expression": "w_th / w_p (linear limit)",
+      "kind": "derived"
+    },
+    {
+      "symbol": "sigma_memb",
+      "value": -9679563.558173733,
+      "unit": "Pa",
+      "expression": "-E alpha theta_bar/(1-nu)",
+      "kind": "estimate"
+    },
+    {
+      "symbol": "Gr",
+      "value": 1.07296875,
+      "unit": "-",
+      "expression": "g beta_f dT* H0^3/nu_kin^2",
+      "kind": "analytic"
+    },
+    {
+      "symbol": "Ri_H0",
+      "value": 0.00171675,
+      "unit": "-",
+      "expression": "Gr / Re_H0^2",
+      "kind": "analytic"
+    },
+    {
+      "symbol": "Ri_Dh",
+      "value": 0.0034335,
+      "unit": "-",
+      "expression": "Gr_Dh / Re_Dh^2",
+      "kind": "analytic"
+    },
+    {
+      "symbol": "Br",
+      "value": 1.0000000000000002e-06,
+      "unit": "-",
+      "expression": "mu U^2 / (kf dT*)",
+      "kind": "analytic"
+    },
+    {
+      "symbol": "dT_b",
+      "value": 1.4354066985645932,
+      "unit": "K",
+      "expression": "q'' L /(rho U H0 cp)",
+      "kind": "analytic"
+    },
+    {
+      "symbol": "h_rigid",
+      "value": 3231.0,
+      "unit": "W/(m2 K)",
+      "expression": "Nu_H1 kf / Dh",
+      "kind": "analytic"
+    },
+    {
+      "symbol": "q_over_h",
+      "value": 1.547508511296812,
+      "unit": "K",
+      "expression": "q'' / h_rigid",
+      "kind": "estimate"
+    },
+    {
+      "symbol": "t_wave",
+      "value": 1.8027756377319948e-06,
+      "unit": "s",
+      "expression": "d sqrt(rho_s/E)",
+      "kind": "analytic"
+    },
+    {
+      "symbol": "t_s",
+      "value": 51.480000000000004,
+      "unit": "s",
+      "expression": "d^2/alpha_s",
+      "kind": "analytic"
+    },
+    {
+      "symbol": "t_f",
+      "value": 1.7416666666666665,
+      "unit": "s",
+      "expression": "H0^2/alpha_f",
+      "kind": "analytic"
+    },
+    {
+      "symbol": "xi",
+      "value": 0.021525000000000016,
+      "unit": "-",
+      "expression": "beta^2 T0/[(lam+2muL) rho_s c_s]",
+      "kind": "analytic"
+    },
+    {
+      "symbol": "sigma_bend_scale",
+      "value": 9000000.0,
+      "unit": "Pa",
+      "expression": "E kappa_th (d/2)/(1-nu^2) (unrestrained scale)",
+      "kind": "derived"
+    }
+  ],
+  "groups": {
+    "Re_Dh": 50.0,
+    "Re_H0": 25.0,
+    "Pr": 6.966666666666667,
+    "Pe": 348.3333333333333,
+    "f_D": 1.92,
+    "Gr": 1.07296875,
+    "Ri_H0": 0.00171675,
+    "Ri_Dh": 0.0034335,
+    "Br": 1.0000000000000002e-06,
+    "R_k": 0.4166666666666667,
+    "D_r": 6.0,
+    "Lambda": 60.0,
+    "Sig_kappa": 0.0005,
+    "dT_star": 4.166666666666667
+  },
+  "derived": {
+    "Dh": 0.001,
+    "L_total": 0.06,
+    "lambda": 5142857142.857144,
+    "mu_L": 1285714285.7142859,
+    "K": 6000000000.000002,
+    "beta": 900000.0000000005,
+    "Ds": 9.642857142857142,
+    "alpha_f": 1.4354066985645933e-07,
+    "alpha_s": 1.7482517482517481e-07,
+    "nu_kin": 1e-06
+  },
+  "strip_pressure": {
+    "grad": 2400.0000000000005,
+    "p0": 120.00000000000003,
+    "pL": 48.00000000000001,
+    "p_mean": 84.00000000000001
+  },
+  "theta_bar_estimate": {
+    "theta_bar": 32.26521186057911,
+    "dT_t": 60.0,
+    "dT_b": 1.4354066985645932,
+    "h_rigid": 3231.0
+  },
+  "time_scales": {
+    "t_wave": 1.8027756377319948e-06,
+    "t_s": 51.480000000000004,
+    "t_f": 1.7416666666666665,
+    "t_adv": 0.6,
+    "xi": 0.021525000000000016
+  },
+  "critical_temperature": 117.49529048915902,
+  "pressure_drop": 72.0
+}
