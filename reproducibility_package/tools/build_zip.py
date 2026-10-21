@@ -1,0 +1,96 @@
+#!/usr/bin/env python3
+"""Build the Overleaf upload archive from ``journal_submission/``.
+
+The archive is written to the repository root as
+``hff_journal_submission.zip`` with ``main.tex`` at its root, which is the
+layout Overleaf expects for *New Project -> Upload Project*::
+
+    main.tex
+    references.bib
+    README.md
+    BUILD_REPORT.md
+    VALIDATION_REPORT.md
+    figures/fig01..fig12 (.pdf and .png)
+    tables/table_*.tex
+
+Usage (from the repository root)::
+
+    python3 tools/build_zip.py            # build
+    python3 tools/build_zip.py --check    # build and verify the listing
+
+No third-party dependency is used.
+"""
+from __future__ import annotations
+
+import argparse
+import pathlib
+import sys
+import zipfile
+
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+SRC = ROOT / "journal_submission"
+OUT = ROOT / "hff_journal_submission.zip"
+
+TOP_FILES = ["main.tex", "references.bib", "README.md", "BUILD_REPORT.md",
+             "VALIDATION_REPORT.md"]
+REQUIRED = ["main.tex", "references.bib"]
+
+
+def collect() -> list[pathlib.Path]:
+    files: list[pathlib.Path] = []
+    for name in TOP_FILES:
+        p = SRC / name
+        if p.exists():
+            files.append(p)
+        elif name in REQUIRED:
+            raise SystemExit(f"missing required file: {p}")
+    for sub, patterns in (("figures", ("*.pdf", "*.png")), ("tables", ("*.tex",))):
+        d = SRC / sub
+        if not d.is_dir():
+            raise SystemExit(f"missing directory: {d}")
+        for pat in patterns:
+            files.extend(sorted(d.glob(pat)))
+    return files
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--check", action="store_true",
+                    help="re-open the archive and verify the listing")
+    args = ap.parse_args()
+
+    files = collect()
+    if not files:
+        raise SystemExit("nothing to archive")
+    with zipfile.ZipFile(OUT, "w", compression=zipfile.ZIP_DEFLATED) as zf:
+        for p in files:
+            zf.write(p, arcname=str(p.relative_to(SRC)))
+    size_mb = OUT.stat().st_size / 1e6
+    print(f"wrote {OUT}  ({len(files)} files, {size_mb:.2f} MB)")
+
+    if args.check:
+        with zipfile.ZipFile(OUT) as zf:
+            bad = zf.testzip()
+            names = zf.namelist()
+            tex = zf.read("main.tex").decode("utf-8") if "main.tex" in names else ""
+        if bad is not None:
+            print(f"corrupt member: {bad}", file=sys.stderr)
+            return 1
+        if "main.tex" not in names:
+            print("main.tex is not at the archive root", file=sys.stderr)
+            return 1
+        figures = [n for n in names if n.startswith("figures/")]
+        tables = [n for n in names if n.startswith("tables/")]
+        print(f"verified: {len(names)} members, {len(figures)} figures, "
+              f"{len(tables)} table fragments, main.tex at root")
+        refs = [n for n in figures if n.endswith(".pdf")]
+        missing = [r for r in refs
+                   if pathlib.PurePosixPath(r).name not in tex]
+        if missing:
+            print(f"figures never referenced from main.tex: {missing}", file=sys.stderr)
+            return 1
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

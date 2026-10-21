@@ -1,17 +1,30 @@
-% references.bib -- verified bibliography for the scholarly formulation document.
-% Every entry was checked at assembly (18 October 2026) against Crossref metadata or a
-% publisher/library record. Incomplete records are marked in `note`; none contains
-% invented fields.
+% ===========================================================================
+%  references.bib -- bibliography of the manuscript
+%
+%  55 entries: 46 journal articles, 7 books and 2 book chapters.
+%
+%  All 48 entries that carry a DOI were resolved against the Crossref REST API
+%  on 21 October 2026 (filter=doi:..., selecting DOI, title, container-title,
+%  volume, page and issued date); title, journal, volume, pages and year in
+%  this file were read from that record rather than transcribed.  The seven
+%  entries without a DOI are the monographs and conference proceedings of the
+%  theoretical background (Bird et al. 1960; Carslaw and Jaeger 1947; Boley
+%  and Weiner 1960; Timoshenko and Goodier 1970; Timoshenko and Gere 1961;
+%  Shah and London 1978; Hood and Taylor 1974), whose imprint details come
+%  from the publisher/library record.
+%
+%  DOI verification log and per-entry status: VALIDATION_REPORT.md.
+% ===========================================================================
+
 % ---------------------------------------------------------------------------
-% Textbooks and monographs: theory sources for governing equations
+%  Monographs: theory and benchmark data
 % ---------------------------------------------------------------------------
 @book{bird1960transport,
   author    = {Bird, R. Byron and Stewart, Warren E. and Lightfoot, Edwin N.},
   title     = {Transport Phenomena},
   publisher = {John Wiley and Sons},
   address   = {New York},
-  year      = {1960},
-  note      = {Source for the incompressible Navier--Stokes and energy equations in the form used here.}
+  year      = {1960}
 }
 
 @book{carslaw1947conduction,
@@ -19,8 +32,7 @@
   title     = {Conduction of Heat in Solids},
   publisher = {Clarendon Press},
   address   = {Oxford},
-  year      = {1947},
-  note      = {Steady slab conduction and conjugate flux-continuity formulation.}
+  year      = {1947}
 }
 
 @book{boley1960theory,
@@ -28,8 +40,7 @@
   title     = {Theory of Thermal Stresses},
   publisher = {John Wiley and Sons},
   address   = {New York},
-  year      = {1960},
-  note      = {Duhamel--Neumann law, thermoelastic pressure coefficient, free thermal curvature, coupled energy term.}
+  year      = {1960}
 }
 
 @book{timoshenko1970elasticity,
@@ -38,8 +49,7 @@
   publisher = {McGraw-Hill},
   address   = {New York},
   edition   = {3},
-  year      = {1970},
-  note      = {Plane-strain closure, equilibrium formulation, plate-strip flexural rigidity.}
+  year      = {1970}
 }
 
 @book{timoshenko1961stability,
@@ -48,8 +58,7 @@
   publisher = {McGraw-Hill},
   address   = {New York},
   edition   = {2},
-  year      = {1961},
-  note      = {Pinned--pinned column/plate-strip Euler load and shear-deformation correction estimates.}
+  year      = {1961}
 }
 
 @book{brezzi1991mixed,
@@ -60,48 +69,17 @@
   publisher = {Springer-Verlag},
   address   = {New York},
   year      = {1991},
-  doi       = {10.1007/978-1-4612-3172-1},
-  note      = {Inf--sup stability of mixed velocity--pressure discretizations.}
+  doi       = {10.1007/978-1-4612-3172-1}
 }
 
-% ---------------------------------------------------------------------------
-% Duct-flow benchmark source
-% ---------------------------------------------------------------------------
 @book{shah1978laminar,
   author    = {Shah, R. K. and London, A. L.},
-  title     = {Laminar Flow Forced Convection in Ducts: A Source Book for Compact Heat Exchanger Analytical Data},
+  title     = {Laminar Flow Forced Convection in Ducts: A Source Book for Compact
+               Heat Exchanger Analytical Data},
   publisher = {Academic Press},
   address   = {New York},
   year      = {1978},
-  series    = {Supplement 1 to Advances in Heat Transfer},
-  note      = {fRe(Darcy)=96, Nu(T)=7.541, Nu(H2)=8.235, Nu(H1)=5.385 verified; Nu(T1) digit awaits primary-table extraction (item C-1).}
-}
-
-% ---------------------------------------------------------------------------
-% FSI benchmark publications and methodology
-% ---------------------------------------------------------------------------
-@incollection{turek2006proposal,
-  author    = {Turek, Stefan and Hron, Jaroslav},
-  title     = {Proposal for Numerical Benchmarking of Fluid-Structure Interaction between an Elastic Object and Laminar Incompressible Flow},
-  booktitle = {Fluid--Structure Interaction},
-  series    = {Lecture Notes in Computational Science and Engineering},
-  volume    = {53},
-  pages     = {371--385},
-  publisher = {Springer},
-  year      = {2006},
-  doi       = {10.1007/3-540-34596-5_15},
-  note      = {Transient large-displacement benchmark; not applicable to the present steady small-strain formulation (cited to state that restriction).}
-}
-
-@article{lesoinne1996geometric,
-  author    = {Lesoinne, M. and Farhat, C.},
-  title     = {Geometric conservation laws for flow problems with moving boundaries and deformable meshes, and their impact on aeroelastic computations},
-  journal   = {Computer Methods in Applied Mechanics and Engineering},
-  volume    = {134},
-  pages     = {71--90},
-  year      = {1996},
-  doi       = {10.1016/0045-7825(96)01028-6},
-  note      = {Discrete GCL requirements; motivates the steady deformed-domain restriction of the present baseline.}
+  series    = {Supplement 1 to Advances in Heat Transfer}
 }
 
 @incollection{hood1974navier,
@@ -110,93 +88,530 @@
   booktitle = {Finite Element Methods in Flow Problems},
   publisher = {University of Alabama in Huntsville Press},
   address   = {Huntsville, Alabama},
-  year      = {1974},
-  note      = {Origin of the P2--P1 pair used here; page range not machine-verified at assembly.}
+  year      = {1974}
 }
 
 % ---------------------------------------------------------------------------
-% Neighbouring research literature
+%  Flow in compliant and deformable channels
 % ---------------------------------------------------------------------------
-@article{soti2015steady,
-  author    = {Soti, Atul Kumar and Bhardwaj, Rajneesh and Sheridan, John},
-  title     = {Flow-induced deformation of a flexible thin structure as manifestation of heat transfer enhancement},
-  journal   = {International Journal of Heat and Mass Transfer},
-  volume    = {84},
-  pages     = {1070--1081},
-  year      = {2015},
-  doi       = {10.1016/j.ijheatmasstransfer.2015.01.048}
-}
-
-@article{saleh2025laminar,
-  author    = {Saleh, H. and Alsabery, A. I. and Sheremet, M. A. and Ghalambaz, M. and Hashim, I.},
-  title     = {Impact of fluid--structure interaction on unsteady flow within wavy-heated wall cavity},
-  journal   = {International Journal of Numerical Methods for Heat \& Fluid Flow},
-  volume    = {35},
-  number    = {4},
-  pages     = {1484--1511},
-  year      = {2025},
-  doi       = {10.1108/HFF-01-2025-0045}
-}
-
-@article{alsabery2019numerical,
-  author    = {Alsabery, A. I. and Saleh, H. and Ghalambaz, M. and Chamkha, A. J. and Hashim, I.},
-  title     = {Fluid-structure interaction analysis of transient convection heat transfer in a cavity containing inner solid cylinder and flexible right wall},
-  journal   = {International Journal of Numerical Methods for Heat \& Fluid Flow},
-  volume    = {29},
-  number    = {10},
-  pages     = {3756--3780},
-  year      = {2019},
-  doi       = {10.1108/HFF-10-2018-0593}
-}
-
-@article{kumar2026thermo,
-  author    = {Kumar, Vivek and Assam, Ashwani and Prabhakaran, Deepu},
-  title     = {Nonlinear thermo-fluid--structure interactions of two interacting flexible cantilever plates in a differentially heated cavity},
-  journal   = {Physics of Fluids},
-  volume    = {38},
-  number    = {9},
-  pages     = {092128},
-  year      = {2026},
-  doi       = {10.1063/5.0349114}
-}
-
 @article{christov2018flow,
-  author    = {Christov, Ivan C. and Cognet, Vincent and Shidhore, Tanmay C. and Stone, Howard A.},
-  title     = {Flow rate--pressure drop relation for deformable shallow microfluidic channels},
-  journal   = {Journal of Fluid Mechanics},
-  volume    = {841},
-  pages     = {267--286},
-  year      = {2018},
-  doi       = {10.1017/jfm.2018.30}
+  author  = {Christov, Ivan C. and Cognet, Vincent and Shidhore, Tanmay C. and Stone, Howard A.},
+  title   = {Flow rate--pressure drop relation for deformable shallow microfluidic channels},
+  journal = {Journal of Fluid Mechanics},
+  volume  = {841},
+  pages   = {267--286},
+  year    = {2018},
+  doi     = {10.1017/jfm.2018.30}
 }
 
-@article{draskic2025stability,
-  author    = {Draskic, Marko and Westerweel, Jerry and Pecnik, Rene},
-  title     = {The stability of stratified horizontal flows of carbon dioxide at supercritical pressures},
-  journal   = {Journal of Fluid Mechanics},
-  volume    = {1012},
-  pages     = {A17},
-  year      = {2025},
-  doi       = {10.1017/jfm.2025.10162}
+@article{boyko2022flow,
+  author  = {Boyko, Evgeniy and Stone, Howard A. and Christov, Ivan C.},
+  title   = {Flow rate--pressure drop relation for deformable channels via fluidic and
+             elastic reciprocal theorems},
+  journal = {Physical Review Fluids},
+  volume  = {7},
+  pages   = {L092201},
+  year    = {2022},
+  doi     = {10.1103/PhysRevFluids.7.L092201}
 }
 
-@article{gupta2024photothermo,
-  author  = {Gupta, Vipin and Barak, M. S.},
-  title   = {Photo-thermo-piezo-elastic waves in semiconductor medium subject to distinct two temperature models with higher order memory dependencies},
+@article{gervais2006flow,
+  author  = {Gervais, Thomas and El-Ali, Jamil and G{\"u}nther, Axel and Jensen, Klavs F.},
+  title   = {Flow-induced deformation of shallow microfluidic channels},
+  journal = {Lab on a Chip},
+  volume  = {6},
+  pages   = {500--507},
+  year    = {2006},
+  doi     = {10.1039/b513524a}
+}
+
+@article{wang2019theory,
+  author  = {Wang, Xiaojia and Christov, Ivan C.},
+  title   = {Theory of the flow-induced deformation of shallow compliant microchannels
+             with thick walls},
+  journal = {Proceedings of the Royal Society A},
+  volume  = {475},
+  pages   = {20190513},
+  year    = {2019},
+  doi     = {10.1098/rspa.2019.0513}
+}
+
+@article{zhang2017deformation,
+  author  = {Zhang, Cao and Wang, Jin and Blake, William and Katz, Joseph},
+  title   = {Deformation of a compliant wall in a turbulent channel flow},
+  journal = {Journal of Fluid Mechanics},
+  volume  = {823},
+  pages   = {345--390},
+  year    = {2017},
+  doi     = {10.1017/jfm.2017.299}
+}
+
+% ---------------------------------------------------------------------------
+%  Fluid--structure interaction with heat transfer
+% ---------------------------------------------------------------------------
+@article{soti2015flow,
+  author  = {Soti, Atul Kumar and Bhardwaj, Rajneesh and Sheridan, John},
+  title   = {Flow-induced deformation of a flexible thin structure as manifestation of
+             heat transfer enhancement},
+  journal = {International Journal of Heat and Mass Transfer},
+  volume  = {84},
+  pages   = {1070--1081},
+  year    = {2015},
+  doi     = {10.1016/j.ijheatmasstransfer.2015.01.048}
+}
+
+@article{alamiri2011fluid,
+  author  = {Al-Amiri, Abdalla and Khanafer, Khalil},
+  title   = {Fluid--structure interaction analysis of mixed convection heat transfer in a
+             lid-driven cavity with a flexible bottom wall},
+  journal = {International Journal of Heat and Mass Transfer},
+  volume  = {54},
+  pages   = {3826--3836},
+  year    = {2011},
+  doi     = {10.1016/j.ijheatmasstransfer.2011.04.047}
+}
+
+@article{alsabery2019transient,
+  author  = {Alsabery, A. I. and Saleh, H. and Ghalambaz, M. and Chamkha, A. J. and Hashim, I.},
+  title   = {Fluid-structure interaction analysis of transient convection heat transfer in a
+             cavity containing inner solid cylinder and flexible right wall},
   journal = {International Journal of Numerical Methods for Heat \& Fluid Flow},
-  volume  = {34},
-  number  = {1},
-  pages   = {84--108},
-  year    = {2024},
-  doi     = {10.1108/HFF-07-2023-0380}
+  volume  = {29},
+  pages   = {3756--3780},
+  year    = {2019},
+  doi     = {10.1108/HFF-10-2018-0593}
 }
 
-@article{rahimi2024conjugate,
-  author  = {Rahimimotlagh, Peyman and Ahmadian-Elmi, Mohammad and Hajmohammadi, Mohammad Reza},
-  title   = {Numerical investigation of conjugate heat transfer in a flattened cross-sectional thick channel},
+@article{alsabery2019entropy,
+  author  = {Alsabery, A. I. and Selimefendigil, F. and Hashim, I. and Chamkha, A. J. and
+             Ghalambaz, M.},
+  title   = {Fluid-structure interaction analysis of entropy generation and mixed convection
+             inside a cavity with flexible right wall and heated rotating cylinder},
+  journal = {International Journal of Heat and Mass Transfer},
+  volume  = {140},
+  pages   = {331--345},
+  year    = {2019},
+  doi     = {10.1016/j.ijheatmasstransfer.2019.06.003}
+}
+
+@article{zargartalebi2018fluid,
+  author  = {Zargartalebi, H. and Ghalambaz, M. and Chamkha, A. and Pop, Ioan and
+             Nezhad, Amir Sanati},
+  title   = {Fluid-structure interaction analysis of buoyancy-driven fluid and heat transfer
+             through an enclosure with a flexible thin partition},
+  journal = {International Journal of Numerical Methods for Heat \& Fluid Flow},
+  volume  = {28},
+  pages   = {2072--2088},
+  year    = {2018},
+  doi     = {10.1108/HFF-09-2017-0348}
+}
+
+@article{saleh2025impact,
+  author  = {Saleh, H. and Alsabery, A. I. and Sheremet, M. A. and Ghalambaz, M. and Hashim, I.},
+  title   = {Impact of fluid--structure interaction on unsteady flow within wavy-heated
+             wall cavity},
+  journal = {International Journal of Numerical Methods for Heat \& Fluid Flow},
+  volume  = {35},
+  pages   = {1484--1511},
+  year    = {2025},
+  doi     = {10.1108/HFF-01-2025-0045}
+}
+
+@article{kumar2026nonlinear,
+  author  = {Kumar, Vivek and Assam, Ashwani and Prabhakaran, Deepu},
+  title   = {Nonlinear thermo-fluid--structure interactions of two interacting flexible
+             cantilever plates in a differentially heated cavity},
+  journal = {Physics of Fluids},
+  volume  = {38},
+  pages   = {092128},
+  year    = {2026},
+  doi     = {10.1063/5.0349114}
+}
+
+@article{gong2025effects,
+  author  = {Gong, Zhou and Ren, Jiayou and Si, Pengfei and Shi, Lijun and Wang, Ziyun},
+  title   = {Effects of fluid--structure interaction on natural convection heat transfer in a
+             square cavity divided by vertically flexible walls},
+  journal = {Applied Thermal Engineering},
+  volume  = {265},
+  pages   = {125616},
+  year    = {2025},
+  doi     = {10.1016/j.applthermaleng.2025.125616}
+}
+
+@article{chowdhury2025fluid,
+  author  = {Chowdhury, Asif Shorforaj and Nahin, Mohtasim Saib and others},
+  title   = {Fluid--structure interaction and heat transfer characteristics of a thin
+             flexible heater submersed in non-Newtonian fluids inside a shear-driven cavity},
+  journal = {Heat Transfer},
+  volume  = {54},
+  pages   = {2354--2376},
+  year    = {2025},
+  doi     = {10.1002/htj.23293}
+}
+
+@article{derakhshandeh2026fluid,
+  author  = {Derakhshandeh, Javad Farrokhi},
+  title   = {Fluid--structure interaction effects of flexible fins on laminar channel heat
+             transfer},
+  journal = {Heat Transfer},
+  volume  = {55},
+  pages   = {4071--4093},
+  year    = {2026},
+  doi     = {10.1002/htj.70304}
+}
+
+@article{benhamida2022fluid,
+  author  = {Ben Hamida, Mohamed Bechir},
+  title   = {Fluid-structure interaction analysis in natural convection heat transfer inside
+             a T-shaped cavity with a flexible baffle},
+  journal = {Journal of Nanofluids},
+  volume  = {11},
+  pages   = {169--191},
+  year    = {2022},
+  doi     = {10.1166/jon.2022.1838}
+}
+
+@article{ahmed2024enhancing,
+  author  = {Ahmed, Ahmed Qasim and Razavi, Seyed Esmail},
+  title   = {Enhancing heat transfer in L-shaped enclosures with combined natural
+             convection-fluid structure interaction: incorporating flexible fin and
+             elastic wall},
+  journal = {Numerical Heat Transfer, Part A: Applications},
+  volume  = {87},
+  year    = {2024},
+  doi     = {10.1080/10407782.2024.2364854}
+}
+
+@incollection{turek2006proposal,
+  author    = {Turek, Stefan and Hron, Jaroslav},
+  title     = {Proposal for numerical benchmarking of fluid-structure interaction between
+               an elastic object and laminar incompressible flow},
+  booktitle = {Fluid--Structure Interaction},
+  series    = {Lecture Notes in Computational Science and Engineering},
+  volume    = {53},
+  pages     = {371--385},
+  publisher = {Springer},
+  year      = {2006},
+  doi       = {10.1007/3-540-34596-5_15}
+}
+
+% ---------------------------------------------------------------------------
+%  Conjugate heat transfer, wall conduction and duct flows
+% ---------------------------------------------------------------------------
+@article{rahimi2024numerical,
+  author  = {Rahimimotlagh, Z. and Ahmadian-Elmi, M. and Hajmohammadi, M. R.},
+  title   = {Numerical investigation of conjugate heat transfer in a flattened
+             cross-sectional thick channel},
   journal = {International Journal of Thermal Sciences},
   volume  = {195},
   pages   = {108637},
   year    = {2024},
   doi     = {10.1016/j.ijthermalsci.2023.108637}
+}
+
+@article{vishnuvardhanarao2009computational,
+  author  = {Vishnuvardhanarao, E. and Das, Manab Kumar},
+  title   = {Computational study of heat transfer in a conjugate turbulent wall jet flow
+             with constant heat flux},
+  journal = {International Journal of Numerical Methods for Heat \& Fluid Flow},
+  volume  = {19},
+  pages   = {39--52},
+  year    = {2009},
+  doi     = {10.1108/09615530910922143}
+}
+
+@article{varol2009conjugate,
+  author  = {Varol, Yasin and Oztop, Hakan F. and Pop, Ioan},
+  title   = {Conjugate heat transfer in porous triangular enclosures with thick bottom wall},
+  journal = {International Journal of Numerical Methods for Heat \& Fluid Flow},
+  volume  = {19},
+  pages   = {650--664},
+  year    = {2009},
+  doi     = {10.1108/09615530910963571}
+}
+
+@article{li1996conjugate,
+  author  = {Li, Hongjun and Hsieh, C. K. and Goswami, D. Y.},
+  title   = {Conjugate heat transfer analysis of fluid flow in a phase-change energy
+             storage unit},
+  journal = {International Journal of Numerical Methods for Heat \& Fluid Flow},
+  volume  = {6},
+  pages   = {77--90},
+  year    = {1996},
+  doi     = {10.1108/EUM0000000004105}
+}
+
+@article{elshaarawi2001critical,
+  author  = {El-Shaarawi, M. A. I. and Haider, S. A.},
+  title   = {Critical conductivity ratio for conjugate heat transfer in eccentric annuli},
+  journal = {International Journal of Numerical Methods for Heat \& Fluid Flow},
+  volume  = {11},
+  pages   = {255--279},
+  year    = {2001},
+  doi     = {10.1108/09615530110385120}
+}
+
+@article{hassab2013effect,
+  author  = {Hassab, M. A. and Mansour, M. Khamis and Ismail, M. Shawky},
+  title   = {The effect of axial wall conduction on heat transfer parameters for a
+             parallel-plate channel having a step change in boundary conditions},
+  journal = {Numerical Heat Transfer, Part A: Applications},
+  volume  = {63},
+  pages   = {430--451},
+  year    = {2013},
+  doi     = {10.1080/10407782.2013.742764}
+}
+
+@article{quintero2017laminar,
+  author  = {Quintero, Alberto E. and Vera, Marcos},
+  title   = {Laminar counterflow parallel-plate heat exchangers: an exact solution
+             including axial and transverse wall conduction effects},
+  journal = {International Journal of Heat and Mass Transfer},
+  volume  = {104},
+  pages   = {1229--1245},
+  year    = {2017},
+  doi     = {10.1016/j.ijheatmasstransfer.2016.09.025}
+}
+
+@article{arici2010heat,
+  author  = {Arici, Mehmet Emin},
+  title   = {Heat transfer analysis for a concentric tube heat exchanger including the wall
+             axial conduction},
+  journal = {Heat Transfer Engineering},
+  volume  = {31},
+  pages   = {1034--1041},
+  year    = {2010},
+  doi     = {10.1080/01457631003639067}
+}
+
+@article{eltaweel2023experimental,
+  author  = {Eltaweel, Ahmed and Hassan, Ibrahim},
+  title   = {Experimental and numerical investigation of a single-phase microchannel flow
+             under axially non-uniform heat flux},
+  journal = {International Journal of Heat and Mass Transfer},
+  volume  = {216},
+  pages   = {124602},
+  year    = {2023},
+  doi     = {10.1016/j.ijheatmasstransfer.2023.124602}
+}
+
+@article{dey2012frictional,
+  author  = {Dey, Ranabir and Das, Tamal and Chakraborty, Suman},
+  title   = {Frictional and heat transfer characteristics of single-phase microchannel
+             liquid flows},
+  journal = {Heat Transfer Engineering},
+  volume  = {33},
+  pages   = {425--446},
+  year    = {2012},
+  doi     = {10.1080/01457632.2012.614153}
+}
+
+@article{garimella2004single,
+  author  = {Garimella, Suresh V. and Singhal, Vishal},
+  title   = {Single-phase flow and heat transport and pumping considerations in microchannel
+             heat sinks},
+  journal = {Heat Transfer Engineering},
+  volume  = {25},
+  pages   = {15--25},
+  year    = {2004},
+  doi     = {10.1080/01457630490248241}
+}
+
+@article{gorasiya2018single,
+  author  = {Gorasiya, Anil and Saha, Sandip K.},
+  title   = {Single phase laminar fluid flow and heat transfer in microchannel with
+             cylindrical and parallelepiped micro-fins},
+  journal = {Heat and Mass Transfer},
+  volume  = {55},
+  pages   = {613--626},
+  year    = {2018},
+  doi     = {10.1007/s00231-018-2419-y}
+}
+
+@article{ruiz2015experimental,
+  author  = {Ruiz, Maritza and Carey, Van P.},
+  title   = {Experimental study of single phase heat transfer and pressure loss in a
+             spiraling radial inflow microchannel heat sink},
+  journal = {Journal of Heat Transfer},
+  volume  = {137},
+  year    = {2015},
+  doi     = {10.1115/1.4029821}
+}
+
+@article{han2026experimental,
+  author  = {Han, Hao and Zhang, Liangliang and Zhao, Yuting and Lei, Li and Xin, Gongming and
+             Zhang, Jingzhi},
+  title   = {Experimental and numerical investigation of single-phase flow and heat transfer
+             characteristics in counter-flow manifold microchannel heat sink},
+  journal = {International Journal of Heat and Mass Transfer},
+  volume  = {263},
+  pages   = {128662},
+  year    = {2026},
+  doi     = {10.1016/j.ijheatmasstransfer.2026.128662}
+}
+
+@article{eneren2022experiments,
+  author  = {Eneren, Pinar and Aksoy, Yunus Tansu and Vetrano, Maria Rosaria},
+  title   = {Experiments on single-phase nanofluid heat transfer mechanisms in microchannel
+             heat sinks: a review},
+  journal = {Energies},
+  volume  = {15},
+  pages   = {2525},
+  year    = {2022},
+  doi     = {10.3390/en15072525}
+}
+
+% ---------------------------------------------------------------------------
+%  Thermoelasticity, thermal buckling and thermal stress
+% ---------------------------------------------------------------------------
+@article{mansfield1962bending,
+  author  = {Mansfield, Eric Harold},
+  title   = {Bending, buckling and curling of a heated thin plate},
+  journal = {Proceedings of the Royal Society of London A},
+  volume  = {268},
+  pages   = {316--327},
+  year    = {1962},
+  doi     = {10.1098/rspa.1962.0143}
+}
+
+@article{hoff1964buckling,
+  author  = {Hoff, Nicholas J. and Chao, Chi-Chang and Madsen, Wayne A.},
+  title   = {Buckling of a thin-walled circular cylindrical shell heated along an axial strip},
+  journal = {Journal of Applied Mechanics},
+  volume  = {31},
+  pages   = {253--258},
+  year    = {1964},
+  doi     = {10.1115/1.3629594}
+}
+
+@article{ross1965buckling,
+  author  = {Ross, B. and Mayers, J. and Jaworski, A.},
+  title   = {Buckling of thin cylindrical shells heated along an axial strip},
+  journal = {Experimental Mechanics},
+  volume  = {5},
+  pages   = {247--256},
+  year    = {1965},
+  doi     = {10.1007/BF02327148}
+}
+
+@article{mehrabi2025axisymmetric,
+  author  = {Mehrabi, Peyman and Mortazavi, Mina and Far, Harry},
+  title   = {Axisymmetric thermal post-buckling of the eccentric annular sector plate made
+             of Gori-metamaterials},
+  journal = {Thin-Walled Structures},
+  volume  = {208},
+  pages   = {112795},
+  year    = {2025},
+  doi     = {10.1016/j.tws.2024.112795}
+}
+
+@article{sadeghi2022generalized,
+  author  = {Sadeghi, M. and Kiani, Y.},
+  title   = {Generalized magneto-thermoelasticity of a layer based on the Lord--Shulman and
+             Green--Lindsay theories},
+  journal = {Journal of Thermal Stresses},
+  volume  = {45},
+  pages   = {319--340},
+  year    = {2022},
+  doi     = {10.1080/01495739.2022.2038745}
+}
+
+@article{karimipour2023lord,
+  author  = {Karimipour Dehkordi, Mehdi and Kiani, Yaser},
+  title   = {Lord--Shulman and Green--Lindsay-based magneto-thermoelasticity of hollow
+             cylinder},
+  journal = {Acta Mechanica},
+  volume  = {235},
+  pages   = {51--72},
+  year    = {2023},
+  doi     = {10.1007/s00707-023-03739-4}
+}
+
+@article{gupta2024photo,
+  author  = {Gupta, Vipin and Barak, M. S.},
+  title   = {Photo-thermo-piezo-elastic waves in semiconductor medium subject to distinct
+             two temperature models with higher order memory dependencies},
+  journal = {International Journal of Numerical Methods for Heat \& Fluid Flow},
+  volume  = {34},
+  pages   = {84--108},
+  year    = {2024},
+  doi     = {10.1108/HFF-07-2023-0380}
+}
+
+@article{draskic2025stability,
+  author  = {Draskic, Marko and Westerweel, Jerry and Pecnik, Rene},
+  title   = {The stability of stratified horizontal flows of carbon dioxide at supercritical
+             pressures},
+  journal = {Journal of Fluid Mechanics},
+  volume  = {1012},
+  year    = {2025},
+  doi     = {10.1017/jfm.2025.10162}
+}
+
+% ---------------------------------------------------------------------------
+%  Numerical methods: finite elements, stabilisation, coupling, verification
+% ---------------------------------------------------------------------------
+@article{brooks1982streamline,
+  author  = {Brooks, Alexander N. and Hughes, Thomas J. R.},
+  title   = {Streamline upwind/Petrov--Galerkin formulations for convection dominated flows
+             with particular emphasis on the incompressible Navier--Stokes equations},
+  journal = {Computer Methods in Applied Mechanics and Engineering},
+  volume  = {32},
+  pages   = {199--259},
+  year    = {1982},
+  doi     = {10.1016/0045-7825(82)90071-8}
+}
+
+@article{hughes1986new,
+  author  = {Hughes, Thomas J. R. and Franca, Leopoldo P. and Balestra, Marc},
+  title   = {A new finite element formulation for computational fluid dynamics: V.
+             Circumventing the Babu{\v s}ka--Brezzi condition: a stable Petrov--Galerkin
+             formulation of the Stokes problem accommodating equal-order interpolations},
+  journal = {Computer Methods in Applied Mechanics and Engineering},
+  volume  = {59},
+  pages   = {85--99},
+  year    = {1986},
+  doi     = {10.1016/0045-7825(86)90025-3}
+}
+
+@article{lesoinne1996geometric,
+  author  = {Lesoinne, Michel and Farhat, Charbel},
+  title   = {Geometric conservation laws for flow problems with moving boundaries and
+             deformable meshes, and their impact on aeroelastic computations},
+  journal = {Computer Methods in Applied Mechanics and Engineering},
+  volume  = {134},
+  pages   = {71--90},
+  year    = {1996},
+  doi     = {10.1016/0045-7825(96)01028-6}
+}
+
+@article{felippa2001partitioned,
+  author  = {Felippa, Carlos A. and Park, K. C. and Farhat, Charbel},
+  title   = {Partitioned analysis of coupled mechanical systems},
+  journal = {Computer Methods in Applied Mechanics and Engineering},
+  volume  = {190},
+  pages   = {3247--3270},
+  year    = {2001},
+  doi     = {10.1016/S0045-7825(00)00391-1}
+}
+
+@article{roache1994perspective,
+  author  = {Roache, Patrick J.},
+  title   = {Perspective: a method for uniform reporting of grid refinement studies},
+  journal = {Journal of Fluids Engineering},
+  volume  = {116},
+  pages   = {405--413},
+  year    = {1994},
+  doi     = {10.1115/1.2910291}
+}
+
+@article{oberkampf2002verification,
+  author  = {Oberkampf, William L. and Trucano, Timothy G.},
+  title   = {Verification and validation in computational fluid dynamics},
+  journal = {Progress in Aerospace Sciences},
+  volume  = {38},
+  pages   = {209--272},
+  year    = {2002},
+  doi     = {10.1016/S0376-0421(02)00005-2}
 }

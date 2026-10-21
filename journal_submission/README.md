@@ -1,20 +1,59 @@
 # Manuscript package — `journal_submission/`
 
-Single-column journal article assembled from the HFF study, plus everything needed to
-reproduce it. **The LaTeX was not compiled in this environment** (no TeX distribution is
-available in the build sandbox); see `BUILD_REPORT.md`.
+Journal research article in the layout of the *International Journal of Numerical Methods
+for Heat & Fluid Flow* (Emerald): single-column, structured abstract, nomenclature,
+twelve figures, eleven tables, three appendices and 55 references. Everything needed to
+compile it and to reproduce every number is in this folder or in `../program`.
+
+**The LaTeX was not compiled in the environment where the package was assembled** — no TeX
+distribution is available in the build sandbox. The sources were validated structurally
+(strict parse of the whole file, label/reference/citation audit, figure and table resolution
+for both build layouts); the first real compile will happen in Overleaf. See
+`BUILD_REPORT.md` for exactly what was and was not checked.
 
 ## Contents
 
 ```
 main.tex                 the manuscript (article class, 11 pt, A4, single column)
-references.bib           18 entries, all cited in the text
-figures/fig01..fig09     PDF (vector) and PNG (400 dpi) of every figure
-tables/table_*.tex       six generated LaTeX tables (\input by main.tex)
+references.bib           55 entries: 46 articles, 7 books, 2 book chapters
+figures/fig01..fig12     PDF (vector) and PNG (400 dpi) of every figure
+tables/table_*.tex       nine generated LaTeX tables (\tabinput by main.tex)
 README.md                this file
 BUILD_REPORT.md          how the package was built, what was verified, what was not
-VALIDATION_REPORT.md     numerical results, conservation and verification evidence
+VALIDATION_REPORT.md     numerical results, conservation, verification and DOI evidence
 ```
+
+Figure and table inventory (all produced by `../program/run_all.py` from
+`../program/outputs/data`):
+
+| Figure | File | Content |
+|---|---|---|
+| 1 | `fig01_geometry.pdf` | configuration (schematic, labelled as such) |
+| 2 | `fig02_mesh.pdf` | body-fitted mesh at the converged state, interface detail |
+| 3 | `fig03_grid.pdf` | grid refinement and relative difference to the Richardson limit |
+| 4 | `fig04_verification.pdf` | Nusselt-number verification on four grids |
+| 5 | `fig05_flow.pdf` | velocity profiles and streamwise pressure |
+| 6 | `fig06_thermal.pdf` | local Nusselt number and temperature levels |
+| 7 | `fig07_wall.pdf` | deflection, bending moment and bending stress |
+| 8 | `fig08_convergence.pdf` | coupling convergence and mesh trend of the bow |
+| 9 | `fig09_sensitivity.pdf` | response to imposed flux and wall thickness |
+| 10 | `fig10_reynolds.pdf` | Reynolds-number sensitivity |
+| 11 | `fig11_material.pdf` | wall conductivity and thermal expansion |
+| 12 | `fig12_model_form.pdf` | model-form error of the frozen-force closure |
+
+| Table | File | Content |
+|---|---|---|
+| 1 | `table_parameters.tex` | geometry, operating point, material data |
+| 2 | *(in `main.tex`)* | boundary and interface conditions |
+| 3 | `table_baseline.tex` | closed-form quantities of the formulation |
+| 4 | `table_coupled.tex` | coupled solution at the design point |
+| 5 | `table_mesh.tex` | grid study with observed order, extrapolation and GCI |
+| 6 | `table_sweep.tex` | imposed-flux sweep |
+| 7 | `table_reynolds.tex` | Reynolds-number sweep |
+| 8 | `table_material.tex` | wall-conductivity sweep |
+| 9 | `table_expansion.tex` | thermal-expansion sweep |
+| 10 | `table_verification.tex` | code-verification benchmarks |
+| 11 | *(in `main.tex`)* | nested iterations, tolerances and test inventory (Appendices B–C) |
 
 ## Compile locally
 
@@ -26,78 +65,56 @@ pdflatex main
 pdflatex main
 ```
 
-The document uses only `amsmath`, `amssymb`, `graphicx`, `booktabs`, `siunitx`,
-`longtable`, `caption`, `natbib` and `hyperref`, all of which are part of a standard TeX Live
-or MiKTeX installation. `\graphicspath{{figures/}}` is set, so figures resolve from the
-`figures/` subdirectory.
+Required packages: `amsmath`, `amssymb`, `graphicx`, `booktabs`, `siunitx`, `longtable`,
+`array`, `enumitem`, `caption`, `natbib`, `hyperref`, `mathptmx`, `helvet` — all part of a
+standard TeX Live or MiKTeX installation. `\graphicspath` lists both `figures/` and
+`journal_submission/figures/`, and `\tabinput` resolves `tables/` or
+`journal_submission/tables/` at compile time, so the same file compiles from this folder and
+from the repository root without edits.
 
 ## Import into Overleaf
 
-Two routes work; the first needs no paid feature.
+### Route A — ZIP upload (works on every plan)
 
-### Route A — ZIP upload (recommended, works on every Overleaf plan)
+1. Build the archive with `python3 tools/build_zip.py` from the repository root (or use the
+   ready-made `hff_journal_submission.zip`). The archive contains `main.tex`,
+   `references.bib`, `figures/` and `tables/` at its **root**.
+2. Overleaf → *New Project* → *Upload Project* → choose the ZIP.
+3. The project opens with `main.tex` as the root document; press *Recompile*. The first pass
+   reports undefined references and citations, which is expected before BibTeX has run:
+   Overleaf runs `pdflatex`, `bibtex`, `pdflatex`, `pdflatex` automatically once
+   `references.bib` is present, so a second *Recompile* clears them.
 
-1. Zip the contents of this folder **so that `main.tex` sits at the root of the archive**
-   (not inside an extra directory):
+### Route B — GitHub synchronization (Overleaf premium)
 
-   ```bash
-   cd journal_submission && zip -r ../hff_journal_submission.zip . -x '*.DS_Store'
-   ```
+Overleaf mirrors the **default branch** of the repository (`main`); it cannot follow a
+feature branch and cannot create branches. Therefore:
 
-2. In Overleaf choose *New Project → Upload Project* and select the zip.
-3. Overleaf detects `main.tex` automatically. If it does not, open the project menu and set
-   *Main document* to `main.tex`.
-4. The compiler setting *pdfLaTeX* (the default) is the one used here. No shell escape, no
-   external font, and no `biber` are required — the bibliography uses BibTeX with the
-   `plainnat` style.
-5. Press *Recompile*. The expected output is a single-column article containing 9 figures and
-   6 tables; the page count depends on float placement and is not pre-stated here because the
-   document has not been compiled yet in this environment.
+1. Merge the pull request that contains this manuscript into `main`.
+2. Overleaf → *New Project* → *Import from GitHub* → select
+   `vipin-oss/HFF_Final_Overleaf_Package_FIXED` and the branch `main`.
+3. Set the main document to `main.tex` at the repository root. That file is a two-line
+   wrapper that `\input`s `journal_submission/main.tex`; the manuscript resolves its own
+   figures, tables and bibliography, so no path needs editing.
+4. Press *Recompile*.
 
-Nothing in the package points outside the archive: every `\input` target is in `tables/`,
-every figure is in `figures/`, and the bibliography is `references.bib`.
+Because Overleaf re-syncs from `main` on demand, any later correction must be committed to
+`main` (through a reviewed pull request) before it can be pulled into the project.
 
-### Route B — GitHub sync
+### If the journal requires its own class file
 
-The repository is laid out so that a synced project also compiles, with no path editing:
+The manuscript uses `article` with an Emerald-style front matter so that it compiles with a
+stock TeX installation. When the submission portal requires `emerald.cls`, replace
+`\documentclass[11pt,a4paper]{article}` by the class supplied by the journal and drop the
+`\usepackage{mathptmx}`/`helvet` lines; the structured abstract, keywords, nomenclature and
+sectioning of the present file map one-to-one onto the Emerald template.
 
-* **Repository:** `vipin-oss/HFF_Final_Overleaf_Package_FIXED`
-* **Branch:** `arena/fcb0dec3-hff-final-overleaf-package-fix` (the work is proposed in
-  pull request #1 and is *not* merged into `main`)
-* **Main document:** `main.tex` at the repository root, or `journal_submission/main.tex`.
-  Both compile.
+## Relationship to the rest of the repository
 
-The repository root holds a four-line `main.tex` that inputs the manuscript, and
-`journal_submission/main.tex` contains a *path-handling* block that makes the same file work
-in both layouts: it searches `figures/` and `journal_submission/figures/`, selects
-`tables/` or `journal_submission/tables/` at compile time with `\IfFileExists`, and does the
-same for `references.bib`. So:
-
-| project layout | root document | tables resolved from | bibliography |
-|---|---|---|---|
-| ZIP upload (this folder at the project root) | `main.tex` | `tables/` | `references.bib` |
-| GitHub sync (repository at the project root) | `main.tex` or `journal_submission/main.tex` | `journal_submission/tables/` | `journal_submission/references.bib` |
-
-GitHub sync is an Overleaf plan feature; if the repository or the branch is not listed, use
-Route A. If only `main` is offered and not the branch above, the pull request has to be merged
-first — the branch is deliberately unmerged, so that `main` is untouched until you decide.
-
-The superseded report-class document, with its chapters and TikZ figures, was moved to
-`legacy_report/` so that it cannot be mistaken for the submission and cannot shadow the
-figure or bibliography search paths. `legacy_report/README.md` explains what it is.
-
-## Before submission
-
-* The author block is a placeholder (`Author names, affiliations and corresponding-author
-  details to be completed before submission`), as are the *Author contributions* statement.
-  These must be filled in; no authorship information was available to the build and none was
-  invented.
-* Everything else — numbers, figures, tables, citations — is final and traceable to
-  `../program/outputs/`.
-
-## Where the numbers come from
-
-`main.tex` contains no transcribed numerical result: every figure and table is generated by
-`../program/hff/figures.py` and `../program/hff/tables.py` from the JSON files in
-`../program/outputs/data/`. Values quoted in the running text were cross-checked against the
-same files; `VALIDATION_REPORT.md` lists each quoted value and its source.
+| Path | Role |
+|---|---|
+| `program/` | the executable study: solvers, parameters, tests, figure/table generators |
+| `program/outputs/` | saved numerical results (JSON/CSV), figures (PDF/PNG), tables (`.tex`) |
+| `reproducibility_package/` | program + saved outputs + this manuscript, self-contained |
+| `legacy_report/` | superseded report-class document, kept unchanged for provenance |
+| `hff_journal_submission.zip` | ready-to-upload Overleaf archive built from this folder |

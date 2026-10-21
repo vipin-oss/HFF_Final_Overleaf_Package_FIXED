@@ -16,6 +16,7 @@ Stages
 ``coupled``   partitioned fluid--thermal--structure solution (baseline point)
 ``mesh``      mesh-refinement study of the coupled result
 ``sweep``     imposed-flux and wall-thickness sweeps of the coupled result
+``param``     Reynolds-number, wall-conductivity and thermal-expansion sensitivities
 ``figures``   publication figures from the saved results
 ``tables``    LaTeX tables from the saved results
 
@@ -89,6 +90,28 @@ def _fmt(v):
 # ---------------------------------------------------------------------------
 #  stages
 # ---------------------------------------------------------------------------
+def _gci(values, r: float = 2.0, fs: float = 1.25) -> Dict[str, float]:
+    """Grid Convergence Index (Roache) from three successively refined solutions.
+
+    ``values`` holds the same quantity on three meshes whose element size is halved at
+    each refinement (``r = 2``).  Returns the observed order of accuracy ``p``, the
+    Richardson extrapolated value, the fine-grid GCI with the usual safety factor
+    ``fs = 1.25`` and the extrapolated relative error.
+    """
+    f0, f1, f2 = (float(v) for v in values)
+    denom = abs(f1 - f0)
+    if denom == 0.0:
+        return {"p": float("nan"), "extrapolated": float("nan"), "gci_fine": float("nan"),
+                "relative_change_fine": 0.0, "extrapolated_relative_error": 0.0}
+    p = abs(np.log(abs((f2 - f1) / (f1 - f0)))) / np.log(r)
+    ext = f2 + (f2 - f1) / (r ** p - 1.0)
+    e = abs((f2 - f1) / f2)
+    return {"p": float(p), "extrapolated": float(ext),
+            "gci_fine": float(fs * e / (r ** p - 1.0)),
+            "relative_change_fine": float(e),
+            "extrapolated_relative_error": float(abs((ext - f2) / ext))}
+
+
 def stage_analytic(cfg: Dict, quick: bool) -> Dict[str, Any]:
     print("[analytic] closed-form baseline")
     rows = analytic.baseline(cfg)
@@ -146,6 +169,7 @@ def stage_wall(cfg: Dict, quick: bool) -> Dict[str, Any]:
         "benchmarks": bank,
         "consistency": {k: np.asarray(v).tolist() for k, v in consistency.items()},
         "design_envelope": wall.design_envelope(cfg),
+        "envelope_crossings": _envelope_crossings(wall.design_envelope(cfg), g),
         "buckling_catalog": wall.buckling_catalog(cfg, np.linspace(1e-3, 6e-3, 11)),
     }
     print(f"           frozen-force error: {100 * consistency['rel_error'][2]:.2f}% at "
@@ -155,6 +179,34 @@ def stage_wall(cfg: Dict, quick: bool) -> Dict[str, Any]:
           f"({'converged' if consistent.converged else 'NOT converged'})")
     _write_json("wall_baseline.json", doc)
     return doc
+
+
+def _envelope_crossings(env: Dict[str, Any], g: Dict[str, Any]) -> Dict[str, Any]:
+    """Fluxes at which the reduced wall model reaches its stated limits.
+
+    Linear interpolation on the 241-point envelope written by
+    :func:`hff.wall.design_envelope`.  These are the numbers quoted when the
+    admissible operating range is discussed; a missing crossing is reported as
+    ``None`` rather than extrapolated.
+    """
+    q = np.asarray(env["q"], dtype=float)
+    out: Dict[str, Any] = {}
+
+    def _cross(series: str, level: float):
+        y = np.asarray(env[series], dtype=float)
+        for i in range(1, len(y)):
+            if (y[i - 1] - level) * (y[i] - level) <= 0.0 and y[i] != y[i - 1]:
+                return float(q[i - 1] + (level - y[i - 1]) * (q[i] - q[i - 1])
+                             / (y[i] - y[i - 1]))
+        return None
+
+    out["q_at_bow_0_45_H0"] = _cross("w_over_H0", 0.45)
+    out["q_at_bow_0_50_H0"] = _cross("w_over_H0", 0.50)
+    out["q_at_N_over_Ncr_0_5"] = _cross("N_over_Ncr", 0.50)
+    out["q_at_N_over_Ncr_1_0"] = _cross("N_over_Ncr", 1.00)
+    out["q_at_sigma_over_sy_0_2"] = _cross("sigma_over_sy", 0.20)
+    out["q_at_sigma_over_sy_0_5"] = _cross("sigma_over_sy", 0.50)
+    return out
 
 
 def stage_benchmarks(cfg: Dict, quick: bool) -> Dict[str, Any]:
@@ -258,11 +310,11 @@ def stage_coupled(cfg: Dict, quick: bool, tag: str = "baseline") -> Dict[str, An
 
 
 def stage_mesh_study(cfg: Dict, quick: bool) -> Dict[str, Any]:
-    print("[mesh] refinement study of the coupled solution")
+    print("[mesh] grid-refinement study of the coupled solution (uniform refinement, r = 2)")
     if quick:
-        levels = [(40, 8, 4), (60, 10, 5)]
+        levels = [(30, 3, 2), (60, 6, 4)]
     else:
-        levels = [(60, 8, 4), (120, 10, 6), (240, 16, 8)]
+        levels = [(30, 3, 2), (60, 6, 4), (120, 12, 8)]
     runs = []
     for (nxd, nyf, nys) in levels:
         c = json.loads(json.dumps(cfg))
@@ -270,8 +322,8 @@ def stage_mesh_study(cfg: Dict, quick: bool) -> Dict[str, Any]:
         c["numerics"]["nx_solid"] = nxd
         c["numerics"]["ny_fluid"] = nyf
         c["numerics"]["ny_solid"] = nys
-        c["numerics"]["nx_entrance"] = max(6, nxd // 10)
-        c["numerics"]["nx_exit"] = max(6, nxd // 10)
+        c["numerics"]["nx_entrance"] = max(4, nxd // 10)
+        c["numerics"]["nx_exit"] = max(4, nxd // 10)
         c["numerics"]["wall"]["n_points"] = nxd + 1
         res = coupled.solve_coupled(c, verbose=False)
         m = res.metrics(c)
@@ -281,30 +333,31 @@ def stage_mesh_study(cfg: Dict, quick: bool) -> Dict[str, Any]:
                      "Nu_mean": m["Nu_mean"], "sigma_bend_max": m["sigma_bend_max"],
                      "M_mid": m["M_mid"], "energy_imbalance": m["energy_imbalance"],
                      "iterations": res.iterations, "converged": res.converged})
-        print("           mesh {:>4d}x{:>2d}x{:>2d}: w_max/H0 = {:.6f}, dp = {:.3f} Pa".format(
-            nxd, nyf, nys, m["w_max_over_H0"], m["flow_dp"]))
+        print("           mesh {:>4d}x{:>2d}x{:>2d}: w_max/H0 = {:.6f}, dp = {:.3f} Pa, "
+              "sigma_b = {:.4f} MPa".format(nxd, nyf, nys, m["w_max_over_H0"], m["flow_dp"],
+                                            m["sigma_bend_max"] / 1e6))
 
-    # observed order from the three finest levels (uniform refinement factor 2)
-    order = {}
+    order: Dict[str, Any] = {}
+    gci: Dict[str, Any] = {}
     if len(runs) >= 3:
-        f = [r["w_max"] for r in runs[-3:]]
-        h = [1.0 / r["nx_heated"] for r in runs[-3:]]
-        try:
-            p = float(np.log(abs((f[2] - f[1]) / (f[1] - f[0]))) / np.log(h[1] / h[0]))
-        except (ZeroDivisionError, ValueError):
-            p = float("nan")
-        ext = float(f[2] + (f[2] - f[1]) / (2**p - 1)) if np.isfinite(p) else float("nan")
-        order = {"observed_order_w_max": p, "richardson_extrapolated_w_max": ext,
-                 "finest_rel_change": float(abs(f[2] - f[1]) / abs(f[2]))}
-        print(f"           observed order (w_max) = {p:.2f}, Richardson limit = {ext:.6e} m")
-    doc = {"levels": runs, "order": order}
+        finest = runs[-3:]
+        gci = {key: _gci([r[key] for r in finest]) for key in
+               ("w_max", "dp", "sigma_bend_max", "theta_bar_mean", "Nu_mean")}
+        order = {"observed_order_w_max": gci["w_max"]["p"],
+                 "richardson_extrapolated_w_max": gci["w_max"]["extrapolated"],
+                 "finest_rel_change": gci["w_max"]["relative_change_fine"]}
+        print("           observed order (w_max) = {:.2f}, GCI_fine(w_max) = {:.3f} %, "
+              "Richardson limit = {:.6e} m".format(
+                  gci["w_max"]["p"], 100 * gci["w_max"]["gci_fine"],
+                  gci["w_max"]["extrapolated"]))
+    doc = {"levels": runs, "order": order, "gci": gci}
     _write_json("mesh_study.json", doc)
     return doc
 
 
 def stage_sweeps(cfg: Dict, quick: bool) -> Dict[str, Any]:
     print("[sweep] imposed-flux and wall-thickness sweeps")
-    q_values = ([1e3, 2e3, 3e3, 3.5e3, 4e3, 4.5e3, 5e3, 5.25e3, 5.5e3] if not quick
+    q_values = ([1e3, 2e3, 3e3, 3.5e3, 4e3, 4.5e3, 5e3, 5.25e3] if not quick
                 else [2e3, 5e3, 7e3])
     flux_rows = []
     for q in q_values:
@@ -336,7 +389,7 @@ def stage_sweeps(cfg: Dict, quick: bool) -> Dict[str, Any]:
     _write_json("sweep_flux.json", flux_rows)
 
     d_values = [2.5e-3, 3e-3, 4e-3] if quick else \
-        [2.5e-3, 3e-3, 3.5e-3, 4e-3, 5e-3, 6e-3, 8e-3]
+        [2.5e-3, 3e-3, 3.5e-3, 4e-3, 5e-3]
     thick_rows = []
     for d in d_values:
         c = json.loads(json.dumps(cfg))
@@ -362,6 +415,61 @@ def stage_sweeps(cfg: Dict, quick: bool) -> Dict[str, Any]:
             "converged" if res.converged else "outside model validity"))
     _write_json("sweep_thickness.json", thick_rows)
     return {"flux": flux_rows, "thickness": thick_rows}
+
+
+def _sweep_rows(cfg: Dict, variants: List[Dict], label: str, quick: bool) -> List[Dict]:
+    """Solve the coupled problem for a list of parameter variants and collect metrics."""
+    rows = []
+    for name, patch in variants:
+        c = json.loads(json.dumps(cfg))
+        for key, value in patch.items():
+            if key in ("U", "q_flux"):
+                c["operating"][key] = float(value)
+            elif key in ("d",):
+                c["geometry"][key] = float(value)
+            else:
+                c["solid"][key] = float(value)
+        if quick:
+            c["numerics"]["nx_heated"] = 60
+            c["numerics"]["nx_solid"] = 60
+            c["numerics"]["ny_fluid"] = 6
+            c["numerics"]["ny_solid"] = 4
+            c["numerics"]["wall"]["n_points"] = 61
+        res = coupled.solve_coupled(c, verbose=False)
+        m = res.metrics(c)
+        gr = analytic.groups(c)
+        rows.append({"case": name, "value": float(list(patch.values())[0]),
+                     "Re_Dh": gr["Re_Dh"], "Re_H0": gr["Re_H0"],
+                     "w_max_over_H0": m["w_max_over_H0"], "w_max": m["w_max"],
+                     "theta_bar_mean": m["theta_bar_mean"], "dp": m["flow_dp"],
+                     "Nu_mean": m["Nu_mean"], "sigma_bend_max": m["sigma_bend_max"],
+                     "N_over_Ncr": m["N_over_Ncr"],
+                     "energy_imbalance": m["energy_imbalance"],
+                     "termination": res.termination, "converged": res.converged,
+                     "iterations": res.iterations})
+        print("           {} = {:>9.4g}: w_max/H0 = {:.4f}, dT = {:6.2f} K, "
+              "dp = {:7.1f} Pa, Nu = {:.3f}".format(
+                  label, rows[-1]["value"], m["w_max_over_H0"], m["theta_bar_mean"],
+                  m["flow_dp"], m["Nu_mean"]))
+    return rows
+
+
+def stage_parameter_study(cfg: Dict, quick: bool) -> Dict[str, Any]:
+    """Reynolds-number, wall-conductivity and thermal-expansion sensitivities."""
+    print("[param] Reynolds-number, conductivity and expansion sensitivities")
+    u_values = [0.01, 0.025, 0.05, 0.075, 0.10] if not quick else [0.02, 0.05, 0.10]
+    re_rows = _sweep_rows(cfg, [(f"U={u:.3f}", {"U": u}) for u in u_values], "U", quick)
+    _write_json("sweep_reynolds.json", re_rows)
+
+    k_values = [0.25, 0.35, 0.45, 0.60] if not quick else [0.25, 0.45, 0.70]
+    k_rows = _sweep_rows(cfg, [(f"ks={k:.2f}", {"k": k}) for k in k_values], "ks", quick)
+    _write_json("sweep_conductivity.json", k_rows)
+
+    a_values = [1.5e-5, 2.5e-5, 3.5e-5, 5.0e-5] if not quick else [2.0e-5, 5.0e-5]
+    a_rows = _sweep_rows(cfg, [(f"alpha={a:.1e}", {"alpha": a}) for a in a_values],
+                         "alpha", quick)
+    _write_json("sweep_expansion.json", a_rows)
+    return {"reynolds": re_rows, "conductivity": k_rows, "expansion": a_rows}
 
 
 def stage_figures(cfg: Dict, quick: bool) -> None:
@@ -410,7 +518,7 @@ def main(argv=None) -> int:
     except Exception:                                        # pragma: no cover
         meta["matplotlib"] = "not available"
 
-    stages = ("analytic", "wall", "bench", "coupled", "mesh", "sweep",
+    stages = ("analytic", "wall", "bench", "coupled", "mesh", "sweep", "param",
               "figures", "tables")
     only = set(stages) if args.only.strip() == "all" else \
         {s.strip() for s in args.only.split(",") if s.strip()}
@@ -432,6 +540,8 @@ def main(argv=None) -> int:
         stage_mesh_study(cfg, args.quick); ran.append("mesh")
     if "sweep" in only and not args.skip_sweeps:
         stage_sweeps(cfg, args.quick); ran.append("sweep")
+    if "param" in only and not args.skip_sweeps:
+        stage_parameter_study(cfg, args.quick); ran.append("param")
     if "figures" in only:
         stage_figures(cfg, args.quick); ran.append("figures")
     if "tables" in only:
@@ -449,6 +559,8 @@ def main(argv=None) -> int:
     if render_only and (DATA / "run_metadata.json").exists():
         print("\n(dataset metadata preserved: this run only re-rendered the figures/tables)")
     else:
+        meta["stages"] = ran
+        meta["runtime_s"] = round(time.time() - started, 1)
         _write_json("run_metadata.json", meta)
     print(f"\ndone in {meta['runtime_s']} s; outputs in {OUT}")
     return 0

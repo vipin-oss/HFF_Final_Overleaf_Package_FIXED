@@ -17,10 +17,12 @@ reproducibility_package/
 │   ├── hff/                   the package (config, analytic, fem, flow, thermal,
 │   │                          wall, coupled, benchmarks, figures, tables)
 │   ├── tests/test_hff.py      30 automated tests
+│   ├── tools/                 auxiliary measurements (SUPG sensitivity)
 │   └── outputs/
 │       ├── data/              saved numerical results (JSON) and flat tables (CSV)
-│       ├── figures/           fig01..fig09 as PDF and 400 dpi PNG
+│       ├── figures/           fig01..fig12 as PDF and 400 dpi PNG
 │       └── tables/            LaTeX fragments used by the manuscript
+├── tools/                     archive builder and LaTeX audit (repository layout)
 └── manuscript/                the manuscript as submitted, with its figures/tables
 ```
 
@@ -45,17 +47,26 @@ pip install -r program/requirements.txt
 
 ```bash
 cd program
-python run_all.py                # full study, 402 s (measured) on 2 vCPU
-python -m pytest -q              # 30 tests, ~5 s
+python run_all.py                # full study, 775 s (measured) on 2 vCPU
+python -m pytest -q              # 30 tests, 6.3 s
 ```
 
 The run writes `outputs/data/*.json`, `outputs/figures/*.pdf|png` and `outputs/tables/*.tex`
 and records the parameter file, library versions and per-stage runtimes in
 `outputs/data/run_metadata.json`.
 
-A faster smoke run (`--quick`, coarse meshes and shortened sweeps) exercises every stage in
-about 84 s; it was executed here as a consistency check, but it produces lower-quality figures
-and is not the run used in the paper.
+A faster smoke run (`--quick`, coarse meshes and shortened sweeps) exercises every stage in a
+few minutes; it was executed during development as a consistency check, but it produces
+lower-quality figures and is not the run used in the paper.
+
+Two further artefacts belong to the reported results:
+
+```bash
+./.venv/bin/python tools/supg_sensitivity.py   # element Peclet numbers and the measured
+                                               # effect of the SUPG term (5 s)
+```
+
+writes `outputs/data/supg_sensitivity.json`, the source of the numbers in §5.3 of the paper.
 
 ## 3. Regenerate the manuscript artefacts without re-solving
 

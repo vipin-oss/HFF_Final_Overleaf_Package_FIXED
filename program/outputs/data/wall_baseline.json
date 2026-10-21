@@ -7687,6 +7687,14 @@
       0.00542055559257729
     ]
   },
+  "envelope_crossings": {
+    "q_at_bow_0_45_H0": 5100.402872087387,
+    "q_at_bow_0_50_H0": 5493.5467420585155,
+    "q_at_N_over_Ncr_0_5": 9103.867890041041,
+    "q_at_N_over_Ncr_1_0": null,
+    "q_at_sigma_over_sy_0_2": 5951.33201050649,
+    "q_at_sigma_over_sy_0_5": 9824.164389333902
+  },
   "buckling_catalog": {
     "d": [
       0.001,

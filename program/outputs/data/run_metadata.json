@@ -1,12 +1,12 @@
 {
-  "started_utc": "2026-10-21T09:30:53+00:00",
+  "started_utc": "2026-10-21T10:47:16+00:00",
   "python": "3.11.2",
   "platform": "Linux-6.1.158+-x86_64-with-glibc2.36",
   "numpy": "2.4.6",
   "parameters": {
     "meta": {
       "name": "baseline",
-      "description": "Baseline operating point of the thermally self-deforming conjugate channel (Section 3, Table 2 of the manuscript).",
+      "description": "Baseline operating point of the thermally self-deforming conjugate channel (Section 5, Table 4 of the manuscript).",
       "reference_temperature_K": 293.15
     },
     "geometry": {
@@ -44,9 +44,9 @@
       "nx_heated": 120,
       "nx_entrance": 12,
       "nx_exit": 12,
-      "ny_fluid": 10,
+      "ny_fluid": 12,
       "nx_solid": 120,
-      "ny_solid": 6,
+      "ny_solid": 8,
       "wall_clustering": 2.0,
       "flow": {
         "re_continuation": [
@@ -88,8 +88,9 @@
     "coupled",
     "mesh",
     "sweep",
+    "param",
     "figures",
     "tables"
   ],
-  "runtime_s": 402.3
+  "runtime_s": 775.2
 }

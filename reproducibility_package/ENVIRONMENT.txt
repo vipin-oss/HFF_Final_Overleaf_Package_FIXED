@@ -1,5 +1,5 @@
 ENVIRONMENT AND RUN RECORD
-======================
+=========================
 
 Interpreter
   python           3.11.2
@@ -9,20 +9,26 @@ Libraries actually used for the reported run
   numpy            2.4.6
   scipy            1.17.1
   matplotlib       3.11.2
-  pytest           9.1.1 (test run only)
+  pytest           9.1.1 (test run only; the program itself does not import it)
 
 Hardware
   2 vCPU, 3 GB RAM, no GPU; all runs single-process
 
-Timings (wall clock, this machine)
-  full study                       402.3 s
-  coupled baseline (9 iterations)  17.7 s
-  verification suite               ~25 s
-  wall model (241 nodes)           ~2 s
-  pytest (30 tests)                ~5 s
+Timings (wall clock, this machine, run of 2026-10-21 10:47:16 UTC)
+  full study                       775.2 s
+    analytic                         1 s
+    wall (frozen + self-consistent) 35 s
+    bench (verification suite)       9 s
+    coupled baseline (9 iterations) 28 s
+    mesh study (3 levels)           33 s
+    sweep (13 coupled runs)        323 s
+    param (13 coupled runs)        336 s
+    figures + tables                10 s
+  auxiliary SUPG measurement       5 s
+  pytest (30 tests)                6.3 s
 
 Stages executed
-  analytic, wall, bench, coupled, mesh, sweep, figures, tables
+  analytic, wall, bench, coupled, mesh, sweep, param, figures, tables
 
 Parameter file
   program/params/baseline.json
@@ -55,9 +61,9 @@ Numerical controls
   nx_heated                120
   nx_entrance              12
   nx_exit                  12
-  ny_fluid                 10
+  ny_fluid                 12
   nx_solid                 120
-  ny_solid                 6
+  ny_solid                 8
   wall_clustering          2.0
   [flow]
     re_continuation        [0.0, 0.25, 0.5, 1.0]
@@ -80,7 +86,9 @@ Numerical controls
     pressure_load          True
 
 Notes
-  * No random number generator is used anywhere in the solver;
-    repeated runs are bit-identical (asserted by the test suite).
-  * No TeX distribution was available in the environment used to
-    assemble the manuscript, so no compiled PDF is included.
+  * No random number generator is used anywhere in the solver; repeated runs
+    are bit-identical (asserted by the test suite).
+  * No TeX distribution was available in the environment used to assemble the
+    manuscript, so no compiled PDF is included. See manuscript/BUILD_REPORT.md.
+  * The manuscript sources, figures and tables here are byte-identical to
+    journal_submission/ at the commit that introduced this package.

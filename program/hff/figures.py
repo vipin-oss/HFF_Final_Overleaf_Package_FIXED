@@ -220,7 +220,7 @@ def fig_flow(data: Path, out: _Out, cfg: Dict) -> None:
             ha="center", color=COL["blue"])
     _panel(ax, "b")
     fig.tight_layout()
-    out.save(fig, "fig03_flow")
+    out.save(fig, "fig05_flow")
 
 
 # ---------------------------------------------------------------------------
@@ -262,7 +262,7 @@ def fig_thermal(data: Path, out: _Out, cfg: Dict) -> None:
     ax.legend(loc="upper left", handlelength=1.8)
     _panel(ax, "b")
     fig.tight_layout()
-    out.save(fig, "fig04_thermal")
+    out.save(fig, "fig06_thermal")
 
 
 # ---------------------------------------------------------------------------
@@ -305,7 +305,7 @@ def fig_wall(data: Path, out: _Out, cfg: Dict) -> None:
     ax2.tick_params(axis="y", colors=COL["orange"])
     _panel(ax, "b")
     fig.tight_layout()
-    out.save(fig, "fig05_wall")
+    out.save(fig, "fig07_wall")
 
 
 # ---------------------------------------------------------------------------
@@ -349,11 +349,137 @@ def fig_convergence(data: Path, out: _Out, cfg: Dict) -> None:
                 fontsize=6.8, color=COL["grey"])
     _panel(ax, "b")
     fig.tight_layout()
-    out.save(fig, "fig06_convergence")
+    out.save(fig, "fig08_convergence")
+
 
 
 # ---------------------------------------------------------------------------
-#  Fig. 7 - parameter sensitivity
+#  Fig. 7 - grid refinement and GCI
+# ---------------------------------------------------------------------------
+def fig_grid(data: Path, out: _Out, cfg: Dict) -> None:
+    """Grid-refinement study with the Grid Convergence Index of the finest grid."""
+    ms = _load(data, "mesh_study.json")
+    lv = ms["levels"]
+    gci = ms.get("gci", {})
+    nx = np.array([r["nx_heated"] for r in lv], dtype=float)
+    h = 1.0 / nx
+    fig, axes = plt.subplots(1, 2, figsize=(6.4, 2.5))
+    ax = axes[0]
+    for key, lab, col, mk in (("w_max", "$w_{\\max}$ ($10^{-4}$ m)", COL["blue"], "o"),
+                              ("dp", "$\\Delta p$ (Pa)", COL["red"], "s")):
+        y = np.array([r[key] for r in lv], dtype=float)
+        scale = 1e4 if key == "w_max" else 1.0
+        ax.plot(nx, y * scale, mk + "-", color=col, lw=0.9, ms=3.0, label=lab)
+    ax.set_xscale("log")
+    ax.set_xlabel("elements along the strip, $n_x$")
+    ax.set_ylabel("$w_{\\max}$ ($10^{-4}$ m)")
+    ax2 = ax.twinx()
+    ax2.plot(nx, [r["dp"] for r in lv], "s--", color=COL["red"], lw=0.8, ms=2.6)
+    ax2.set_ylabel("$\\Delta p$ (Pa)", color=COL["red"])
+    ax2.tick_params(axis="y", colors=COL["red"])
+    if gci.get("w_max"):
+        ax.axhline(gci["w_max"]["extrapolated"] * 1e4, color=COL["grey"], ls=":", lw=0.8)
+        ax.text(nx[0] * 1.02, gci["w_max"]["extrapolated"] * 1e4 * 1.0009,
+                "Richardson limit", fontsize=6.5, color=COL["grey"])
+    _panel(ax, "a")
+
+    ax = axes[1]
+    if gci:
+        for key, lab, col, mk in (("w_max", "$w_{\\max}$", COL["blue"], "o"),
+                                  ("dp", "$\\Delta p$", COL["green"], "s"),
+                                  ("sigma_bend_max", "$\\sigma_b^{\\max}$",
+                                   COL["orange"], "^")):
+            y = np.array([r[key] for r in lv[-3:]], dtype=float)
+            err = np.abs((y - gci[key]["extrapolated"]) / gci[key]["extrapolated"])
+            ax.loglog(h[-3:], np.maximum(err, 1e-16), mk + "-", color=col, lw=0.9,
+                      ms=3.0, label=f"{lab}, $p$ = {gci[key]['p']:.2f}")
+        hh = np.array([h[-3], h[-1]])
+        ref = np.abs((np.array([lv[-3]["w_max"]]) - gci["w_max"]["extrapolated"])
+                     / gci["w_max"]["extrapolated"])[0]
+        ax.loglog(hh, ref * (hh / h[-3]) ** 2, ":", color=COL["grey"], lw=0.8)
+        ax.text(hh[-1], ref * (hh[-1] / h[-3]) ** 2 * 1.4, "$O(h^2)$", fontsize=6.5,
+                color=COL["grey"], ha="right")
+        ax.legend(loc="lower right", fontsize=6.2)
+    ax.set_xlabel("element size $h \\propto 1/n_x$")
+    ax.set_ylabel("relative difference to Richardson limit")
+    _panel(ax, "b")
+    fig.tight_layout()
+    out.save(fig, "fig03_grid")
+
+
+# ---------------------------------------------------------------------------
+#  Fig. 9 - Reynolds-number sensitivity
+# ---------------------------------------------------------------------------
+def fig_reynolds(data: Path, out: _Out, cfg: Dict) -> None:
+    rows = [r for r in _load(data, "sweep_reynolds.json") if r.get("converged", True)]
+    re = np.array([r["Re_Dh"] for r in rows], dtype=float)
+    fig, axes = plt.subplots(1, 2, figsize=(6.4, 2.5))
+    ax = axes[0]
+    ax.plot(re, [r["w_max_over_H0"] for r in rows], "o-", color=COL["blue"], lw=1.0,
+            ms=3.0, label="$w_{\\max}/H_0$")
+    ax.set_xlabel("$\\mathrm{Re}_{D_h}$")
+    ax.set_ylabel("$w_{\\max}/H_0$", color=COL["blue"])
+    ax.tick_params(axis="y", colors=COL["blue"])
+    ax2 = ax.twinx()
+    ax2.plot(re, [r["theta_bar_mean"] for r in rows], "s--", color=COL["red"], lw=1.0,
+             ms=2.8)
+    ax2.set_ylabel("$\\bar\\theta$ (K)", color=COL["red"])
+    ax2.tick_params(axis="y", colors=COL["red"])
+    _panel(ax, "a")
+
+    ax = axes[1]
+    ax.plot(re, [r["dp"] for r in rows], "o-", color=COL["green"], lw=1.0, ms=3.0)
+    ax.set_xlabel("$\\mathrm{Re}_{D_h}$")
+    ax.set_ylabel("$\\Delta p$ (Pa)", color=COL["green"])
+    ax.tick_params(axis="y", colors=COL["green"])
+    ax2 = ax.twinx()
+    ax2.plot(re, [r["Nu_mean"] for r in rows], "s--", color=COL["purple"], lw=1.0, ms=2.8)
+    ax2.set_ylabel("$\\overline{Nu}$", color=COL["purple"])
+    ax2.tick_params(axis="y", colors=COL["purple"])
+    _panel(ax, "b")
+    fig.tight_layout()
+    out.save(fig, "fig10_reynolds")
+
+
+# ---------------------------------------------------------------------------
+#  Fig. 10 - material sensitivity (conductivity, expansion)
+# ---------------------------------------------------------------------------
+def fig_material(data: Path, out: _Out, cfg: Dict) -> None:
+    ks = [r for r in _load(data, "sweep_conductivity.json") if r.get("converged", True)]
+    al = [r for r in _load(data, "sweep_expansion.json") if r.get("converged", True)]
+    fig, axes = plt.subplots(1, 2, figsize=(6.4, 2.5))
+    ax = axes[0]
+    k = np.array([r["value"] for r in ks], dtype=float)
+    ax.plot(k, [r["w_max_over_H0"] for r in ks], "o-", color=COL["blue"], lw=1.0, ms=3.0,
+            label="$w_{\\max}/H_0$")
+    ax.set_xlabel("wall conductivity $k_s$ (W m$^{-1}$ K$^{-1}$)")
+    ax.set_ylabel("$w_{\\max}/H_0$", color=COL["blue"])
+    ax.tick_params(axis="y", colors=COL["blue"])
+    ax2 = ax.twinx()
+    ax2.plot(k, [r["theta_bar_mean"] for r in ks], "s--", color=COL["orange"], lw=1.0,
+             ms=2.8)
+    ax2.set_ylabel("$\\bar\\theta$ (K)", color=COL["orange"])
+    ax2.tick_params(axis="y", colors=COL["orange"])
+    _panel(ax, "a")
+
+    ax = axes[1]
+    a = np.array([r["value"] for r in al], dtype=float) * 1e5
+    ax.plot(a, [r["w_max_over_H0"] for r in al], "o-", color=COL["blue"], lw=1.0, ms=3.0)
+    ax.set_xlabel("thermal expansion $\\alpha$ ($10^{-5}$ K$^{-1}$)")
+    ax.set_ylabel("$w_{\\max}/H_0$", color=COL["blue"])
+    ax.tick_params(axis="y", colors=COL["blue"])
+    ax2 = ax.twinx()
+    ax2.plot(a, [r["sigma_bend_max"] / 1e6 for r in al], "s--", color=COL["red"], lw=1.0,
+             ms=2.8)
+    ax2.set_ylabel("$\\sigma_b^{\\max}$ (MPa)", color=COL["red"])
+    ax2.tick_params(axis="y", colors=COL["red"])
+    _panel(ax, "b")
+    fig.tight_layout()
+    out.save(fig, "fig11_material")
+
+
+# ---------------------------------------------------------------------------
+#  Fig. 8 - parameter sensitivity
 # ---------------------------------------------------------------------------
 def fig_sensitivity(data: Path, out: _Out, cfg: Dict) -> None:
     """Coupled response to the imposed flux and to the wall thickness."""
@@ -409,7 +535,7 @@ def fig_sensitivity(data: Path, out: _Out, cfg: Dict) -> None:
     ax.legend(loc="upper right", handlelength=1.4)
     _panel(ax, "b")
     fig.tight_layout()
-    out.save(fig, "fig07_sensitivity")
+    out.save(fig, "fig09_sensitivity")
 
 
 def fig_model_form(data: Path, out: _Out, cfg: Dict) -> None:
@@ -444,7 +570,7 @@ def fig_model_form(data: Path, out: _Out, cfg: Dict) -> None:
     ax.legend(loc="upper left", handlelength=1.6)
     _panel(ax, "b")
     fig.tight_layout()
-    out.save(fig, "fig09_model_form")
+    out.save(fig, "fig12_model_form")
 
 
 # ---------------------------------------------------------------------------
@@ -495,7 +621,7 @@ def fig_verification(data: Path, out: _Out, cfg: Dict) -> None:
               frameon=True, edgecolor="none")
     _panel(ax, "b")
     fig.tight_layout()
-    out.save(fig, "fig08_verification")
+    out.save(fig, "fig04_verification")
 
 
 # ---------------------------------------------------------------------------
@@ -509,9 +635,12 @@ def make_all(data: Path, figdir: Path, cfg: Dict) -> List[str]:
                      (fig_thermal, (data, out, cfg)),
                      (fig_wall, (data, out, cfg)),
                      (fig_convergence, (data, out, cfg)),
+                     (fig_grid, (data, out, cfg)),
                      (fig_sensitivity, (data, out, cfg)),
-                     (fig_verification, (data, out, cfg)),
-                     (fig_model_form, (data, out, cfg))):
+                     (fig_reynolds, (data, out, cfg)),
+                     (fig_material, (data, out, cfg)),
+                     (fig_model_form, (data, out, cfg)),
+                     (fig_verification, (data, out, cfg))):
         try:
             fn(*args)
             made.append(fn.__name__)
