@@ -1,0 +1,140 @@
+\section{Reduced-order thermoelastic analysis of the strip}
+\label{sec:reduced}
+
+This section derives the closed-form relations used to size the deformation before any coupled
+computation. All of them follow from the model of Section~\ref{sec:formulation} under the stated
+assumptions; the numerical values at the baseline are collected in Section~\ref{sec:baseline}.
+
+\subsection{Free thermal curvature and the sign chain}
+\label{sec:freecurv}
+Let $\eta$ be the coordinate across the strip measured from the mid-plane (positive towards the outer
+face), and let the temperature be linear,
+$\theta(\eta)=\bar\theta+\Gamma\eta$, with $\Gamma=\Delta T_t/d>0$ by condition B5. For a thin strip with
+traction-free faces $\sigma_{yy}\simeq0$, and plane strain gives
+$\sigma_{xx}=E'[\varepsilon_{xx}-(1+\nu)\alpha\theta]$ with $E'=E/(1-\nu^2)$. With
+$\varepsilon_{xx}=\varepsilon_0+\kappa\eta$, a vanishing axial force resultant gives
+$\varepsilon_0=(1+\nu)\alpha\bar\theta$, and a vanishing moment resultant gives the free thermal
+eigen-curvature
+\begin{equation}
+\kth=(1+\nu)\,\alpha\,\frac{\Delta T_t}{d}=(1+\nu)\,\alpha\,\frac{\qpp}{k_s},
+\qquad \Delta T_t=\frac{\qpp d}{k_s}, \label{eq:kappa}
+\end{equation}
+where the second form uses one-dimensional steady conduction across the strip
+\citep{carslaw1947conduction} and is the plane-strain form of the classical result
+\citep{boley1960theory}. Two consequences follow. First, $\kth$ does not depend on $d$: the
+through-thickness gradient adjusts to cancel the thickness. Second, a strip clamped at both ends
+carries the constant restoring moment $D_s\kth$ and does not bow ($w\equiv0$); the bowing
+mechanism exists only for pinned ends or for an axially non-uniform $\kth(x)$, which fixes the
+support choice A7.
+
+The sign chain is, in order: (i) $\qpp>0$ supplies heat to the outer face (B5); (ii) the temperature
+therefore rises towards the outer face ($\Gamma>0$), which is the hot face; (iii) the hot fibres
+elongate more, so the strip curves with the outer face convex, $\kth>0$; (iv) with pinned ends this
+is an arch whose mid-span moves \emph{away} from the channel, $w>0$; (v) the passage height
+$H=H_0+w$ increases. The same chain read backwards shows that a bow \emph{into} the passage
+would require heating the fluid-facing face, which is a different model (Section~\ref{sec:limits}).
+
+\subsection{Pinned bowing at negligible axial force}
+\label{sec:pinned}
+With $w^{\prime\prime}=-\kth$ and $w(0)=w(L)=0$,
+\begin{equation}
+w(x)=\frac{\kth}{2}\,x(L-x),\qquad \wmax^{\mathrm{lin}}=\frac{\kth L^2}{8}.
+\label{eq:wlin}
+\end{equation}
+This is exact within thin-strip theory when the axial force is negligible, which is the state of a
+strip free to expand axially.
+
+\subsection{Thermal membrane force and buckling}
+\label{sec:buckling}
+With the axial displacement blocked at both ends the mean axial strain vanishes, and integration
+across the thickness gives the compressive membrane force per unit depth
+\begin{equation}
+N_\theta=-\frac{E\,d\,\alpha\bar\theta}{1-\nu},\qquad \Nc=|N_\theta|. \label{eq:ntheta}
+\end{equation}
+The pinned--pinned Euler load of the wide strip is $\ncr=\pi^2D_s/L^2$ \citep{timoshenko1961stability}.
+The wide-strip rigidity is the consistent one because plane strain suppresses the anticlastic
+curvature mode. Setting $\Nc=\ncr$ gives the critical mean temperature rise
+\begin{equation}
+\bar T_{\mathrm{cr}}=\frac{\pi^2d^2}{12\,\alpha(1+\nu)L^2},\qquad
+M_b=\frac{\bar T_{\mathrm{cr}}}{\bar\theta}, \label{eq:tcr}
+\end{equation}
+where the buckling margin $M_b$ is used as a guard. The mean wall rise is estimated as
+$\bar\theta=\Delta T_t/2+\qpp/h+\Delta T_b/2$: half the through-wall drop, the interface excess over
+the local bulk temperature with the rigid-slit coefficient $h=\mathrm{Nu}_{H1}k_f/D_h$ for one heated
+wall \citep{shah1978laminar}, and half the bulk rise $\Delta T_b=\qpp L/(\rho UH_0c_p)$.
+
+\subsection{Beam--column bowing at finite membrane force}
+\label{sec:beamcolumn}
+A pinned strip carrying the compressive force $\Nc$ couples its deflection to that force at leading
+order. Retaining the geometric stiffness of the membrane force and freezing the force at its
+blocked-state value, the transverse equilibrium of the strip, with total moment $M=D_s(w^{\prime\prime}+\kth)$
+vanishing at the pins, is
+\begin{equation}
+D_s\,w^{\prime\prime\prime\prime}+\Nc\,w^{\prime\prime}=0,\qquad w(0)=w(L)=0,\quad
+w^{\prime\prime}(0)=w^{\prime\prime}(L)=-\kth. \label{eq:beamcol}
+\end{equation}
+With $\mu^2=\Nc/D_s$ the solution is
+\begin{equation}
+w(x)=\frac{\kth}{\mu^2}\left[\frac{1-\cos\mu L}{\sin\mu L}\sin\mu x+\cos\mu x-1\right],\qquad
+\wmax=\frac{\kth}{\mu^2}\left[\sec\frac{\mu L}{2}-1\right], \label{eq:wbc}
+\end{equation}
+which reduces to \eqref{eq:wlin} as $\mu L\to0$ and diverges at $\mu L=\pi$, the Euler threshold
+\eqref{eq:tcr}: the bowing law and the buckling limit are two limits of one relation. The force
+is not in fact frozen. With both ends blocked, the mean axial strain contains the arc-stretching
+term $\tfrac12\langle w^{\prime2}\rangle$, so the signed force acquires the correction
+\begin{equation}
+N_\theta(w)=N_\theta+\frac{Ed}{2(1-\nu^2)}\,\langle w^{\prime2}\rangle,\qquad
+\Nc^{\mathrm{sc}}=|N_\theta|-\frac{Ed}{2(1-\nu^2)}\langle w^{\prime2}\rangle, \label{eq:nupdate}
+\end{equation}
+which relaxes the compression. Because the family \eqref{eq:wbc} holds for every fixed force,
+\eqref{eq:nupdate} is a scalar fixed-point problem for $\Nc^{\mathrm{sc}}$.
+
+Two deflections are therefore defined, and they answer different questions. The \emph{frozen-force}
+value $\wmax$ of \eqref{eq:wbc} with $\Nc=|N_\theta|$ is the exact solution of the stated
+equation \eqref{eq:beamcol}; because it neglects the relaxation it overestimates the deflection and
+is a conservative upper bound. The \emph{self-consistent} value solves \eqref{eq:wbc} with
+$\Nc^{\mathrm{sc}}$ and is the von K\'arm\'an equilibrium of the reduced strip. It is also what the
+coupled algorithm of Section~\ref{sec:algorithm} converges to, since it re-evaluates the membrane force at
+every iteration. The self-consistent value is therefore quoted as the model's best estimate, and the
+frozen-force value as the upper bound; both are reported. The two differ by \NumExcessFrozen\,\% at
+the baseline, \NumExcessW\,\% and \NumExcessS\,\% at the heat fluxes of guards G1 and G2
+(Section~\ref{sec:guards}), and \NumExcessB\,\% at $\Nc/\ncr=0.5$, where the frozen-force form should
+no longer be used.
+
+\subsection{Hydraulic loading and the thermal-to-hydraulic ratio}
+\label{sec:hydraulic}
+Integrating plane Poiseuille flow \citep{bird1960transport,shah1978laminar} gives the slit pressure
+drop
+\begin{equation}
+\Delta p=\frac{12\mu UL}{H_0^2}. \label{eq:dp}
+\end{equation}
+With the outlet datum $p=0$ and the casing cavity at the same reference pressure (A9), the gauge
+pressure on the strip falls linearly from $p(0)=p(L)+\Delta p$ at its upstream end to
+$p(L)=12\mu UL_o/H_0^2$ at its downstream end, with mean $\bar p=\tfrac12[p(0)+p(L)]$. For pinned ends, a uniform load
+$\bar p$ acting in the same sense as the thermal bow deflects the strip by
+$w_p=5\bar pL^4/(384D_s)$ at the linear level \citep{timoshenko1970elasticity}; the mild variation of
+the load is neglected in this estimate. The ratio of the thermal to the hydraulic deflection of the
+\emph{same} strip is
+\begin{equation}
+\Gamma_p=\frac{w_{\mathrm{th}}}{w_p},\qquad
+\Gamma_p^{\mathrm{lin}}=\frac{\wmax^{\mathrm{lin}}}{w_p}=\frac{48\,\kth D_s}{5\,\bar pL^2}, \label{eq:gammap}
+\end{equation}
+where $\Gamma_p^{\mathrm{lin}}$ uses both deflections at zero membrane force. A second like-for-like
+form, $\Gamma_p^{\Nc}$, computes both deflections with the same compressive force $\Nc$: the thermal
+deflection from \eqref{eq:wbc} and the pressure deflection from the beam--column equation
+$D_sw^{\prime\prime\prime\prime}+\Nc w^{\prime\prime}=\bar p$. Both forms compare two responses of one
+structure in one state and are therefore directly comparable. A ratio that places the thermal
+deflection \emph{with} the beam--column amplification over a pressure deflection \emph{without} it
+mixes two states of the structure and is not used. Because $\kth$ is independent of $d$ while
+$D_s\propto d^3$ and $\bar p\propto UH_0^{-2}$, $\Gamma_p$ grows with wall thickness and falls with
+velocity and with decreasing channel height.
+
+\subsection{Admissibility guards}
+\label{sec:guards}
+Five guards bound the regime in which the reduced-order model and the weak form of
+Section~\ref{sec:fe} are used. (G1) $\wmax/H_0\le0.5$, so that the deformed fluid mesh keeps positive
+Jacobians. (G2) $\sigma_{\max}\le0.2\,\sigma_y$, with $\sigma_{\max}$ the sum of the bending stress
+$6|M_{\mathrm{mid}}|/d^2$ at mid-span and the membrane stress $E\alpha\bar\theta/(1-\nu)$.
+(G3) $M_b\ge2$. (G4) $\Gamma_p\ge5$, the threshold above which the thermal bow is the dominant
+deformation. (G5) $\mathrm{Re}_{D_h}\le100$, $\mathrm{Br}<10^{-2}$ and a Richardson number small enough
+for the neglect of buoyancy, with $\mathrm{Ri}=g\beta_f\Delta T^{*}H_0/U^2$ and $\Delta T^{*}=\qpp H_0/k_f$.

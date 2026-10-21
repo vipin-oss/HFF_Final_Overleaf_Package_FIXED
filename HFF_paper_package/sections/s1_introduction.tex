@@ -1,0 +1,55 @@
+\section{Introduction}
+\label{sec:intro}
+
+Compact heat exchangers, micro-reactors and electronics coolers are increasingly built with polymer
+walls, which combine low thermal conductivity with a high coefficient of thermal expansion. For the
+same imposed heat flux, such a wall sustains a through-thickness temperature difference that is
+far larger than that of a metallic wall of equal thickness, and linear
+thermoelasticity associates this difference with a free thermal curvature of the wall
+\citep{boley1960theory,timoshenko1970elasticity}. When the wall is as thick as, or thicker than, the
+channel is high, the curvature is not a small perturbation of the passage: it modifies the flow
+cross-section, and heat-transfer predictions that assume a fixed geometry become geometry-dependent
+in a thermally self-consistent way.
+
+Fluid--structure interaction (FSI) with heat transfer has mostly been studied for deformation
+driven by the fluid. \citet{soti2015steady} computed laminar channel flow past a flexible thin plate
+and showed that the flow-induced motion passively raises the heat transfer; \citet{alsabery2019numerical}
+and \citet{saleh2025laminar} treated transient natural convection in cavities with flexible walls;
+\citet{christov2018flow} derived the steady relation between flow rate and pressure drop in a
+deformable shallow channel, again with pressure as the only load. The structure is thermally passive
+in these studies. Thermally driven structural motion has been computed for heated flexible
+cantilevers in a differentially heated cavity \citep{kumar2026thermo}, a confined natural-convection
+configuration rather than a forced-convection channel. Conjugate heat transfer in rigid thick-wall channels, finally,
+has been studied \citep{rahimi2024conjugate}, but there the wall does not move.
+
+The configuration studied here differs in the mechanism and in the flow class. A finite segment of
+one wall of a laminar forced-convection slit is a thin thermoelastic strip, heated on its outer
+face. Conduction across the strip sets up a temperature difference; the associated eigen-curvature,
+acting on a strip with pinned ends, bows it \emph{away} from the passage; the widened passage
+changes the near-wall velocity and temperature gradients and therefore the interfacial heat flux,
+which is one of the boundary data of the conduction problem in the strip. Within the literature
+examined for this work we did not find a study that combines (i) the thermal eigen-curvature of the
+wall as the principal deformation mechanism, (ii) a closed steady loop through the conjugate
+interface, and (iii) a confined forced-convection channel. This positioning is deliberately bounded:
+the literature search was not exhaustive, and it is not a claim of priority.
+
+The paper makes five contributions, and states clearly what it does not do.
+\begin{enumerate}
+\item A complete steady formulation with one consistent set of sign and interface conventions
+(Section~\ref{sec:formulation}).
+\item A reduced-order thermoelastic analysis of the strip in closed form: free curvature,
+pinned bowing, thermal membrane force and buckling, the beam--column amplification of the bow, and
+the ratio of thermal to hydraulic deflection (Section~\ref{sec:reduced}).
+\item A baseline operating point evaluated from first principles, with the heat-flux ceilings
+imposed by deformation, stress and buckling, and an \emph{indicative} estimate of what the
+deformation does to the flow (Section~\ref{sec:baseline}).
+\item A specified finite-element formulation and fixed-point algorithm for the coupled problem, with
+the treatment of the interface variables made explicit (Section~\ref{sec:fe}).
+\item A plane-strain Q8 verification of the wall idealisation: a mesh-sensitivity study of the free bow at a
+fixed sampling height, and an axially restrained, geometrically nonlinear solution of the baseline wall
+(Section~\ref{sec:q8}).
+\end{enumerate}
+\textbf{No coupled fluid--structure computation is reported.} The coupled solver is specified, not
+executed; every statement about the flow in Section~\ref{sec:baseline} is a reduced-order estimate
+and is labelled as such. The paper is organised accordingly: formulation, analysis, baseline, finite
+element method and verification, and limitations.

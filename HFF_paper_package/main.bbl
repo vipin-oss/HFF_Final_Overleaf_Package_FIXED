@@ -1,0 +1,113 @@
+\begin{thebibliography}{18}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Alsabery et~al.(2019)Alsabery, Saleh, Ghalambaz, Chamkha, and
+  Hashim]{alsabery2019numerical}
+Alsabery, A.~I., Saleh, H., Ghalambaz, M., Chamkha, A.~J. and Hashim, I.
+  (2019), ``Fluid-structure interaction analysis of transient convection heat
+  transfer in a cavity containing inner solid cylinder and flexible right
+  wall'', \emph{International Journal of Numerical Methods for Heat \& Fluid
+  Flow}, Vol.~29 No.~10, pp.~3756--3780, \doi{10.1108/HFF-10-2018-0593}.
+
+\bibitem[Bird et~al.(1960)Bird, Stewart, and Lightfoot]{bird1960transport}
+Bird, R.~B., Stewart, W.~E. and Lightfoot, E.~N. (1960), \emph{Transport
+  Phenomena}, John Wiley \& Sons, New York, NY.
+
+\bibitem[Boley and Weiner(1960)]{boley1960theory}
+Boley, B.~A. and Weiner, J.~H. (1960), \emph{Theory of Thermal Stresses}, John
+  Wiley \& Sons, New York, NY.
+
+\bibitem[Brezzi and Fortin(1991)]{brezzi1991mixed}
+Brezzi, F. and Fortin, M. (1991), \emph{Mixed and Hybrid Finite Element
+  Methods}, Springer-Verlag, New York, NY, \doi{10.1007/978-1-4612-3172-1}.
+
+\bibitem[Brooks and Hughes(1982)]{brooks1982streamline}
+Brooks, A.~N. and Hughes, T.~J.~R. (1982), ``Streamline
+  upwind/{P}etrov--{G}alerkin formulations for convection dominated flows with
+  particular emphasis on the incompressible {N}avier--{S}tokes equations'',
+  \emph{Computer Methods in Applied Mechanics and Engineering}, Vol.~32
+  No.~1--3, pp.~199--259, \doi{10.1016/0045-7825(82)90071-8}.
+
+\bibitem[Carslaw and Jaeger(1947)]{carslaw1947conduction}
+Carslaw, H.~S. and Jaeger, J.~C. (1947), \emph{Conduction of Heat in Solids},
+  Clarendon Press, Oxford.
+
+\bibitem[Celik et~al.(2008)Celik, Ghia, Roache, Freitas, Coleman, and
+  Raad]{celik2008procedure}
+Celik, I.~B., Ghia, U., Roache, P.~J., Freitas, C.~J., Coleman, H. and Raad,
+  P.~E. (2008), ``Procedure for estimation and reporting of uncertainty due to
+  discretization in {CFD} applications'', \emph{Journal of Fluids Engineering},
+  Vol.~130 No.~7, p.~078001, \doi{10.1115/1.2960953}.
+
+\bibitem[Christov et~al.(2018)Christov, Cognet, Shidhore, and
+  Stone]{christov2018flow}
+Christov, I.~C., Cognet, V., Shidhore, T.~C. and Stone, H.~A. (2018), ``Flow
+  rate-pressure drop relation for deformable shallow microfluidic channels'',
+  \emph{Journal of Fluid Mechanics}, Vol.~841, pp.~267--286,
+  \doi{10.1017/jfm.2018.30}.
+
+\bibitem[Draskic et~al.(2025)Draskic, Westerweel, and
+  Pecnik]{draskic2025stability}
+Draskic, M., Westerweel, J. and Pecnik, R. (2025), ``The stability of
+  stratified horizontal flows of carbon dioxide at supercritical pressures'',
+  \emph{Journal of Fluid Mechanics}, Vol.~1012, p.~A17,
+  \doi{10.1017/jfm.2025.10162}.
+
+\bibitem[Hood and Taylor(1974)]{hood1974navier}
+Hood, P. and Taylor, C. (1974), ``{N}avier--{S}tokes equations using mixed
+  interpolation'', in Oden, J.~T., Zienkiewicz, O.~C., Gallagher, R.~H. and
+  Taylor, C. (Eds), \emph{Finite Element Methods in Flow Problems}, University
+  of Alabama in Huntsville Press, Huntsville, AL, pp.~121--132.
+
+\bibitem[Kumar et~al.(2026)Kumar, Assam, and Prabhakaran]{kumar2026thermo}
+Kumar, V., Assam, A. and Prabhakaran, D. (2026), ``Nonlinear
+  thermo-fluid-structure interactions of two interacting flexible cantilever
+  plates in a differentially heated cavity'', \emph{Physics of Fluids}, Vol.~38
+  No.~9, p.~092128, \doi{10.1063/5.0349114}.
+
+\bibitem[Lesoinne and Farhat(1996)]{lesoinne1996geometric}
+Lesoinne, M. and Farhat, C. (1996), ``Geometric conservation laws for flow
+  problems with moving boundaries and deformable meshes, and their impact on
+  aeroelastic computations'', \emph{Computer Methods in Applied Mechanics and
+  Engineering}, Vol.~134 No.~1--2, pp.~71--90,
+  \doi{10.1016/0045-7825(96)01028-6}.
+
+\bibitem[Rahimimotlagh et~al.(2024)Rahimimotlagh, Ahmadian-Elmi, and
+  Hajmohammadi]{rahimi2024conjugate}
+Rahimimotlagh, Z., Ahmadian-Elmi, M. and Hajmohammadi, M.~R. (2024),
+  ``Numerical investigation of conjugate heat transfer in a flattened
+  cross-sectional thick channel'', \emph{International Journal of Thermal
+  Sciences}, Vol.~195, p.~108637, \doi{10.1016/j.ijthermalsci.2023.108637}.
+
+\bibitem[Saleh et~al.(2025)Saleh, Alsabery, Sheremet, Ghalambaz, and
+  Hashim]{saleh2025laminar}
+Saleh, H., Alsabery, A.~I., Sheremet, M.~A., Ghalambaz, M. and Hashim, I.
+  (2025), ``Impact of fluid-structure interaction on unsteady flow within
+  wavy-heated wall cavity'', \emph{International Journal of Numerical Methods
+  for Heat \& Fluid Flow}, Vol.~35 No.~4, pp.~1484--1511,
+  \doi{10.1108/HFF-01-2025-0045}.
+
+\bibitem[Shah and London(1978)]{shah1978laminar}
+Shah, R.~K. and London, A.~L. (1978), \emph{Laminar Flow Forced Convection in
+  Ducts: A Source Book for Compact Heat Exchanger Analytical Data}, Academic
+  Press, New York, NY.
+
+\bibitem[Soti et~al.(2015)Soti, Bhardwaj, and Sheridan]{soti2015steady}
+Soti, A.~K., Bhardwaj, R. and Sheridan, J. (2015), ``Flow-induced deformation
+  of a flexible thin structure as manifestation of heat transfer enhancement'',
+  \emph{International Journal of Heat and Mass Transfer}, Vol.~84,
+  pp.~1070--1081, \doi{10.1016/j.ijheatmasstransfer.2015.01.048}.
+
+\bibitem[Timoshenko and Gere(1961)]{timoshenko1961stability}
+Timoshenko, S.~P. and Gere, J.~M. (1961), \emph{Theory of Elastic Stability},
+  2nd edition, McGraw-Hill, New York, NY.
+
+\bibitem[Timoshenko and Goodier(1970)]{timoshenko1970elasticity}
+Timoshenko, S.~P. and Goodier, J.~N. (1970), \emph{Theory of Elasticity}, 3rd
+  edition, McGraw-Hill, New York, NY.
+
+\end{thebibliography}

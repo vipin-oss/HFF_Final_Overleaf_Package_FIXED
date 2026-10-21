@@ -1,0 +1,39 @@
+\section{Conclusions and limitations}
+\label{sec:conclusions}
+
+A thin thermoelastic strip heated on its outer face bows \emph{away from the channel}: the through-wall
+temperature difference sets a free curvature $\kth=(1+\nu)\alpha\qpp/k_s$ that is independent of the strip thickness,
+and pinned ends turn it into a bow that widens the passage. At the baseline the reduced-order bow is
+$\NumWscH\,H_0$ and a two-dimensional geometrically nonlinear finite-element solution of the wall gives
+$\NLwFEH\,H_0$, which is $\NLoverScPct\,\%$ higher; the beam--column amplification of the free bow
+($\NLampFE$ in the finite-element solution) and the relaxation of the membrane force
+($\NLrelaxFE\,\%$ against $\NumRelax\,\%$) are both reproduced in magnitude. The binding limits on the heat flux are
+deformation and stress, with buckling an outer ceiling. Indicative flow-side estimates, which need the coupled
+computation for confirmation, point to a hydraulic effect of order one and a notable rise of the wall excess
+temperature, while the effect of the flow back on the bow is small at the baseline.
+
+The verification is partial. Only the wall has been verified (levels V1--V4 of Table~\ref{tab:hier}); the
+fluid, the interface formulation and the coupled algorithm are specified and unverified (V5--V10).
+
+\subsection*{Limitations}\label{sec:limits}
+\begin{itemize}
+\item \textbf{No coupled results.} Every flow-side number is a reduced-order estimate (Section~\ref{sec:indicative}),
+and the lubrication and quasi-developed assumptions are not justified at the baseline parameters.
+\item \textbf{Material data} are representative of an unfilled PEEK-class polymer and not frozen against a
+datasheet; they are constant with temperature, and the strip is linearly thermoelastic (A3).
+\item \textbf{Idealisations.} Perfect thermal contact (A6), ideal pinned ends (A7), an idealised uniform heater
+(A8), and a casing that is only a support, with no contact with the deformed strip and no clearance (A9). A real
+mounting would change the end conditions and, with them, the bow (Section~\ref{sec:q8free}).
+\item \textbf{Heated face.} The model heats the outer face. Heating the fluid-facing face would bow the strip into the
+channel and is a different model, outside this paper.
+\item \textbf{Two dimensions.} Plane strain is assumed; end effects and finite thickness may explain part of the
+finite-element departure from the beam model; shear flexibility accounts for a small share of it, and most of the
+$\NLoverScPct\,\%$ has not been attributed.
+\item \textbf{Steady state.} Transient heating, thermal inertia and viscoelasticity of the polymer are not
+modelled.
+\end{itemize}
+
+\subsection*{Further work}
+Carry out V5--V10 of Table~\ref{tab:hier}; compute the coupled problem and test the contraction of the
+fixed point; replace the idealised heater and end conditions with a specified mounting and casing contact; and
+validate against experiment.
