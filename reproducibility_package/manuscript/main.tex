@@ -3,8 +3,11 @@
 %  Journal research article -- International Journal of Numerical Methods
 %  for Heat & Fluid Flow (Emerald) layout.
 %
-%  Build (Overleaf or local):
-%      pdflatex main ; bibtex main ; pdflatex main ; pdflatex main
+%  Build (Overleaf or local) -- two passes, no BibTeX run:
+%      pdflatex main ; pdflatex main
+%  The bibliography is generated from references.bib by
+%      python3 tools/make_references.py
+%  and is read from references.tex.
 %
 %  The file compiles in two layouts without editing:
 %    (a) ZIP / local build: main.tex at the project root, figures/ and
@@ -20,6 +23,7 @@
 \usepackage[scaled=0.90]{helvet}
 \usepackage[margin=2.5cm]{geometry}
 \usepackage{amsmath,amssymb}
+\usepackage{amsthm}
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{siunitx}
@@ -30,6 +34,11 @@
             singlelinecheck=false]{caption}
 \usepackage[round,authoryear]{natbib}
 \usepackage[hidelinks]{hyperref}
+
+% ---- theorem environments ------------------------------------------------
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
 
 \sisetup{detect-all=true,group-digits=false}
 \setlist[itemize]{leftmargin=1.2em,itemsep=1pt,topsep=2pt}
@@ -78,85 +87,60 @@ a coupled conjugate flow, heat-transfer and thermoelastic analysis}
 
 \begin{structuredabstract}
 \abshead{Purpose}
-This paper quantifies how a thin, axially restrained channel wall deforms under the heat it conducts, and how that deformation feeds back on the flow and heat transfer.
+A closed model is derived and verified for a flux-heated channel wall that deforms under its own
+temperature field, and the feedback on the conjugate flow and heat transfer quantified.
 
 \abshead{Design/methodology/approach}
-A plane channel whose heated upper wall is a pinned--pinned strip is solved with steady incompressible Navier--Stokes and energy equations in the deformed passage, a monolithic conjugate conduction problem sharing interface temperatures, and a von~K\'arm\'an beam--column strip with axial compatibility, coupled by a partitioned fixed-point iteration and discretised with $P_2$--$P_1$ Taylor--Hood triangles and streamline-upwind stabilisation.
+Plane-strain thermoelasticity is reduced to an axially restrained beam--column strip by a
+two-field variational principle, the flow in the lubrication limit and the thermal entry
+problem by a Sturm--Liouville expansion. Closed forms follow for the resistance (a Gauss
+hypergeometric function generalised to self-similar shapes), the bow and the buckling
+threshold; the axial map is proved a contraction and the thermal closure an exact property of
+the horizontal mean of the wall temperature. A coupled finite-element solution verifies every
+formula.
 
 \abshead{Findings}
-At $\ReDh=50$ and $q''=5\,\mathrm{kW/m^2}$ the strip bows $0.441\,H_0$, $40\%$ of it geometric amplification, and the pressure drop rises from $144$ to $315$~Pa. The wall temperature rise is $34.3$~K, $6.2\%$ above the one-dimensional estimate, and the membrane resultant reaches $0.28$ of the Euler load. The frozen-force wall closure over-predicts the bow by $1.2\%$ at $5\,\mathrm{kW/m^2}$ and by $14.9\%$ at $10\,\mathrm{kW/m^2}$.
+At $\ReDh=50$ and $q''=5\,\mathrm{kW/m^2}$ the strip bows $0.441\,H_0$ and the pressure drop
+rises from $144$ to $315$~Pa. The resistance integral over the computed shape reproduces this to
+$0.03\%$ at the design point; the $\sin^2$ idealisation underpredicts it by $15\%$, a frozen-shape plus truncation
+effect rather than an error of the law. The wall rise is $34.3$~K, its $7.5\%$ excess over
+one-dimensional conduction being the $7.4\%$ lengthening of the conduction path by the bow plus
+a mid-surface convention. The frozen-force closure overpredicts the bow by $1.2\%$ at
+the design point and $14.9\%$ at $10\,\mathrm{kW/m^2}$. Deformation raises the local Nusselt
+number by up to $70\%$, with exponent $0.79$ in $H_0/H$.
 
 \abshead{Research limitations/implications}
-The wall is a reduced beam--column strip; the flow is steady, two-dimensional, laminar and constant-property; no experiment is reported; and the kinematic ceiling $|w|/H_0\lesssim0.5$ bounds the admissible load.
+Plane strain, steady laminar flow, small slopes, $|w|/H_0\le0.45$; shear correction omitted
+($4\%$); no experiment.
 
 \abshead{Practical implications}
-Deformation, not strength or buckling, binds the operating range, and pressure-only estimates of the hydraulic resistance fail once the thermal bow develops.
+Design formulae replace semi-empirical corrections; deformation, not strength, sets the
+operating range.
 
 \abshead{Originality/value}
-The thermoelastic--hydraulic loop is closed, solved and verified as a whole, and the model-form error of the wall closure used in design estimates is quantified across the admissible range.
+The loop is closed in closed form and every formula is verified against an independent
+computation.
 
 \vspace{3pt}
-\noindent\textbf{Keywords:} conjugate heat transfer; fluid--structure
-interaction; thermal buckling; beam--column; finite element method;
-verification and validation
+\noindent\textbf{Keywords:} conjugate heat transfer; thermoelastic stability;
+fluid--structure interaction; lubrication theory; Sturm--Liouville series;
+verification
 
 \vspace{2pt}
-\noindent\textbf{Article classification:} Research paper
+\noindent\textbf{Paper type:} Research paper
 \end{structuredabstract}
+
+\vspace{2pt}
+\noindent\textit{Disclosure statement:} the author declares no
+conflict of interest and no specific funding was received for this work.
 
 \vspace{4pt}
 \noindent\rule{\textwidth}{0.4pt}
 
 % ===========================================================================
-\section*{Nomenclature}
-\addcontentsline{toc}{section}{Nomenclature}
-\small
-\begin{longtable}{@{}l l l@{\hspace{8mm}}l l l@{}}
-\toprule
-Symbol & Meaning & Unit & Symbol & Meaning & Unit\\
-\midrule
-\endfirsthead
-\toprule
-Symbol & Meaning & Unit & Symbol & Meaning & Unit\\
-\midrule
-\endhead
-$c_p$ & fluid specific heat & J\,kg$^{-1}$K$^{-1}$ & $q''$ & imposed heat flux & W\,m$^{-2}$\\
-$c_s$ & wall specific heat & J\,kg$^{-1}$K$^{-1}$ & $t$ & time & s\\
-$d$ & wall thickness & m & $u,v$ & velocity components & m\,s$^{-1}$\\
-$\bd$ & displacement vector & m & $\bu$ & velocity vector & m\,s$^{-1}$\\
-$D_h$ & hydraulic diameter, $2H_0$ & m & $U$ & mean inlet velocity & m\,s$^{-1}$\\
-$D_s$ & flexural rigidity of the strip & N\,m & $w$ & interface deflection & m\\
-$E$ & Young's modulus & Pa & $w_{lin}$ & linear bow $\kappa_{th}L^2/8$ & m\\
-$f_D$ & Darcy friction factor & -- & $w_p$ & pressure-only bow & m\\
-$h$ & convective coefficient & W\,m$^{-2}$K$^{-1}$ & $x,y$ & streamwise, transverse & m\\
-$h_e$ & element size & m & $\alpha$ & thermal expansion coeff. & K$^{-1}$\\
-$H_0$ & undeformed passage height & m & $\beta$ & thermal modulus & Pa\,K$^{-1}$\\
-$k_f,k_s$ & fluid, wall conductivity & W\,m$^{-1}$K$^{-1}$ & $\gamma$ & $=\partial\theta/\partial y$ & K\,m$^{-1}$\\
-$L$ & heated length & m & $\Ga$ & boundary of a domain & --\\
-$L_e,L_o$ & entrance, exit length & m & $\Delta T^{*}$ & $q''H_0/k_f$ & K\\
-$M$ & bending moment per unit depth & N & $\Delta T_t$ & $q''d/k_s$ & K\\
-$M_b$ & buckling margin $\bar T_{cr}/\bar\theta$ & -- & $\eps$ & strain tensor & --\\
-$N$ & compressive membrane resultant & N\,m$^{-1}$ & $\theta$ & temperature rise & K\\
-$N_\theta$ & blocked thermal resultant & N\,m$^{-1}$ & $\bar\theta$ & thickness-averaged $\theta$ & K\\
-$N_{cr}$ & Euler load $\pi^2D_s/L^2$ & N\,m$^{-1}$ & $\kappa_{th}$ & free thermal curvature & m$^{-1}$\\
-$p$ & pressure & Pa & $\lambda,\mu_L$ & Lam\'e parameters & Pa\\
-$Pe$ & P\'eclet number & -- & $\mu$ & dynamic viscosity & Pa\,s\\
-$Pr$ & Prandtl number & -- & $\nu$ & Poisson ratio & --\\
-$\mathrm{Br}$ & Brinkman number & -- & $\rho$ & density & kg\,m$^{-3}$\\
-$\mathrm{Gr}$ & Grashof number & -- & $\sigma_b$ & bending stress & Pa\\
-$\mathrm{Nu}$ & Nusselt number $2H_0h/k_f$ & -- & $\sigma_m$ & membrane stress & Pa\\
-$\mathrm{Ri}$ & Richardson number & -- & $\bsig$ & stress tensor & Pa\\
-$\mathrm{Re}$ & Reynolds number & -- & $\xi$ & thermoelastic coupling & --\\
-$\Ga_p$ & $w_{lin}/w_p$ & -- & $\tau_w$ & wall shear stress & Pa\\
-\bottomrule
-\end{longtable}
 
-% ===========================================================================
 \section{Introduction}
 \label{sec:intro}
-
-\subsection{Context and motivation}
-\label{sec:context}
 
 Channels whose walls are thin enough to bend are the rule rather than the
 exception in compact heat exchangers and in microfluidic hardware. In a
@@ -187,9 +171,6 @@ turbulent channel \citet{zhang2017deformation} quantified the change of the
 mean profile produced by a compliant wall. In all of these studies the load
 that deforms the wall is the pressure, and the energy equation is either
 absent or passive.
-
-\subsection{Coupled heat transfer and deformation}
-\label{sec:litfsi}
 
 A second and, for heated hardware, more consequential coupling arises when
 the deformation is produced by the temperature field that the wall itself
@@ -229,9 +210,6 @@ gupta2024photo}. The monographs of \citet{boley1960theory},
 \citet{timoshenko1970elasticity} and \citet{timoshenko1961stability} supply
 the eigenstrain and stability relations used in the present reduction.
 
-\subsection{Conjugate conduction in the wall}
-\label{sec:litconj}
-
 The thermal side of the same problem has its own literature. Conjugate heat
 transfer with a conducting wall of finite thickness has been studied for
 thick-walled flattened channels \citep{rahimi2024numerical}, for turbulent
@@ -249,9 +227,6 @@ essentially one-dimensional through the thickness when $k_s d \ll k_f L$, and
 axial conduction in the wall, while small in the core of a heated segment,
 produces end effects over a length $O(d)$ that a reduced model cannot
 represent.
-
-\subsection{The gap addressed here}
-\label{sec:gap}
 
 The three strands above have not, to the best of the present author's
 knowledge, been closed into a single verified computation for the
@@ -284,10 +259,7 @@ the range of fluxes that an application would use. The useful engineering
 output of the analysis is therefore not a single number but the location of
 that ceiling together with the accuracies that can be claimed below it.
 
-\subsection{Contributions and organisation}
-\label{sec:contrib}
-
-This paper makes five contributions.
+This paper makes six contributions.
 (i) A complete and self-consistent statement of the coupled problem with the
 quantitative support of every assumption, including the dimensionless groups
 and the five regime bounds that delimit it (\S\ref{sec:model}--\S\ref{sec:groups}).
@@ -310,13 +282,331 @@ flux, the wall thickness, the Reynolds number and two material properties,
 the location of the kinematic, strength and stability ceilings, and the
 model-form error of the frozen-force wall closure (\S\ref{sec:results},
 \S\ref{sec:discussion}).
+(vi) A set of closed-form and asymptotic results with proofs: the self-similar reduction of the
+hydraulic functional to the moments of the bow, with an a priori truncation bound and a
+stability lemma in the shape; and an exact statement of the thermal closure of the wall strip
+from which the residual of the one-dimensional model is attributed to the lengthening of the
+conduction path (\S\ref{sec:analytical}, Appendix~\ref{app:proofs}).
 
 \S\ref{sec:limitations} states what the model excludes; the reduced
 structural model is the most consequential of those exclusions and it is not
 presented as a substitute for a two-dimensional thermoelastic continuum.
 
+The paper is organised as follows. Section~\ref{sec:equations} sets out the field
+equations, the dimensionless groups and the limits against which the solution is later
+checked, and the nomenclature follows it. Section~\ref{sec:model} poses the problem: the
+configuration, the ten assumptions with their quantitative support, the derivation of the
+reduced wall model and the boundary data. Section~\ref{sec:numerics} describes how the
+coupled problem is solved, including the monolithic conjugate assembly, the coupling
+algorithm, the mesh-independence study and the verification of the implementation.
+Section~\ref{sec:results} reports the coupled solution and its sensitivity to five
+parameters, Section~\ref{sec:discussion} discusses what the results mean and
+Section~\ref{sec:limitations} states what the model excludes. Section~\ref{sec:conclusions}
+concludes. Three appendices record the closed-form algebra, the weak forms and the
+reproduction record.
+
 % ===========================================================================
-\section{Physical model and assumptions}
+
+\section{Field equations}
+\label{sec:equations}
+
+\subsection{Field equations and kinematics}
+\label{sec:field}
+
+With $\bu=(u,v)$ the velocity, $p$ the pressure, $T_f$ the fluid temperature,
+$T_s$ the solid temperature and $\theta=T_s-T_{\mathrm{in}}$ the wall
+temperature rise, the steady field equations are
+\begin{align}
+\nabla\cdot\bu &= 0 && \text{in } \Om_f, \label{eq:continuity}\\
+\rho\,(\bu\cdot\nabla)\bu &= -\nabla p + \mu\nabla^2\bu && \text{in } \Om_f, \label{eq:momentum}\\
+\rho c_p\,(\bu\cdot\nabla)T_f &= k_f\nabla^2 T_f && \text{in } \Om_f, \label{eq:fluidenergy}\\
+\nabla\cdot(k_s\nabla T_s) &= 0 && \text{in } \Om_s^0, \label{eq:solidenergy}
+\end{align}
+in which $\Om_f$ is the \emph{deformed} fluid domain, whose upper boundary on
+$0\le x\le L$ is the deflected interface, while the wall conduction problem
+is posed on the reference configuration $\Om_s^0$ (\S\ref{sec:wallmodelscope}).
+Buoyancy and viscous dissipation are absent from
+\eqref{eq:momentum}--\eqref{eq:fluidenergy} for the quantitative reasons given
+in \S\ref{sec:assumptions}. The fluid properties are those of
+Table~\ref{tab:params}; the transport equations are the standard
+constant-property forms \citep{bird1960transport}, and the wall equation is
+the steady conduction equation of \citet{carslaw1947conduction}.
+
+\subsection{Thermoelastic constitutive law and equilibrium}
+\label{sec:constitutive}
+
+The wall is described by the Duhamel--Neumann extension of isotropic linear
+elasticity,
+\begin{align}
+\bsig &= 2\mu_L\beps + \lambda(\operatorname{tr}\beps)\bI - \beta\theta\bI,
+\qquad \beta=(3\lambda+2\mu_L)\alpha=\frac{E\alpha}{1-2\nu},
+\label{eq:constitutive}\\
+\beps &= \tfrac12\bigl(\nabla\bd+\nabla\bd^{\mathsf T}\bigr),
+\qquad \nabla\cdot\bsig=\mathbf 0 \ \ \text{in } \Om_s^0,
+\label{eq:equilibrium}
+\end{align}
+where $\lambda,\mu_L$ are the Lam\'e parameters, $\bd$ the displacement and
+$\beta$ the thermal modulus \citep{boley1960theory,timoshenko1970elasticity}.
+Equation \eqref{eq:equilibrium} is posed on the reference configuration,
+which is consistent with assumption A4; the fluid equations
+\eqref{eq:continuity}--\eqref{eq:fluidenergy} are posed on the deformed domain
+$\Om_f$ and therefore carry the geometric coupling of the problem.
+
+\subsection{Variational reduction to the strip}
+\label{sec:variational}
+
+The one-dimensional model of \S\ref{sec:wall} is not postulated: it is the Euler--Lagrange
+system of a two-field functional obtained from the three-dimensional virtual work of the
+strip. Let $u_0(x)$ be the axial displacement of the mid-surface and $w(x)$ the deflection
+into the passage. Under the Kirchhoff hypothesis the displacement field and the axial strain
+are
+\begin{equation}
+u_x=u_0(x)-y'w'(x),\qquad u_y=w(x),\qquad
+\eps_{xx}=\eps^{0}-y'w'',\qquad
+\eps^{0}=u_0'+\tfrac12 w'^2 ,
+\label{eq:kirchhoff}
+\end{equation}
+with $y'$ measured from the mid-surface; the last term of $\eps^{0}$ is the geometric
+shortening that couples stretching to bending and that a linear theory omits. The
+plane-strain free energy of the strip, with the thermal strain subtracted, is
+\begin{equation}
+\Pi[u_0,w]=\frac12\int_0^L\int_{-d/2}^{d/2}
+\frac{E}{1-\nu^2}\bigl[\eps_{xx}-(1+\nu)\alpha\theta\bigr]^2\,\dd y'\,\dd x
++\frac12\int_0^L D_s\bigl(w''+\kappa_{th}\bigr)^2\dd x-\int_0^L f\,w\,\dd x ,
+\label{eq:functional}
+\end{equation}
+where the second integral is the bending energy written in terms of the curvature measured
+from its stress-free value $\kappa_{th}=(1+\nu)\alpha q''/k_s$ of \eqref{eq:kappa}, and
+$f=-p$ is the transverse load of the fluid. Carrying out the thickness integrals with
+$\int\dd y'=d$ and $\int y'^2\dd y'=d^3/12$, and using \eqref{eq:theta_profile}, reduces
+\eqref{eq:functional} to
+\begin{equation}
+\Pi=\frac12\int_0^L\Bigl[\frac{Ed}{1-\nu^2}\bigl(\eps^{0}-(1+\nu)\alpha\bar\theta\bigr)^2
++D_s\bigl(w''+\kappa_{th}\bigr)^2\Bigr]\dd x-\int_0^L f\,w\,\dd x .
+\label{eq:functional1d}
+\end{equation}
+
+Stationarity with respect to $u_0$ returns the axial resultant
+\begin{equation}
+N=\frac{Ed}{1-\nu^2}\bigl(\eps^{0}-(1+\nu)\alpha\bar\theta\bigr)
+=\frac{Ed}{1-\nu^2}\Bigl(u_0'+\tfrac12 w'^2-(1+\nu)\alpha\bar\theta\Bigr),
+\label{eq:Nvariational}
+\end{equation}
+and, because $\partial\Pi/\partial u_0$ contains $u_0$ only through $N$, it also returns
+$N'=0$: the axial force of a strip loaded only at its ends is constant along the span.
+Stationarity with respect to $w$ gives
+\begin{equation}
+D_s\bigl(w''''+\kappa_{th}''\bigr)-\bigl(Nw'\bigr)'=f ,
+\label{eq:EL}
+\end{equation}
+which is \eqref{eq:beam} once $N$ is constant. The kinematic constraint of the pinned ends,
+$u_0(0)=u_0(L)=0$, integrates \eqref{eq:Nvariational} to
+$\eps^{0}=\tfrac12\langle w'^2\rangle-(1+\nu)\alpha\bar\theta$ with
+$\langle\cdot\rangle$ the span average, and substitution back into \eqref{eq:Nvariational}
+returns \eqref{eq:nupdate}. The two equations of the strip model are therefore the two
+Euler--Lagrange equations of one functional, not two independent assumptions, and the axial
+compatibility condition is the statement that the ends cannot approach.
+
+Three terms are discarded in the reduction, and each is bounded rather than ignored. Transverse
+shear contributes the Timoshenko correction
+$12D_s/(\kappa_sG\,dL^2)=4.0\%$ to the deflection at $L/d=10$ and $\nu=0.4$, with
+$\kappa_s=5/6$ and $G=E/2(1+\nu)$; it is the largest single approximation of the model and is
+carried explicitly into \S\ref{sec:limitations}. The finite-strain terms of \eqref{eq:kirchhoff}
+are of order $\langle w'^2\rangle=1.4\times10^{-4}$ at the design point. The through-thickness
+variation of the axial stress, which a beam theory replaces by its resultants, is recovered
+only at the extreme fibre, where $\sigma_b=6|M|/d^2$; the error of that recovery is part of
+the model-form error measured in \S\ref{sec:modform}.
+
+\subsection{Interface conditions}
+\label{sec:ifconditions}
+
+On the interface $\Ga_{\mathrm{if}}$ the kinematic, mechanical and thermal
+conditions are
+\begin{align}
+\bu &= \mathbf 0, \label{eq:ifkin}\\
+\bsig\cdot\bn &= \bigl(-p\bI+2\mu\D(\bu)\bigr)\cdot\bn,
+\label{eq:iftraction}\\
+T_f &= T_s, \qquad -k_f\nabla T_f\cdot\bn = -k_s\nabla T_s\cdot\bn,
+\label{eq:ifthermal}
+\end{align}
+with the single normal $\bn$ of \S\ref{sec:geometry} directed from the fluid
+into the solid. The sign convention of \eqref{eq:iftraction}--\eqref{eq:ifthermal}
+is what makes the interface terms of the two weak forms exactly antisymmetric,
+which is the property exploited by the monolithic assembly of
+\S\ref{sec:monolithic}.
+
+The no-slip and outflow data of the flow sub-problem determine the fluid
+traction in \eqref{eq:iftraction} completely. In the reduced wall equation the
+transverse load is taken as the pressure alone: the normal viscous
+contribution is of order $2\mu|\partial u_n/\partial n|=0.3$~Pa against a mean
+interface pressure of $169$~Pa (\S\ref{sec:flowresults}), that is $0.2\%$,
+and it is not carried into the beam load. This is the only term of
+\eqref{eq:iftraction} omitted anywhere in the formulation, and its omission is
+bounded by the ratio just quoted.
+
+\subsection{Non-dimensionalisation and governing groups}
+\label{sec:groups}
+
+Lengths are scaled by $H_0$, velocities by $U$, the pressure by $\mu U/H_0$
+and the temperature rise by $\Delta T^{*}=q''H_0/k_f$. The momentum equation
+then reads
+\begin{equation}
+-\hat\nabla^2\hat{\bu}+\ReH\,(\hat{\bu}\cdot\hat\nabla)\hat{\bu}
++\hat\nabla\hat p=\mathbf 0,
+\label{eq:nsdim}
+\end{equation}
+and the fluid energy equation
+\begin{equation}
+\mathrm{Pe}\,(\hat{\bu}\cdot\hat\nabla)\hat T_f=\hat\nabla^2\hat T_f,
+\qquad \mathrm{Pe}=\ReDh\,Pr,
+\label{eq:energydim}
+\end{equation}
+with $\ReH=\rho U H_0/\mu=25$, $\ReDh=2\ReH=50$, $Pr=\mu c_p/k_f=6.97$ and
+$\mathrm{Pe}=348$. The wall conduction equation retains the conductivity
+contrast $R_k=k_s/k_f=0.417$ and the thickness ratio $d/H_0=6$, and its
+solution is controlled by the two dimensionless groups
+\begin{equation}
+\Lambda=\frac{(1+\nu)\alpha q''L^2}{k_s H_0}=60,
+\qquad
+\Sigma_\kappa=\frac{\alpha q''H_0}{k_s}=5.0\times10^{-4},
+\label{eq:groups}
+\end{equation}
+which are respectively the linear bow normalised by the passage height and the
+ratio of the conduction temperature drop to the through-thickness temperature
+difference. The mechanical response is governed by the load ratio
+$|\bar N_\theta|/N_{cr}=0.275$ (\S\ref{sec:wall}) and by the geometry through
+$L/d=10$ and $L/H_0=60$.
+
+The dimensionless form \eqref{eq:nsdim} is not cosmetic: it is the form
+actually assembled. An assembly in dimensional variables makes the
+saddle-point matrix ill-conditioned by eight orders of magnitude and destroys
+the accuracy of the sparse direct factorisation, which is the reason the
+implementation normalises velocities and pressures at the element level
+(\S\ref{sec:flowsolver}).
+
+\subsection{Limiting cases}
+\label{sec:limits}
+
+Four limits of the formulation set out in equations
+\\eqref{eq:continuity}--\\eqref{eq:ifthermal} and \\eqref{eq:beamdim} are used
+later as checks and as the reference states against which the coupled solution
+is read.
+
+\emph{Rigid wall.} For $w\equiv0$ the passage is plane and the flow reduces to
+Poiseuille flow with $f\,Re_{D_h}=96$, while the energy equation reduces to the
+thermal-entry problem of a parallel-plate channel with a uniform wall flux. This
+limit is reproduced to round-off by the present solvers (\S\ref{sec:benchmarks})
+and supplies the denominators of every normalised quantity reported below.
+
+\emph{One-dimensional wall conduction.} When $k_s d\ll k_f L$, equation
+\eqref{eq:solidenergy} collapses to $\dd^2T_s/\dd y^2=0$ and the wall
+temperature rise becomes $q''(d/k_s+1/h)$; the through-thickness profile
+\eqref{eq:theta_profile} then reduces to a straight line and the eigen-curvature
+\eqref{eq:kappa} to its linear-in-$q''$ form. The departure of the coupled
+solution from this estimate is the $6.2\%$ reported in \S\ref{sec:thermalresults}.
+
+\emph{Frozen membrane force.} Setting $N=N_\theta$ in equation
+\eqref{eq:beam} removes the axial-compatibility equation \eqref{eq:nupdate} and
+leaves a linear bending problem. The resulting over-prediction of the bow is the
+model-form error quantified in \S\ref{sec:modform}; it vanishes as $q''\to0$.
+
+\emph{Euler column.} With $q''=0$ the strip carries no thermal load, and the
+eigenvalue problem implied by equation \eqref{eq:beamdim} at $\lambda=\pi$
+returns $N_{cr}=\pi^2D_s/L^2$, the classical pinned--pinned result that the
+thermal resultant must reach for buckling to occur. The working point at
+$0.283\,N_{cr}$ therefore sits below, but not far below, that limit.
+
+\subsection{Regime bounds}
+\label{sec:bounds}
+
+Five bounds delimit the validity of the results, and each is checked at every
+computed operating point.
+\begin{itemize}
+\item[\textbf{B1}] \emph{Laminar regime:} $\ReDh\le100$. The design point has
+$\ReDh=50$, and the sensitivity sweep of \S\ref{sec:reynolds} spans
+$25\le\ReDh\le100$.
+\item[\textbf{B2}] \emph{Buckling margin:} $M_b=\bar T_{cr}/\bar\theta\ge2$,
+with $\bar T_{cr}=\pi^2d^2/[12\alpha(1+\nu)L^2]=117.5$~K the mean wall
+temperature rise at which the pinned strip buckles. At the design point
+$M_b=3.64$ on the one-dimensional estimate of $\bar\theta$ and $3.43$ on the
+computed value, so the strip is below thermal buckling but not by a wide
+margin.
+\item[\textbf{B3}] \emph{Kinematic ceiling:} $|w|/H_0\le0.45$ for a
+converged coupled solution, with $|w|/H_0=0.5$ as the absolute ceiling of the
+small-slope reduction. The two numbers differ because the body-fitted mesh
+construction of \eqref{eq:blend} remains valid slightly beyond the point at
+which the beam kinematics cease to be defensible; the guard is placed
+conservatively at $0.45$ and runs that cross it are reported as
+first-iteration predictors rather than as coupled solutions
+(\S\ref{sec:coupling}).
+\item[\textbf{B4}] \emph{Buoyancy:} $\mathrm{Ri}_{H_0}\le10^{-2}$; the design
+point has $\mathrm{Ri}_{H_0}=1.7\times10^{-3}$, a factor $5.8$ in hand.
+\item[\textbf{B5}] \emph{Thermal dominance of the load:}
+$\Ga_p=w_{lin}/w_p\ge5$, where $w_p=5\bar pL^4/(384D_s)$ is the pressure-only
+bow of the same strip under the mean passage pressure. At the design point
+$\Ga_p=1.7\times10^{3}$, so the deformation is thermally driven by more than
+three orders of magnitude --- which is what makes the mechanism worth
+isolating, and what makes a pressure-driven analysis of this configuration
+inappropriate.
+\end{itemize}
+
+% ===========================================================================
+
+\section*{Nomenclature}
+\addcontentsline{toc}{section}{Nomenclature}
+\small
+\begin{longtable}{@{}l l l@{\hspace{8mm}}l l l@{}}
+\toprule
+Symbol & Meaning & Unit & Symbol & Meaning & Unit\\
+\midrule
+\endfirsthead
+\toprule
+Symbol & Meaning & Unit & Symbol & Meaning & Unit\\
+\midrule
+\endhead
+$c_p$ & fluid specific heat & J\,kg$^{-1}$K$^{-1}$ & $q''$ & imposed heat flux & W\,m$^{-2}$\\
+$c_s$ & wall specific heat & J\,kg$^{-1}$K$^{-1}$ & $t$ & time & s\\
+$d$ & wall thickness & m & $u,v$ & velocity components & m\,s$^{-1}$\\
+$\bd$ & displacement vector & m & $\bu$ & velocity vector & m\,s$^{-1}$\\
+$D_h$ & hydraulic diameter, $2H_0$ & m & $U$ & mean inlet velocity & m\,s$^{-1}$\\
+$D_s$ & flexural rigidity of the strip & N\,m & $w$ & interface deflection & m\\
+$E$ & Young's modulus & Pa & $w_{lin}$ & linear bow $\kappa_{th}L^2/8$ & m\\
+$f_D$ & Darcy friction factor & -- & $w_p$ & pressure-only bow & m\\
+$h$ & convective coefficient & W\,m$^{-2}$K$^{-1}$ & $x,y$ & streamwise, transverse & m\\
+$h_e$ & element size & m & $\alpha$ & thermal expansion coeff. & K$^{-1}$\\
+$H_0$ & undeformed passage height & m & $\beta$ & thermal modulus & Pa\,K$^{-1}$\\
+$k_f,k_s$ & fluid, wall conductivity & W\,m$^{-1}$K$^{-1}$ & $\gamma$ & $=\partial\theta/\partial y$ & K\,m$^{-1}$\\
+$L$ & heated length & m & $\Ga$ & boundary of a domain & --\\
+$L_e,L_o$ & entrance, exit length & m & $\Delta T^{*}$ & $q''H_0/k_f$ & K\\
+$M$ & bending moment per unit depth & N & $\Delta T_t$ & $q''d/k_s$ & K\\
+$M_b$ & buckling margin $\bar T_{cr}/\bar\theta$ & -- & $\eps$ & strain tensor & --\\
+$N$ & compressive membrane resultant & N\,m$^{-1}$ & $\theta$ & temperature rise & K\\
+$N_\theta$ & blocked thermal resultant & N\,m$^{-1}$ & $\bar\theta$ & wall temperature rise (mid-surface) & K\\
+$N_{cr}$ & Euler load $\pi^2D_s/L^2$ & N\,m$^{-1}$ & $\kappa_{th}$ & free thermal curvature & m$^{-1}$\\
+$p$ & pressure & Pa & $\lambda,\mu_L$ & Lam\'e parameters & Pa\\
+$Pe$ & P\'eclet number & -- & $\mu$ & dynamic viscosity & Pa\,s\\
+$Pr$ & Prandtl number & -- & $\nu$ & Poisson ratio & --\\
+$\mathrm{Br}$ & Brinkman number & -- & $\rho$ & density & kg\,m$^{-3}$\\
+$\mathrm{Gr}$ & Grashof number & -- & $\sigma_b$ & bending stress & Pa\\
+$\mathrm{Nu}$ & Nusselt number $2H_0h/k_f$ & -- & $\sigma_m$ & membrane stress & Pa\\
+$\mathrm{Ri}$ & Richardson number & -- & $\bsig$ & stress tensor & Pa\\
+$\mathrm{Re}$ & Reynolds number & -- & $\xi$ & thermoelastic coupling & --\\
+$\Ga_p$ & $w_{lin}/w_p$ & -- & $\tau_w$ & wall shear stress & Pa\\
+$a$ & normalised bow $w_{\max}/H_0$ & -- & $\lambda_n$ & eigenvalue of \eqref{eq:sl} & --\\
+$A_n$ & series coefficient & -- & $\psi_n$ & eigenfunction of \eqref{eq:sl} & --\\
+$c$ & axial stiffness $Ed/2(1-\nu^2)$ & N & $\mathcal F$ & axial-compatibility map & N\,m$^{-1}$\\
+$H(x)$ & local passage height & m & ${}_2F_1$ & Gauss hypergeometric function & --\\
+$\hat w$ & normalised bow $w/w_{\max}$ & -- & $c_k$ & shape moment $\langle\hat w^k\rangle$ & --\\
+$\Pi$ & $\Delta p_{\rm strip}/\Delta p_0$ & -- & $C_k$ & coefficient of $a^k$ in $\Pi$ & --\\
+$\bar\theta_{\rm avg}$ & exact thickness average of $\theta$ & K & $\Theta(y)$ & horizontal mean of $\theta$ & K\\
+$\bar\theta_{\rm mid}$ & mid-surface value of $\theta$ & K & $R$ & curvature residual, \eqref{eq:deformedclosure} & K\\
+\bottomrule
+\end{longtable}
+\normalsize
+
+% ===========================================================================
+
+\section{Problem formulation}
 \label{sec:model}
 
 \subsection{Configuration and geometry}
@@ -447,164 +737,20 @@ the bulk heating of the water; one consequence, developed in
 with the strip length and no single Nusselt number characterises the wall.
 
 % ===========================================================================
-\section{Governing equations}
-\label{sec:equations}
 
-\subsection{Field equations}
-\label{sec:field}
-
-With $\bu=(u,v)$ the velocity, $p$ the pressure, $T_f$ the fluid temperature,
-$T_s$ the solid temperature and $\theta=T_s-T_{\mathrm{in}}$ the wall
-temperature rise, the steady field equations are
-\begin{align}
-\nabla\cdot\bu &= 0 && \text{in } \Om_f, \label{eq:continuity}\\
-\rho\,(\bu\cdot\nabla)\bu &= -\nabla p + \mu\nabla^2\bu && \text{in } \Om_f, \label{eq:momentum}\\
-\rho c_p\,(\bu\cdot\nabla)T_f &= k_f\nabla^2 T_f && \text{in } \Om_f, \label{eq:fluidenergy}\\
-\nabla\cdot(k_s\nabla T_s) &= 0 && \text{in } \Om_s^0, \label{eq:solidenergy}
-\end{align}
-in which $\Om_f$ is the \emph{deformed} fluid domain, whose upper boundary on
-$0\le x\le L$ is the deflected interface, while the wall conduction problem
-is posed on the reference configuration $\Om_s^0$ (\S\ref{sec:wallmodelscope}).
-Buoyancy and viscous dissipation are absent from
-\eqref{eq:momentum}--\eqref{eq:fluidenergy} for the quantitative reasons given
-in \S\ref{sec:assumptions}. The fluid properties are those of
-Table~\ref{tab:params}; the transport equations are the standard
-constant-property forms \citep{bird1960transport}, and the wall equation is
-the steady conduction equation of \citet{carslaw1947conduction}.
-
-\subsection{Thermoelastic constitutive law and equilibrium}
-\label{sec:constitutive}
-
-The wall is described by the Duhamel--Neumann extension of isotropic linear
-elasticity,
-\begin{align}
-\bsig &= 2\mu_L\beps + \lambda(\operatorname{tr}\beps)\bI - \beta\theta\bI,
-\qquad \beta=(3\lambda+2\mu_L)\alpha=\frac{E\alpha}{1-2\nu},
-\label{eq:constitutive}\\
-\beps &= \tfrac12\bigl(\nabla\bd+\nabla\bd^{\mathsf T}\bigr),
-\qquad \nabla\cdot\bsig=\mathbf 0 \ \ \text{in } \Om_s^0,
-\label{eq:equilibrium}
-\end{align}
-where $\lambda,\mu_L$ are the Lam\'e parameters, $\bd$ the displacement and
-$\beta$ the thermal modulus \citep{boley1960theory,timoshenko1970elasticity}.
-Equation \eqref{eq:equilibrium} is posed on the reference configuration,
-which is consistent with assumption A4; the fluid equations
-\eqref{eq:continuity}--\eqref{eq:fluidenergy} are posed on the deformed domain
-$\Om_f$ and therefore carry the geometric coupling of the problem.
-
-\subsection{Interface conditions}
-\label{sec:ifconditions}
-
-On the interface $\Ga_{\mathrm{if}}$ the kinematic, mechanical and thermal
-conditions are
-\begin{align}
-\bu &= \mathbf 0, \label{eq:ifkin}\\
-\bsig\cdot\bn &= \bigl(-p\bI+2\mu\D(\bu)\bigr)\cdot\bn,
-\label{eq:iftraction}\\
-T_f &= T_s, \qquad -k_f\nabla T_f\cdot\bn = -k_s\nabla T_s\cdot\bn,
-\label{eq:ifthermal}
-\end{align}
-with the single normal $\bn$ of \S\ref{sec:geometry} directed from the fluid
-into the solid. The sign convention of \eqref{eq:iftraction}--\eqref{eq:ifthermal}
-is what makes the interface terms of the two weak forms exactly antisymmetric,
-which is the property exploited by the monolithic assembly of
-\S\ref{sec:monolithic}.
-
-The no-slip and outflow data of the flow sub-problem determine the fluid
-traction in \eqref{eq:iftraction} completely. In the reduced wall equation the
-transverse load is taken as the pressure alone: the normal viscous
-contribution is of order $2\mu|\partial u_n/\partial n|=0.3$~Pa against a mean
-interface pressure of $169$~Pa (\S\ref{sec:flowresults}), that is $0.2\%$,
-and it is not carried into the beam load. This is the only term of
-\eqref{eq:iftraction} omitted anywhere in the formulation, and its omission is
-bounded by the ratio just quoted.
-
-\subsection{Non-dimensionalisation and governing groups}
-\label{sec:groups}
-
-Lengths are scaled by $H_0$, velocities by $U$, the pressure by $\mu U/H_0$
-and the temperature rise by $\Delta T^{*}=q''H_0/k_f$. The momentum equation
-then reads
-\begin{equation}
--\hat\nabla^2\hat{\bu}+\ReH\,(\hat{\bu}\cdot\hat\nabla)\hat{\bu}
-+\hat\nabla\hat p=\mathbf 0,
-\label{eq:nsdim}
-\end{equation}
-and the fluid energy equation
-\begin{equation}
-\mathrm{Pe}\,(\hat{\bu}\cdot\hat\nabla)\hat T_f=\hat\nabla^2\hat T_f,
-\qquad \mathrm{Pe}=\ReDh\,Pr,
-\label{eq:energydim}
-\end{equation}
-with $\ReH=\rho U H_0/\mu=25$, $\ReDh=2\ReH=50$, $Pr=\mu c_p/k_f=6.97$ and
-$\mathrm{Pe}=348$. The wall conduction equation retains the conductivity
-contrast $R_k=k_s/k_f=0.417$ and the thickness ratio $d/H_0=6$, and its
-solution is controlled by the two dimensionless groups
-\begin{equation}
-\Lambda=\frac{(1+\nu)\alpha q''L^2}{k_s H_0}=60,
-\qquad
-\Sigma_\kappa=\frac{\alpha q''H_0}{k_s}=5.0\times10^{-4},
-\label{eq:groups}
-\end{equation}
-which are respectively the linear bow normalised by the passage height and the
-ratio of the conduction temperature drop to the through-thickness temperature
-difference. The mechanical response is governed by the load ratio
-$|\bar N_\theta|/N_{cr}=0.275$ (\S\ref{sec:wall}) and by the geometry through
-$L/d=10$ and $L/H_0=60$.
-
-The dimensionless form \eqref{eq:nsdim} is not cosmetic: it is the form
-actually assembled. An assembly in dimensional variables makes the
-saddle-point matrix ill-conditioned by eight orders of magnitude and destroys
-the accuracy of the sparse direct factorisation, which is the reason the
-implementation normalises velocities and pressures at the element level
-(\S\ref{sec:flowsolver}).
-
-\subsection{Regime bounds}
-\label{sec:bounds}
-
-Five bounds delimit the validity of the results, and each is checked at every
-computed operating point.
-\begin{itemize}
-\item[\textbf{B1}] \emph{Laminar regime:} $\ReDh\le100$. The design point has
-$\ReDh=50$, and the sensitivity sweep of \S\ref{sec:reynolds} spans
-$25\le\ReDh\le100$.
-\item[\textbf{B2}] \emph{Buckling margin:} $M_b=\bar T_{cr}/\bar\theta\ge2$,
-with $\bar T_{cr}=\pi^2d^2/[12\alpha(1+\nu)L^2]=117.5$~K the mean wall
-temperature rise at which the pinned strip buckles. At the design point
-$M_b=3.64$ on the one-dimensional estimate of $\bar\theta$ and $3.43$ on the
-computed value, so the strip is below thermal buckling but not by a wide
-margin.
-\item[\textbf{B3}] \emph{Kinematic ceiling:} $|w|/H_0\le0.45$ for a
-converged coupled solution, with $|w|/H_0=0.5$ as the absolute ceiling of the
-small-slope reduction. The two numbers differ because the body-fitted mesh
-construction of \eqref{eq:blend} remains valid slightly beyond the point at
-which the beam kinematics cease to be defensible; the guard is placed
-conservatively at $0.45$ and runs that cross it are reported as
-first-iteration predictors rather than as coupled solutions
-(\S\ref{sec:coupling}).
-\item[\textbf{B4}] \emph{Buoyancy:} $\mathrm{Ri}_{H_0}\le10^{-2}$; the design
-point has $\mathrm{Ri}_{H_0}=1.7\times10^{-3}$, a factor $5.8$ in hand.
-\item[\textbf{B5}] \emph{Thermal dominance of the load:}
-$\Ga_p=w_{lin}/w_p\ge5$, where $w_p=5\bar pL^4/(384D_s)$ is the pressure-only
-bow of the same strip under the mean passage pressure. At the design point
-$\Ga_p=1.7\times10^{3}$, so the deformation is thermally driven by more than
-three orders of magnitude --- which is what makes the mechanism worth
-isolating, and what makes a pressure-driven analysis of this configuration
-inappropriate.
-\end{itemize}
-
-% ===========================================================================
-\section{Reduced wall model and its derivation}
+\subsection{Reduced wall model and its derivation}
 \label{sec:wall}
 
-This section derives the wall model actually solved in the coupled
-computation. The derivation is given in full because the model-form error of
-its most common simplification is one of the results of the paper
+This subsection states the wall model actually solved in the coupled computation,
+together with the support for its hypotheses; its derivation from the
+three-dimensional virtual work is given in \S\ref{sec:variational} and its closed-form
+solution in \S\ref{sec:analytical}. The statements are set out here because the model-form
+error of the model's most common simplification is one of the results of the paper
 (\S\ref{sec:modform}), and because the eigen-curvature and blocked-force
 relations are easy to mis-state by a factor $(1+\nu)/(1-\nu)$ if the
 plane-strain closure is applied carelessly.
 
-\subsection{Scope of the reduction}
+\subsubsection{Scope of the reduction}
 \label{sec:wallmodelscope}
 
 The wall is slender, $L/d=10$, and shallow, $|w|/H_0\le0.45$, and it is
@@ -619,7 +765,7 @@ consequences of the last of these are stated in \S\ref{sec:limitations}; they
 are the reason the reported bending stress is an extreme-fibre estimate
 rather than a computed two-dimensional field.
 
-\subsection{Plane-strain strip and the thermal eigenstrain}
+\subsubsection{Plane-strain strip and the thermal eigenstrain}
 \label{sec:eigenstrain}
 
 For a wide strip, $\eps_{zz}=0$, and for a thin strip the through-thickness
@@ -680,7 +826,7 @@ $(1-\nu^2)$, is a plane-strain effect and is the term most often mis-stated
 in design estimates; it is $18\%$ larger than the plane-stress value at
 $\nu=0.4$.
 
-\subsection{Beam--column equilibrium}
+\subsubsection{Beam--column equilibrium}
 \label{sec:beameq}
 
 Consider a strip element of unit width carrying the compressive axial
@@ -702,7 +848,7 @@ curvature \citep{timoshenko1961stability,boley1960theory}; the sign of the
 axial term is the compressive one, so that a compressive $N$ reduces the
 effective stiffness.
 
-\subsection{Axial compatibility}
+\subsubsection{Axial compatibility}
 \label{sec:compat}
 
 The axial force is not an independent variable: the strip is pinned at both
@@ -727,9 +873,12 @@ stiffness in \eqref{eq:beam} increases as the bow grows. The relief is
 $907$~N/m at the design point, that is $2.9\%$ of $N_\theta$ and $0.86\%$ of
 $N_{cr}$. Equations \eqref{eq:beam} and \eqref{eq:nupdate} are a coupled
 nonlinear problem in $(w,N)$ even though each is linear in its own unknown;
-their solution is the structure sub-problem of \S\ref{sec:wallsolver}.
+their solution is the structure sub-problem of \S\ref{sec:wallsolver}, the
+existence and uniqueness of that solution are established in
+Theorem~\ref{thm:contraction} of \S\ref{sec:contraction}, and its closed form is
+\eqref{eq:Wclosed} of \S\ref{sec:stripclosed}.
 
-\subsection{Non-dimensional form and closed-form solution}
+\subsubsection{Non-dimensional form}
 \label{sec:closedform}
 
 With $\xi=x/L$, $W=w/H_0$, $\lambda^2=NL^2/D_s$, $\beta=\kappa_{th}L^2/H_0$
@@ -756,12 +905,13 @@ against which the finite-element wall solver is verified
 \eqref{eq:beamdim} ceases to have a bounded solution as $\lambda\to\pi$,
 which is the Euler load.
 
-\subsection{Critical load and critical temperature}
+\subsubsection{Critical load and critical temperature}
 \label{sec:critical}
 
 Setting $\lambda=\pi$ in \eqref{eq:closed} gives the Euler load of the pinned
 strip and, through \eqref{eq:ntheta}, the mean wall temperature rise at which
-the axially restrained strip buckles:
+the axially restrained strip buckles (the same limits are recovered from
+\eqref{eq:Tcr} in \S\ref{sec:stripclosed}):
 \begin{equation}
 N_{cr}=\frac{\pi^2D_s}{L^2},
 \qquad
@@ -786,7 +936,7 @@ w_p=\frac{5\,\bar p\,L^4}{384\,D_s}=9.19\times10^{-8}\ \mathrm{m}
 at the design point, three orders of magnitude below the thermal bow. This is
 the quantitative content of bound B5.
 
-\subsection{The frozen-force closure}
+\subsubsection{The frozen-force closure}
 \label{sec:frozen}
 
 The axial-compatibility condition \eqref{eq:nupdate} is a scalar nonlinearity
@@ -817,8 +967,489 @@ through-thickness distribution of the \emph{mechanical} stress, and that is
 the error quantified in \S\ref{sec:limitations}.
 
 % ===========================================================================
-\section{Computational formulation}
+
+\subsection{Boundary conditions and closure of the problem}
+\label{sec:bcs}
+
+Table~\ref{tab:bcs} collects all boundary data of the coupled problem. They
+are listed separately from \S\ref{sec:equations} because the thermal and
+mechanical data on the strip ends and on the casing are what the reduced wall
+model represents, and because the outlet treatment is itself a modelling
+decision: the do-nothing condition of \S\ref{sec:flowsolver} is the discrete
+counterpart of a traction-free outflow, and it fixes the pressure level
+without an algebraic constraint.
+
+\begin{table}[htbp]
+\centering
+\caption{Boundary and interface data of the coupled problem. The interface
+$\Ga_{\mathrm{if}}$ is the deformed face $y=H_0-w(x)$ over
+$0\le x\le L$; $\bn$ is directed from the fluid into the solid and
+$\bn_{\mathrm{out}}=-\bn$ on the outer face.}
+\label{tab:bcs}
+\small
+\begin{tabular}{@{}p{3.3cm}p{3.6cm}p{4.0cm}p{3.4cm}@{}}
+\toprule
+Boundary & Flow & Thermal & Structure\\
+\midrule
+Inlet, $x=-L_e$ &
+$u=6U\frac{y}{H_0}\bigl(1-\frac{y}{H_0}\bigr)$, $v=0$ &
+$T_f=T_{\mathrm{in}}=293.15$~K &
+---\\
+Outlet, $x=L+L_o$ &
+do-nothing traction; $p=0$ datum applied after the solve &
+$\partial_n T_f=0$ &
+---\\
+Lower wall, $y=0$ &
+$u=v=0$ &
+$\partial_n T_f=0$ &
+---\\
+Rigid upper wall, $-L_e\le x<0$ and $L<x\le L+L_o$ &
+$u=v=0$ &
+$\partial_n T_f=0$ &
+---\\
+Interface, $\Ga_{\mathrm{if}}$ &
+$u=v=0$; traction $-p\bn$ &
+$T_f=T_s$, $-k_f\nabla T_f\cdot\bn=-k_s\nabla T_s\cdot\bn$ &
+transverse load $f=-p$\\
+Outer face, $y=H_0+d$ &
+--- &
+$-k_s\nabla T_s\cdot\bn_{\mathrm{out}}=q''$ &
+free surface\\
+Strip ends, $x=0$ and $x=L$ &
+--- &
+$\partial_n T_s=0$ &
+$w=0$, $M=0$; axial displacement $0$\\
+Casing, $x=0$, $x=L$ on $H_0<y<H_0+d$ &
+--- &
+$\partial_n T_s=0$ &
+rigid, axially fixed\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The problem is closed as follows. For a given interface shape $w(x)$, the
+flow problem \eqref{eq:nsdim} with the flow data of Table~\ref{tab:bcs} is
+well posed and determines $p$ and $\bu$ up to the pressure level, which the
+outflow condition fixes. The thermal problem \eqref{eq:thermalweak} with the
+shared interface unknowns is well posed and determines $T$ in both domains.
+The structure problem \eqref{eq:beam}--\eqref{eq:nupdate} with the load $f=-p$
+and the eigen-curvature of \eqref{eq:kappa} determines $w$ and $N$. The
+coupling of \S\ref{sec:coupling} is the fixed point of the composition of
+these three maps, and its contraction rate --- measured, not assumed --- is
+reported with the convergence history of every run.
+
+Two features of Table~\ref{tab:bcs} deserve comment because they are
+frequently mishandled. First, the outlet condition is applied to the
+\emph{deformed} domain, so the plane $x=L+L_o$ is a straight vertical line only
+because the exit section is rigid; in a fully compliant device the outlet
+plane would itself depend on $w$, and the do-nothing condition would need the
+geometric-conservation treatment of \citet{lesoinne1996geometric}. Second, the
+axial restraint of the strip is imposed as zero \emph{in-plane displacement}
+at both ends, not as a symmetry condition. This is what makes the membrane
+force of \eqref{eq:ntheta} appear at all; a strip with one free end would
+carry no axial force and would bow by the linear amount
+$w_{lin}=0.315\,H_0$ instead of $0.441\,H_0$.
+
+% ===========================================================================
+
+\section{Solution of the problem}
 \label{sec:numerics}
+
+The problem posed in Section~\ref{sec:model} is solved as three coupled
+blocks: a velocity--pressure problem in the deformed passage, a conjugate
+conduction problem in the strip and its surroundings, and the nonlinear
+beam--column equation of the strip itself. Section~\ref{sec:analytical} solves the reduced problem in closed form;
+Sections~\ref{sec:fe}--\ref{sec:coupling} define the discretisation, the weak forms and
+the coupling; Sections~\ref{sec:grid} and \ref{sec:verification} report the
+mesh-independence study and the verification of the implementation.
+
+\subsection{Analytical solution of the reduced problem}
+\label{sec:analytical}
+
+The reduced problem of \S\ref{sec:wall} is closed enough to be solved without a mesh: the
+strip equation is linear for a given membrane force, the hydraulic resistance of the deformed
+passage is an integral of a known function of the shape, and the thermal-entry problem is a
+regular Sturm--Liouville problem. The three solutions are stated here as theorems because
+each is used later as a verification reference, and because their hypotheses are exactly the
+assumptions A1--A10 of \S\ref{sec:assumptions}. Throughout, $a=w_{\max}/H_0$ is the
+normalised bow, $\xi=x/L$, $W=w/H_0$, $\beta=\kappa_{th}L^2/H_0$ and
+$\lambda^2=NL^2/D_s$.
+
+\subsubsection{Closed form of the strip}
+\label{sec:stripclosed}
+
+For constant $\kappa_{th}$ and constant $N$, equation \eqref{eq:beam} is linear with constant
+coefficients. Its solution with $W(0)=W(1)=0$ and $W''(0)=W''(1)=-\beta$ is
+\begin{equation}
+W(\xi)=\frac{\beta}{\lambda^2}\Bigl[1-\cos\lambda\xi-\tan\frac{\lambda}{2}\,\sin\lambda\xi\Bigr]
++\frac{f L^4}{D_sH_0}\,
+\frac{1}{\lambda^4}\Bigl[\frac{\lambda^2}{2}\xi(1-\xi)+\cos\lambda\xi-1
++\tan\frac{\lambda}{2}\Bigl(\sin\lambda\xi-\lambda\xi\Bigr)\Bigr],
+\label{eq:Wclosed}
+\end{equation}
+whose first term is the thermal bow and whose second is the pressure bow; the pressure term
+reproduces $5\bar pL^4/384D_s$ as $\lambda\to0$ and the thermal term reproduces the circular
+arc $\beta\xi(1-\xi)/2$ in the same limit. Setting $\lambda=\pi$ in \eqref{eq:Wclosed} gives
+the Euler load $N_{cr}=\pi^2D_s/L^2$ and, through \eqref{eq:ntheta}, the critical mean
+temperature rise
+\begin{equation}
+\bar T_{cr}=\frac{\pi^2d^2}{12\,\alpha(1+\nu)L^2}=\frac{N_{cr}(1-\nu)}{Ed\alpha},
+\label{eq:Tcr}
+\end{equation}
+which is independent of the modulus and scales as $(d/L)^2$. At the design point
+$N_{cr}=1.057\times10^{5}$~N/m and $\bar T_{cr}=117.5$~K, so the buckling margin is
+$M_b=\bar T_{cr}/\bar\theta=3.43$.
+
+\subsubsection{The axial-compatibility map is a contraction}
+\label{sec:contraction}
+
+Write \eqref{eq:nupdate} as the scalar fixed-point problem $N=\mathcal F(N)$ with
+\begin{equation}
+\mathcal F(N)=N_\theta-c\,\bigl\langle w_N'^2\bigr\rangle,\qquad
+c=\frac{Ed}{2(1-\nu^2)},
+\label{eq:map}
+\end{equation}
+where $w_N$ is the solution \eqref{eq:Wclosed} of \eqref{eq:beam} at that $N$.
+
+\begin{theorem}[Contraction of the axial map]
+\label{thm:contraction}
+Let $N_\theta<N_{cr}/3$. Then $\mathcal F$ maps $[0,N_{cr}/3]$ into itself, is a contraction
+there, and the iteration $N_{k+1}=\mathcal F(N_k)$ converges to the unique fixed point $N^*$
+with
+\begin{equation}
+|N_k-N^*|\le\frac{q^k}{1-q}\,|N_1-N_0|,\qquad
+q=\frac{2N_\theta}{N_{cr}-N_\theta}<1 .
+\label{eq:rate}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+See Appendix~\ref{app:proofs}. The mechanism is that $w_N$ is the solution of a linear
+problem whose resolvent grows like $(N_{cr}-N)^{-1}$, so that
+$\|\partial_N w_N'\|^2\le\|w_N'\|^2/(N_{cr}-N)$; with
+$c\langle w_N'^2\rangle=N_\theta-N$ this gives
+$|\mathcal F'|\le2(N_\theta-N)/(N_{cr}-N)\le q$.
+\end{proof}
+
+At the design point $N_\theta/N_{cr}=0.2746$, so the hypothesis of
+Theorem~\ref{thm:contraction} is satisfied with $q=0.757$; the bound is sufficient but
+conservative, and the derivative of $\mathcal F$ evaluated from \eqref{eq:Wclosed} at the same
+point is $1.6\times10^{-5}$, which is why the scalar iteration converges in a few sweeps while
+the outer fluid--thermal--structure loop of \S\ref{sec:coupling} needs nine.
+
+\subsubsection{Closed-form hydraulic resistance}
+\label{sec:lubrication}
+
+In the lubrication limit $\varepsilon=H_0/L\ll1$ the streamwise momentum balance of the
+passage, with mass flux $Q=UH_0$ per unit width conserved, integrates once to
+\begin{equation}
+-\frac{\dd p}{\dd x}=\frac{12\mu Q}{H(x)^3},\qquad H(x)=H_0-w(x),
+\label{eq:lubmom}
+\end{equation}
+and the pressure drop over the strip is $\Delta p=12\mu Q\int_0^L H^{-3}\dd x$.
+
+\begin{theorem}[Hydraulic resistance of the bowed passage]
+\label{thm:pressure}
+For the kinematic shape $w=w_{\max}\sin^2(\pi x/L)$ and $a=w_{\max}/H_0<1$,
+\begin{equation}
+\Delta p=\frac{12\mu QL}{H_0^{3}}\;{}_2F_1\!\Bigl(3,\tfrac12;1;a\Bigr)
+=\Delta p_0\Bigl[1+\frac32a+\frac94a^2+\frac{25}{8}a^3+\frac{525}{128}a^4+O(a^5)\Bigr],
+\label{eq:dpclosed}
+\end{equation}
+where $\Delta p_0=12\mu QL/H_0^3$ is the undeformed value and ${}_2F_1$ is the Gauss
+hypergeometric function. The identity follows from
+$\int_0^\pi(1-a\sin^2s)^{-3}\dd s=\pi\,{}_2F_1(3,\tfrac12;1;a)$.
+\end{theorem}
+
+\begin{proof}
+Substitute $s=\pi x/L$ and expand $(1-a\sin^2s)^{-3}=\sum_n\frac{(3)_n}{n!}a^n\sin^{2n}s$;
+term-by-term integration with $\int_0^\pi\sin^{2n}s\,\dd s=\pi(2n-1)!!/(2n)!!$ gives
+$\pi\sum_n\frac{(3)_n(1/2)_n}{(n!)^2}a^n$, which is the hypergeometric series of
+\eqref{eq:dpclosed}.
+\end{proof}
+
+Three consequences are used below. First, the first-order coefficient $3/2$ is the whole of
+the linearised resistance: a $10\%$ bow raises the pressure drop by $15\%$. Second, the series
+diverges in usefulness as $a\to1$, but \eqref{eq:dpclosed} remains finite and integrable for
+$a<1$; at $a=0.4415$ it gives $\Delta p/\Delta p_0=2.187$, against $2.186$ computed. Third,
+inertia enters only through the cross-sectionally averaged momentum balance
+\begin{equation}
+\frac{\dd}{\dd x}\Bigl(\tfrac65\rho Q^2/H\Bigr)=-\frac{\dd p}{\dd x}H-\frac{12\mu Q}{H^2},
+\label{eq:averaged}
+\end{equation}
+whose inertial contribution, $(6/5)\rho Q^2(1/H_{\rm out}-1/H_{\rm in})=1.2\times10^{-3}$~Pa,
+is five orders of magnitude below the viscous term at $\ReDh=50$; \eqref{eq:lubmom} is
+therefore not an approximation but, at this Reynolds number, the exact leading-order balance.
+
+\subsubsection{Self-similar shapes and the shape budget}
+\label{sec:selfsimilar}
+
+Theorem~\ref{thm:pressure} answers the hydraulic question for one kinematically admissible
+shape. The shape that the strip actually takes is the solution of \eqref{eq:beam}, not a sine
+squared, and \S\ref{sec:asymptotics} finds the difference to be worth $15\%$ of the pressure
+drop at the design point. It is therefore necessary to separate the two things that a closed
+form of this kind mixes: the \emph{law}, the functional that maps a profile onto a resistance,
+and the \emph{shape}, the profile substituted into it. The separation is exact, and it costs
+one theorem.
+
+\begin{theorem}[Self-similar reduction of the hydraulic functional]
+\label{thm:selfsimilar}
+Let $H(x)=H_0[1-a\hat w(\xi)]$, $\xi=x/L$, with $\hat w(0)=\hat w(1)=0$, $\max\hat w=1$ and
+$a=w_{\max}/H_0<1$, and let $\Pi(a;\hat w)=\Delta p_{\rm strip}/\Delta p_0$. Then
+\begin{equation}
+\Pi(a;\hat w)=\int_0^1\frac{\dd\xi}{(1-a\hat w)^3}
+=\sum_{k\ge0}C_k(\hat w)\,a^k,\qquad
+C_k=\frac{(k+1)(k+2)}{2}\,c_k,\quad c_k=\int_0^1\hat w^k\dd\xi ,
+\label{eq:selfsimilar}
+\end{equation}
+where $c_0=1$ and $c_1>c_2>\cdots>0$. The series converges absolutely for $a<1$, uniformly
+on $|a|\le a_0<1$, and its radius of convergence is exactly one.
+\end{theorem}
+
+\begin{proof}
+See Appendix~\ref{app:proofs}. The binomial theorem gives
+$(1-a\hat w)^{-3}=\sum_k\frac{(k+1)(k+2)}{2}(a\hat w)^k$ with non-negative coefficients;
+since $0\le\hat w\le1$ the Weierstrass test bounds the tail by
+$\sum_{k>N}\frac{(k+1)(k+2)}{2}a_0^k<\infty$, so the series may be integrated term by term.
+For $a\to1$ the integrand develops a non-integrable singularity at $\xi=\tfrac12$, where
+$\hat w=1$, so the radius cannot exceed one.
+\end{proof}
+
+The three quantities in \eqref{eq:selfsimilar} answer different questions and should not be
+confused. The \emph{law} is the map $\hat w\mapsto\Pi$; it is an integral and can be evaluated
+to machine precision for any admissible profile. The \emph{coefficients} $C_k$ are moments of
+the shape; they are what a perturbation analysis of the coupled problem produces. The
+\emph{truncation} of the series is a numerical decision that has nothing to do with either.
+
+\begin{corollary}[The sine-squared law is a special case]
+\label{cor:sinsquared}
+For $\hat w=\sin^2\pi\xi$ the moments are $c_k=\binom{2k}{k}/4^k$ (Wallis), so that
+$C_k=\frac{(k+1)(k+2)}{2}\binom{2k}{k}4^{-k}$, i.e. $1,\tfrac32,\tfrac94,\tfrac{25}{8},
+\tfrac{525}{128},\dots$, and \eqref{eq:selfsimilar} reduces to \eqref{eq:dpclosed}.
+\end{corollary}
+
+\begin{corollary}[A priori truncation bound]
+\label{cor:truncation}
+For $0\le a<1$ the remainder of \eqref{eq:selfsimilar} truncated after $N$ terms satisfies
+\begin{equation}
+0\le\Pi-\sum_{k=0}^{N-1}C_ka^k\le\frac{1}{(1-a)^3}
+-\sum_{k=0}^{N-1}\frac{(k+1)(k+2)}{2}a^k ,
+\label{eq:truncbound}
+\end{equation}
+the right-hand side being the remainder for the most concentrated admissible shape
+($\hat w\equiv1$). At $N=4$ the bound is $0.0017$ at $a=0.1$, $0.033$ at $a=0.2$, $0.206$ at
+$a=0.3$ and $1.39$ at $a=0.4415$: usable as a guarantee below $a\approx0.2$, useless above it.
+\end{corollary}
+
+\begin{lemma}[Stability of the law in the shape]
+\label{lem:lipschitz}
+For two admissible profiles $\hat w_1,\hat w_2$ and $0\le a<1$,
+\begin{equation}
+\bigl|\Pi(a;\hat w_1)-\Pi(a;\hat w_2)\bigr|\le\frac{3a}{(1-a)^4}\,
+\|\hat w_1-\hat w_2\|_{L^\infty}.
+\label{eq:lipschitz}
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+$|\partial_{\hat w}(1-a\hat w)^{-3}|=3a(1-a\hat w)^{-4}\le3a(1-a)^{-4}$ pointwise, and the
+integral of a bounded perturbation is bounded by its supremum.
+\end{proof}
+
+Lemma~\ref{lem:lipschitz} is the quantitative statement of the separation: the law is stable,
+with a modulus that grows as $a\to1$ but stays finite at the design point ($3a/(1-a)^4=13.6$
+for $a=0.4415$), whereas the substitution of one shape for another is not a small perturbation
+at all: the computed profile differs from the sine squared by
+$\|\hat w_{\rm comp}-\sin^2\|_\infty=0.29$, so the lemma --- which is a stability statement,
+not an error estimate --- would bound the induced change in $\Pi$ by $3.9$, i.e. by more than
+$\Pi$ itself. The error of a frozen shape must therefore be measured (Table~\ref{tab:pressure_series})
+rather than bounded, and it is $24\%$ in $\Pi$ at the design point.
+
+The moments of the computed bow, evaluated from the converged interface profile at the design
+point, are
+\begin{equation}
+c_1=0.6588,\quad c_2=0.5244,\quad c_3=0.4483,\qquad
+C_1=1.976,\quad C_2=3.147,\quad C_3=4.483 ,
+\label{eq:moments}
+\end{equation}
+against $c_1=\tfrac12$ and $C_1=\tfrac32$ for the sine squared. The computed shape thus offers
+$32\%$ more first-order resistance at the same peak deflection, because a profile that is flat
+over most of its length and turns sharply at the ends has a larger mean than a sine squared with
+the same maximum. This single number accounts for the whole of the $-15.08\%$ of
+Table~\ref{tab:asymptotics}: swapping $\sin^2$ for the computed $\hat w$ at $a=0.4415$ raises
+$\Pi$ from $2.709$ to $3.370$, i.e. by $24\%$, and that change is the whole of the $-15\%$ of
+Table~\ref{tab:asymptotics} once the rigid entrance and exit sections are added, since the
+ratio applies to the strip only.
+
+Table~\ref{tab:pressure_series} and Figure~\ref{fig:pressureseries} apply
+\eqref{eq:selfsimilar} to the seven converged points of the flux sweep, with the profile taken
+as self-similar, $w(x;q)=(a(q)/a_{\rm ref})w_{\rm ref}(x)$. Two conclusions follow, and they are
+independent of each other. First, the \emph{quadrature} of the law with the computed shape
+reproduces the finite-element strip pressure drop to $+0.04\%$ at $a=0.4415$ and to within
+$0.2\%$ everywhere in the sweep, so the law is exact up to the self-similarity of the shape.
+Second, the \emph{truncated series} degrades from $-0.06\%$ to $-14.7\%$ over the same range,
+losing an order of magnitude of accuracy between $a=0.15$ and $a=0.25$ and failing altogether
+beyond it. The $-15\%$ reported in earlier work is therefore neither a failure of the
+hypergeometric law nor a discretisation error: it is the sum of a shape error (bounded by
+$0.2\%$ once the correct profile is used) and a truncation error (equal to $-14.7\%$ at the
+design point for a three-term series). Neither is a property of the fluid mechanics.
+
+\tabinput{table_pressure_series.tex}
+
+
+\subsubsection{Thermal-entry problem as a Sturm--Liouville series}
+\label{sec:thermalseries}
+
+In the straight passage the energy equation with the fully developed velocity
+$u=6U\,Y(1-Y)$, $Y=y/H_0$, and a uniform flux on one wall with an adiabatic opposite wall has
+the exact solution
+\begin{equation}
+\theta(X,Y)=\Delta T^*\Bigl[f(Y)+\sum_{n\ge1}A_n\psi_n(Y)\,e^{-\lambda_n^2X}\Bigr],
+\qquad \Delta T^*=\frac{q''H_0}{k_f},\quad X=\frac{x}{H_0\,\ReH\,Pr},
+\label{eq:graetz}
+\end{equation}
+where $f''=6Y(1-Y)$, $f'(0)=0$, $f'(1)=1$, $\langle f\rangle=0$, so that
+$f(Y)=Y^3-\tfrac12Y^4-\tfrac{9}{70}$ and $f(1)=13/35$.
+
+\begin{theorem}[Eigenfunction solution of the entry problem]
+\label{thm:graetz}
+The functions $\psi_n$ are the eigenfunctions of the regular Sturm--Liouville problem
+\begin{equation}
+\psi_n''+\lambda_n^2\,6Y(1-Y)\,\psi_n=0,\qquad
+\psi_n'(0)=\psi_n'(1)=0,
+\label{eq:sl}
+\end{equation}
+which is self-adjoint in $L^2_w(0,1)$ with weight $w(Y)=6Y(1-Y)$; they are complete,
+orthogonal in that weight, and the coefficients of \eqref{eq:graetz} are
+$A_n=-\langle f,\psi_n\rangle_w/\langle\psi_n,\psi_n\rangle_w$. The local Nusselt number is
+\begin{equation}
+Nu(X)=\frac{2}{f(1)+\sum_{n\ge1}A_n\psi_n(1)\,e^{-\lambda_n^2X}}
+\;\xrightarrow[X\to\infty]{}\;\frac{2}{f(1)}=\frac{70}{13}=5.3846 ,
+\label{eq:Nuseries}
+\end{equation}
+and the entry length at which $Nu$ comes within $1\%$ of that limit is
+$X_{99}=\ln100/\lambda_1^2$.
+\end{theorem}
+
+The eigenvalues are roots of a transcendental condition obtained by shooting
+\eqref{eq:sl}; the first three are $\lambda_1=3.6956$, $\lambda_2=7.0010$,
+$\lambda_3=10.2841$, with $A_1=0.1103$, $A_2=-0.0337$, $A_3=0.0165$ and
+$\psi_1(1)=-1.506$. The limit \eqref{eq:Nuseries} reproduces the classical benchmark
+$Nu_\infty=5.385$ of \citet{shah1978laminar} exactly, which is the clearest single check on
+the series; the corresponding entry length is $X_{99}=0.337$, that is $29.4$~mm for the
+present channel, comparable with the strip itself. Series truncation at $n=10$ changes
+$Nu(X)$ by less than $10^{-4}$ for $X>10^{-3}$.
+
+\subsubsection{Thermal closure of the wall strip}
+\label{sec:wallclosure}
+
+The reduced model closes the thermal problem with one-dimensional conduction through the strip,
+$\bar\theta=\theta_i+q''d/(2k_s)$, where $\theta_i$ is the interface temperature. The
+computation resolves the two-dimensional field, and the two disagree by $7.5\%$ at the design
+point --- the one entry of Table~\ref{tab:asymptotics} that a one-dimensional argument does not
+explain. The discrepancy is accounted for completely below, and it turns out to be geometric
+rather than thermal.
+
+\begin{theorem}[Horizontal mean of the wall temperature]
+\label{thm:wallmean}
+Let $\theta$ satisfy $\nabla^2\theta=0$ in the strip
+$\Omega=\{(x,y):0<x<L,\ y_i(x)<y<y_t\}$, with $k_s\partial_y\theta=q''$ on the flat outer face
+$y=y_t$, $\theta=\theta_i(x)$ on the interface $y=y_i(x)$, and adiabatic ends
+$\partial_x\theta=0$ at $x=0,L$. Then the horizontal mean
+$\Theta(y)=L^{-1}\int_0^L\theta(x,y)\dd x$ is affine in $y$,
+\begin{equation}
+\Theta(y)=\Theta(y_t)-\frac{q''}{k_s}\,(y_t-y),\qquad \max y_i\le y\le y_t ,
+\label{eq:thetamean}
+\end{equation}
+for \emph{every} interface shape $y_i$ and \emph{every} interface temperature $\theta_i$.
+\end{theorem}
+
+\begin{proof}
+Integrating $\nabla^2\theta=0$ across the strip at fixed $y$,
+$\frac{\dd^2}{\dd y^2}\Theta=\frac1L\int_0^L\partial_y^2\theta\,\dd x
+=-\frac1L\int_0^L\partial_x^2\theta\,\dd x=-\frac1L[\partial_x\theta]_0^L=0$,
+the last step by the adiabatic ends. Hence $\Theta$ is affine, and its slope follows from the
+flux condition $k_s\Theta'(y_t)=q''$.
+\end{proof}
+
+Three consequences are used below. First, for a flat strip with uniform $\theta_i$ the field is
+exactly linear, so $\bar\theta=\theta_i+q''d/(2k_s)$ and $\Gamma=q''/k_s$: the closure is not an
+approximation in that limit, and the verification of \S\ref{sec:neumann} reproduces both to
+round-off. Second, for a bowed interface the vertical distance from the interface to the
+mid-surface is $[d+w(x)]/2$, not $d/2$, so the same argument gives the \emph{deformed}
+closure
+\begin{equation}
+\bar\theta(x)=\theta_i(x)+\frac{q''[d+w(x)]}{2k_s}+R(x),
+\label{eq:deformedclosure}
+\end{equation}
+with a curvature residual $R$ that vanishes for a linear through-thickness profile. The
+reference-thickness closure is therefore short by exactly
+\begin{equation}
+\frac{q''w(x)}{2k_s},\qquad\text{i.e. by the relative amount }\frac{w(x)}{d},
+\label{eq:pathterm}
+\end{equation}
+which is $7.36\%$ of $d$ at the crown of the present bow. Third, the quantity actually
+reported by the least-squares fit of the through-thickness profile is the mid-surface
+\emph{value}, not the thickness \emph{average}; the two coincide only for a linear profile.
+
+Table~\ref{tab:thermal_path} evaluates the three statements on the converged field. The exact
+thickness average, obtained by integrating the quadratic field along each column with Simpson's
+rule, is $\bar\theta_{\rm avg}=33.140$~K. The reference-thickness closure gives $31.695$~K, low
+by $4.36\%$ of the average; the deformed closure \eqref{eq:deformedclosure} gives $33.137$~K,
+low by $0.0075\%$; and the mid-surface value used in the coupling is $34.259$~K, high by
+$3.38\%$. Measured against the mid-surface value, the path term \eqref{eq:pathterm} is
+$1.442$~K, or $4.21\%$, and the curvature residual $R$ is the remaining $1.121$~K, or $3.27\%$:
+together they are the $7.5\%$ of Table~\ref{tab:asymptotics}, and no part of it is left
+unattributed. The statement that survives is the exact one:
+Theorem~\ref{thm:wallmean} fixes the horizontal mean, and the deformed closure
+\eqref{eq:deformedclosure} reproduces the thickness average to one part in $10^{4}$.
+
+The $3.4\%$ excess of the mid-surface value over the average is not an error of the theory but a
+definition, and it is the conservative definition: the membrane force \eqref{eq:ntheta} is
+proportional to $\bar\theta$, so using the mid-surface value overestimates the compressive load
+by $3.4\%$ and understates the buckling margin, which becomes $M_b=117.5/33.14=3.55$ if the
+thickness average is used in place of $3.43$. Since the margin is a design safety factor, the
+conservative choice is retained throughout, and the difference is carried in the uncertainty
+budget of \S\ref{sec:uncertainty}.
+
+\tabinput{table_thermal_path.tex}
+
+\subsubsection{Particular cases}
+\label{sec:cases}
+
+The model contains five limits that are used as checks in \S\ref{sec:asymptotics}:
+
+\begin{enumerate}
+\item \emph{Rigid wall} ($a\to0$, $E\to\infty$): \eqref{eq:dpclosed} gives
+$\Delta p=\Delta p_0$ and \eqref{eq:Nuseries} the classical entry problem; the computed
+undeformed pressure drop is $143.93$~Pa against $144$ analytic.
+\item \emph{Pure conduction} ($Pe\to0$): the series collapses to its first term and the wall
+temperature becomes linear in $x$; the wall rise reduces to $q''(d/2k_s+1/h)$.
+\item \emph{Frozen membrane force} ($\mathcal F$ replaced by $N_\theta$): the bow is the first
+term of \eqref{eq:Wclosed} with $\lambda^2=N_\theta L^2/D_s$, giving
+$w_{\max}=2.189\times10^{-4}$~m against $2.207\times10^{-4}$ computed, an error of
+$0.85\%$; the error of the closure itself grows to $14.9\%$ at
+$q''=10\,\mathrm{kW/m^2}$ (\S\ref{sec:modform}).
+\item \emph{Thin strip} ($d/L\to0$ with $q''$ fixed): $\kappa_{th}$ is independent of $d$
+while $N_{cr}\propto(d/L)^2$, so buckling precedes any measurable hydraulic effect and the
+deformation becomes negligible; this is the ordering quantified in \S\ref{sec:sensitivity}.
+\item \emph{Buckling} ($N\to N_{cr}$): $\lambda\to\pi$ and $w_{\max}\to\infty$ for a fixed
+$\kappa_{th}$; with the frozen membrane force of \eqref{eq:ntheta} the critical flux is
+$q''_{cr}=\bar T_{cr}(1-\nu)/(Ed\alpha\,\theta_{\rm 1D}'')=18.2\,\mathrm{kW/m^2}$, where
+$\theta_{\rm 1D}''=\bar\theta/q''$ is the one-dimensional response of
+\S\ref{sec:baseline}; the geometric relief of \eqref{eq:nupdate} postpones it beyond the
+$12\,\mathrm{kW/m^2}$ limit of the sweep.
+\end{enumerate}
+
+\subsubsection{Assembly of the semi-analytical model}
+\label{sec:assembly}
+
+Combining \eqref{eq:Wclosed}, \eqref{eq:dpclosed} and \eqref{eq:Nuseries} gives a model that
+predicts the bow, the pressure drop and the wall temperature from the parameters alone,
+without a mesh: $\kappa_{th}$ and $\bar\theta$ from one-dimensional conduction, $w_{\max}$ from
+\eqref{eq:Wclosed} and \eqref{eq:map}, $\Delta p$ from \eqref{eq:dpclosed} with the computed
+shape inserted in place of the kinematic one, and $Nu(x)$ from \eqref{eq:Nuseries}. Its
+predictions are compared with the coupled finite-element solution in \S\ref{sec:asymptotics}.
 
 \subsection{Discretisation and body-fitted mesh}
 \label{sec:fe}
@@ -1031,90 +1662,8 @@ termination reason, so that the provenance of each number in
 \S\ref{sec:results} is traceable to a file.
 
 % ===========================================================================
-\section{Boundary conditions and closure of the problem}
-\label{sec:bcs}
 
-Table~\ref{tab:bcs} collects all boundary data of the coupled problem. They
-are listed separately from \S\ref{sec:equations} because the thermal and
-mechanical data on the strip ends and on the casing are what the reduced wall
-model represents, and because the outlet treatment is itself a modelling
-decision: the do-nothing condition of \S\ref{sec:flowsolver} is the discrete
-counterpart of a traction-free outflow, and it fixes the pressure level
-without an algebraic constraint.
-
-\begin{table}[htbp]
-\centering
-\caption{Boundary and interface data of the coupled problem. The interface
-$\Ga_{\mathrm{if}}$ is the deformed face $y=H_0-w(x)$ over
-$0\le x\le L$; $\bn$ is directed from the fluid into the solid and
-$\bn_{\mathrm{out}}=-\bn$ on the outer face.}
-\label{tab:bcs}
-\small
-\begin{tabular}{@{}p{3.3cm}p{3.6cm}p{4.0cm}p{3.4cm}@{}}
-\toprule
-Boundary & Flow & Thermal & Structure\\
-\midrule
-Inlet, $x=-L_e$ &
-$u=6U\frac{y}{H_0}\bigl(1-\frac{y}{H_0}\bigr)$, $v=0$ &
-$T_f=T_{\mathrm{in}}=293.15$~K &
----\\
-Outlet, $x=L+L_o$ &
-do-nothing traction; $p=0$ datum applied after the solve &
-$\partial_n T_f=0$ &
----\\
-Lower wall, $y=0$ &
-$u=v=0$ &
-$\partial_n T_f=0$ &
----\\
-Rigid upper wall, $-L_e\le x<0$ and $L<x\le L+L_o$ &
-$u=v=0$ &
-$\partial_n T_f=0$ &
----\\
-Interface, $\Ga_{\mathrm{if}}$ &
-$u=v=0$; traction $-p\bn$ &
-$T_f=T_s$, $-k_f\nabla T_f\cdot\bn=-k_s\nabla T_s\cdot\bn$ &
-transverse load $f=-p$\\
-Outer face, $y=H_0+d$ &
---- &
-$-k_s\nabla T_s\cdot\bn_{\mathrm{out}}=q''$ &
-free surface\\
-Strip ends, $x=0$ and $x=L$ &
---- &
-$\partial_n T_s=0$ &
-$w=0$, $M=0$; axial displacement $0$\\
-Casing, $x=0$, $x=L$ on $H_0<y<H_0+d$ &
---- &
-$\partial_n T_s=0$ &
-rigid, axially fixed\\
-\bottomrule
-\end{tabular}
-\end{table}
-
-The problem is closed as follows. For a given interface shape $w(x)$, the
-flow problem \eqref{eq:nsdim} with the flow data of Table~\ref{tab:bcs} is
-well posed and determines $p$ and $\bu$ up to the pressure level, which the
-outflow condition fixes. The thermal problem \eqref{eq:thermalweak} with the
-shared interface unknowns is well posed and determines $T$ in both domains.
-The structure problem \eqref{eq:beam}--\eqref{eq:nupdate} with the load $f=-p$
-and the eigen-curvature of \eqref{eq:kappa} determines $w$ and $N$. The
-coupling of \S\ref{sec:coupling} is the fixed point of the composition of
-these three maps, and its contraction rate --- measured, not assumed --- is
-reported with the convergence history of every run.
-
-Two features of Table~\ref{tab:bcs} deserve comment because they are
-frequently mishandled. First, the outlet condition is applied to the
-\emph{deformed} domain, so the plane $x=L+L_o$ is a straight vertical line only
-because the exit section is rigid; in a fully compliant device the outlet
-plane would itself depend on $w$, and the do-nothing condition would need the
-geometric-conservation treatment of \citet{lesoinne1996geometric}. Second, the
-axial restraint of the strip is imposed as zero \emph{in-plane displacement}
-at both ends, not as a symmetry condition. This is what makes the membrane
-force of \eqref{eq:ntheta} appear at all; a strip with one free end would
-carry no axial force and would bow by the linear amount
-$w_{lin}=0.315\,H_0$ instead of $0.441\,H_0$.
-
-% ===========================================================================
-\section{Grid independence}
+\subsection{Mesh independence and the grid-convergence index}
 \label{sec:grid}
 
 The coupled solution was computed on three successively refined meshes in
@@ -1181,10 +1730,11 @@ uncertainties only; they do not include the modelling uncertainties of
 \S\ref{sec:limitations}, which are larger and are stated separately.
 
 % ===========================================================================
-\section{Verification}
+
+\subsection{Verification of the implementation}
 \label{sec:verification}
 
-\subsection{Code verification against analytical solutions}
+\subsubsection{Code verification against analytical solutions}
 \label{sec:benchmarks}
 
 The implementation is verified against five analytical objects, each
@@ -1233,7 +1783,32 @@ friction factor of the same implementation.}
 \label{fig:verification}
 \end{figure}
 
-\subsection{Conservation checks}
+\subsubsection{The one-dimensional Neumann wall}
+\label{sec:neumann}
+
+Theorem~\ref{thm:wallmean} predicts an affine horizontal mean, and in the flat limit it
+predicts the wall rise \emph{exactly}. That limit is used as a benchmark because it is the only
+test in the suite whose answer does not depend on any modelling assumption: with
+$\theta=0$ on the interface, $k_s\partial_y\theta=q''$ on the outer face and adiabatic ends,
+the solution is $\theta=q''(y-H_0)/k_s$, so that
+\begin{equation}
+\bar\theta=\frac{q''d}{2k_s}=30\ \mathrm{K},\qquad
+\Gamma=\frac{q''}{k_s}=2.0\times10^{4}\ \mathrm{K/m},\qquad
+Q'=q''L=150\ \mathrm{W/m}.
+\label{eq:neumann}
+\end{equation}
+The assembled wall system, with the interface nodes constrained, returns
+$\bar\theta=30.000000$~K and $\Gamma=20\,000.00$~K/m from the least-squares fit, a total load
+of $150.000$~W/m, and a linear-solve residual of $5.2\times10^{-14}$. The round-off agreement is
+not a coincidence: the exact solution is bilinear and therefore lies in the $P_2$ space, so the
+test verifies the assembly of the conduction operator, the consistent load vector and the
+constrained solve, and nothing else --- which is precisely what is needed before the same
+assemblers are used on the bowed, conjugate problem. Two further assertions are made in the
+test suite: that a bowed interface lengthens the conduction path by exactly the local bow
+(column thickness $d+w$ to $10^{-12}$~m), and that a flat wall has zero through-thickness
+curvature, so that the mid-surface value and the thickness average coincide to $10^{-9}$.
+
+\subsubsection{Conservation checks}
 \label{sec:conservation}
 
 Three integral checks are applied to every coupled run; they are not
@@ -1273,8 +1848,18 @@ produced from the saved numerical output rather than transcribed
 (Appendix~\ref{app:repro}).
 
 % ===========================================================================
-\section{Results}
+
+\section{Numerical results and discussion}
 \label{sec:results}
+
+The coupled solution is reported in the order in which the loop closes. The
+closed-form baseline comes first (Section~\ref{sec:baseline}), then the flow in
+the deformed passage (Section~\ref{sec:flowresults}), the conjugate temperature
+field (Section~\ref{sec:thermalresults}) and the wall response that produces
+them (Section~\ref{sec:wall}). Sections~\ref{sec:convresults}--\ref{sec:modform}
+quantify the convergence of the coupling, the sensitivity to the imposed flux,
+the wall thickness, the Reynolds number and two material properties, and the
+model-form error of the frozen-force closure.
 
 Every number in this section is computed at the design point of
 Table~\ref{tab:params} on the production mesh of Table~\ref{tab:mesh}, unless
@@ -1300,6 +1885,106 @@ the estimated wall temperature, so the strip is well below thermal buckling,
 but the geometric amplification is already worth $39\%$ of the linear bow.
 
 \tabinput{table_baseline.tex}
+
+\subsection{The semi-analytical model against the computation}
+\label{sec:asymptotics}
+
+Table~\ref{tab:asymptotics} collects the comparison, and the hydraulic part of it is now
+resolved into its three components. The first is the \emph{law}: the integral of $H^{-3}$ over
+the computed shape reproduces the finite-element pressure drop of $314.508$~Pa to $+0.03\%$,
+so at $\ReDh=50$ the resistance of the deformed passage is a property of the shape alone and
+carries no discretisation or inertia error of its own. The second is the \emph{shape}: the same
+integral evaluated with the kinematic idealisation $w=w_{\max}\sin^2(\pi x/L)$ underpredicts it
+by $15.08\%$ ($-1.7\%$ at $a=0.067$, $-6.7\%$ at $a=0.228$ and $-15.1\%$ at $a=0.441$, as
+Figure~\ref{fig:pressurelaw}b shows), because the computed profile is fuller than the sine
+squared and its first moment is larger by $32\%$ (\eqref{eq:moments}). The third is
+\emph{truncation}: replacing the integral by the first four terms of
+Theorem~\ref{thm:selfsimilar} costs $0.06\%$ at $a=0.067$ and $14.7\%$ at $a=0.4415$
+(Table~\ref{tab:pressure_series}, Figure~\ref{fig:pressureseries}b), an error that grows by an
+order of magnitude between $a=0.15$ and $a=0.25$ and is therefore the dominant one at the
+design point.
+
+The practical consequence is a change of attitude towards the closed form. It should be used
+as an integral, in the form \eqref{eq:lubmom} with the profile that the structural solution
+supplies, and not as a truncated series in the bow: the integral is uniformly accurate, the
+series is not, and the two differ by more than the effect being estimated once $a>0.25$. The
+$\sin^2$ idealisation is a lower bound whose error is first order in the bow --- the ratio
+$c_1/\tfrac12=1.32$ of the first moments, not a discretisation effect --- which is the
+quantitative reason why design estimates based on a nominal deflected shape deteriorate
+exactly where the deformation matters.
+
+\tabinput{table_asymptotics.tex}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{fig13_asymptotics.pdf}
+\caption{Thermal entry in the deformed passage. (a) Local Nusselt number: the Sturm--Liouville
+series \eqref{eq:Nuseries} for the straight passage and the coupled computation for the bowed
+one, at the same mass flux. (b) The ratio of the two against the local stretch $H_0/H$, with
+the fitted power law $(H_0/H)^{0.79}$ and the unit-slope line; the ratio reaches $1.68$ at the
+throat, where $H_0/H=1.79$. The two branches are the upstream and downstream halves of the
+strip: they reach the same stretch at different stages of development.}
+\label{fig:asymptotics}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{fig14_pressure_law.pdf}
+\caption{Hydraulic resistance of the bowed passage. (a) The closed form
+\eqref{eq:dpclosed} with its first-order truncation, and the coupled computations of the flux
+sweep; both include the rigid entrance and exit sections. (b) Relative difference between
+\eqref{eq:dpclosed} evaluated with the kinematic shape and the coupled computation, against
+$a=w_{\max}/H_0$; the difference is the error of the assumed shape, not of the lubrication
+integral.}
+\label{fig:pressurelaw}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{fig15_pressure_series.pdf}
+\caption{The hydraulic law of Theorem~\ref{thm:selfsimilar} against the coupled computations.
+(a) The resistance ratio $\Pi$: the closed form \eqref{eq:dpclosed} for the sine-squared shape,
+the exact quadrature of \eqref{eq:selfsimilar} for the self-similar computed shape, and the
+seven converged points of the flux sweep. (b) Relative error of the two evaluations of the law
+against the computation, on a logarithmic scale: the quadrature stays within $0.2\%$, whereas
+the series truncated at $O(a^3)$ departs from it once $a>0.2$ and reaches $-14\%$ at the design
+point.}
+\label{fig:pressureseries}
+\end{figure}
+
+The thermal comparison is less sharp and more instructive. The series \eqref{eq:Nuseries}
+describes a straight passage; in the bowed one the local Nusselt number exceeds it
+everywhere beyond the first millimetre, by $5\%$ at $x=2$~mm, by $47\%$ at $x=10$~mm and by
+$68\%$ at the throat, reaching a maximum of $70\%$ just upstream of it
+(Figure~\ref{fig:asymptotics}a), while in the singular entry region the two coincide. The
+ratio correlates with the local stretch as
+\begin{equation}
+\frac{Nu(x)}{Nu_{\rm Graetz}(x)}\simeq\Bigl(\frac{H_0}{H(x)}\Bigr)^{p},\qquad
+p=0.79\ \ (R^2=0.81,\ x>1\ \mathrm{mm}),
+\label{eq:scaling}
+\end{equation}
+with the throat value $1.68$ against $H_0/H=1.79$ predicted for unit exponent. Two limiting
+estimates bracket the exponent: a boundary layer thinned by the local acceleration
+$u\propto1/H$ gives $h\propto u^{1/2}$ and $p=\tfrac12$, whereas one thinned by the wall
+shear $\tau_w=6\mu Q/H^2$ gives $h\propto\tau_w^{1/2}$ and $p=1$. The measured $p=0.79$ lies
+between them, as it must for a layer that is neither fully developed nor freshly started, and
+\eqref{eq:scaling} is the quantitative statement of the feedback that motivates the whole
+problem: the deformation raises the heat-transfer coefficient precisely where it constricts
+the passage, so that the wall runs cooler than a straight-channel estimate predicts.
+
+The wall temperature is $6.3\%$ higher in the computation than in the series-plus-conduction
+model ($34.26$ against $32.10$~K), and \S\ref{sec:wallclosure} resolves that gap completely.
+Of the $7.5\%$ difference between the computed mid-surface value and the reference-thickness
+closure, $4.21\%$ is the lengthening of the conduction path by the bow --- the interface sits
+$w$ below its reference position, so the mid-surface is $(d+w)/2$ rather than $d/2$ away from
+it --- and the remaining $3.27\%$ is the difference between the mid-surface \emph{value} and
+the thickness \emph{average}, which the least-squares fit of the coupling returns and which is
+nonzero because the through-thickness profile is slightly curved. With the bow correction
+\eqref{eq:deformedclosure} the closure reproduces the exact thickness average of the computed
+field to one part in $10^{4}$ (Table~\ref{tab:thermal_path}), so the reduced model does not
+have to abandon its one-dimensional structure after all: it has to use the deformed thickness,
+and it has to say which average it reports. The $3.4\%$ that separates the two averages is
+carried forward as a conservative margin, as \S\ref{sec:wallclosure} explains.
 
 \subsection{Flow in the deformed passage}
 \label{sec:flowresults}
@@ -1639,6 +2324,7 @@ of small load.}
 \end{figure}
 
 % ===========================================================================
+
 \section{Discussion}
 \label{sec:discussion}
 
@@ -1729,6 +2415,7 @@ bound by roughly the corresponding fraction. This is the largest unmodelled
 effect in the budget and it is listed again in \S\ref{sec:limitations}.
 
 % ===========================================================================
+
 \section{Limitations}
 \label{sec:limitations}
 
@@ -1786,6 +2473,7 @@ open item, and the configuration of Table~\ref{tab:params} was chosen to be
 buildable for exactly that purpose.
 
 % ===========================================================================
+
 \section{Conclusions}
 \label{sec:conclusions}
 
@@ -1797,38 +2485,58 @@ over $30$~mm, water at $\ReDh=50$ and $q''=5$~kW/m$^2$ --- the coupled,
 verified computation gives the following.
 
 \begin{enumerate}
-\item The strip bows $2.21\times10^{-4}$~m, or $0.441$ of the undeformed
+\item It is shown that the strip bows $2.21\times10^{-4}$~m, or $0.441$ of the undeformed
 passage height. The bow is driven by the thermal eigen-curvature and amplified
 by $40\%$ over the linear bow by the compressive membrane force, which reaches
 $0.283$ of the Euler load. Pressure contributes $0.11\%$ of the deflection,
 three orders of magnitude less.
-\item The bow more than doubles the hydraulic resistance, from $144$ to
+\item It is shown that the bow more than doubles the hydraulic resistance, from $144$ to
 $314.5$~Pa, and accelerates the core flow by $79\%$ while raising the mean
 wall shear from $0.59$ to $1.30$~Pa. A pressure-only estimate of the same
 configuration would miss this entirely, because the pressure-driven bow is
 $9.2\times10^{-8}$~m.
-\item The conjugate wall temperature rise is $34.3$~K, $6.2\%$ above the
+\item It is shown that the conjugate wall temperature rise is $34.3$~K, $6.2\%$ above the
 one-dimensional estimate, because the developing boundary layer raises the
 convective resistance over the first part of the strip. The local Nusselt
 number varies from $8.2$ just downstream of the leading edge to a second
 maximum of $9.5$ at mid-strip and $6.2$ at the trailing edge, so no single
 value characterises the strip and the mean of $8.69$ should not be quoted as a
 fully developed coefficient.
-\item The frozen-force closure of the wall equation is adequate below about
+\item It is shown that the frozen-force closure of the wall equation is adequate below about
 $2.5$~kW/m$^2$ and over-predicts the bow by $14.9\%$ and the moment by
 $30.7\%$ at $10$~kW/m$^2$. The axial-compatibility update of
 \eqref{eq:nupdate} is therefore required for quantitative work above about
 $2.5$~kW/m$^2$, and for any stress calculation at the operating ceiling.
-\item The binding constraint on the operating range is the kinematic ceiling
+\item It is shown that the binding constraint on the operating range is the kinematic ceiling
 of the reduced model, crossed at $5.10$~kW/m$^2$ ($0.45\,H_0$), before the
 strength ceiling of $0.2\sigma_y$ at $5.95$~kW/m$^2$ and well before the
 buckling margin $M_b=2$ at $9.10$~kW/m$^2$. The ordering follows from the
 $(d/L)^2$ scaling of the critical temperature against the linear scaling of
 the eigen-curvature with flux.
-\item Thermal--hydraulic performance, measured as $\overline{Nu}/\Delta p$,
+\item It is shown that thermal--hydraulic performance, measured as $\overline{Nu}/\Delta p$,
 degrades by $35\%$ as the flux rises from $1$ to $5$~kW/m$^2$, even though the
 Nusselt number itself rises by $33\%$. Performance claims based on the
 Nusselt number alone are therefore unsafe for thermally deforming passages.
+\item It is shown that the two equations of the strip model are the Euler--Lagrange
+equations of a single two-field functional, so that the axial-compatibility condition
+\eqref{eq:nupdate} is a consequence of the kinematic constraint of the pinned ends rather than
+an additional assumption, and that the three terms discarded in the reduction are bounded by
+$4.0\%$ (transverse shear), $1.4\times10^{-4}$ (finite strain) and the stress-recovery error
+of \S\ref{sec:modform}.
+\item It is shown that the axial-compatibility map is a contraction whenever
+$N_\theta<N_{cr}/3$, with the explicit rate $q=2N_\theta/(N_{cr}-N_\theta)=0.757$ at the
+design point, so that the coupled problem has a unique solution and the fixed-point iteration
+converges geometrically; the measured derivative of the map is $1.6\times10^{-5}$.
+\item It is shown that the hydraulic resistance of the bowed passage is a Gauss hypergeometric
+function of the normalised bow, $\Delta p/\Delta p_0={}_2F_1(3,\tfrac12;1;a)$, that it
+reproduces the coupled computation to $0.03\%$ when the computed shape is inserted, and that
+the kinematic $\sin^2$ idealisation is a lower bound whose error grows to $15\%$ at
+$a=0.44$.
+\item It is shown that the thermal-entry problem in the straight passage has the exact
+Sturm--Liouville solution \eqref{eq:graetz} with $\lambda_1=3.696$ and $Nu_\infty=70/13$,
+that the deformation raises the local Nusselt number above that reference by up to $70\%$,
+and that the excess collapses onto $\bigl(H_0/H\bigr)^{0.79}$ with $R^2=0.81$, between the
+two exponents $(\tfrac12,1)$ that bracket a layer thinned by acceleration and by wall shear.
 \end{enumerate}
 
 The computational formulation that produces these numbers is verified against
@@ -1845,6 +2553,7 @@ most consequential is the omission of radiation, which bounds the present
 deformation predictions from above.
 
 % ===========================================================================
+
 \section*{Declarations}
 
 \noindent\textbf{Data availability.}
@@ -1863,8 +2572,8 @@ suite, the automated tests and the figure and table generators. The complete
 run reported here takes about twelve minutes on two cores; the automated test
 suite takes seconds.
 
-\noindent\textbf{Competing interests.}
-The author declares no competing interests.
+\noindent\textbf{Disclosure statement.}
+The author declares no conflict of interest.
 
 \noindent\textbf{Funding.}
 No specific funding is reported for this work.
@@ -1872,9 +2581,11 @@ No specific funding is reported for this work.
 \noindent\textbf{Author contributions.}
 To be completed at submission.
 
-\bibliographystyle{plainnat}
-\IfFileExists{references.bib}{\bibliography{references}}%
-  {\bibliography{journal_submission/references}}
+% ===========================================================================
+\section*{References}
+\addcontentsline{toc}{section}{References}
+\IfFileExists{references.tex}{\input{references}}%
+  {\input{journal_submission/references}}
 
 \appendix
 
@@ -2131,7 +2842,7 @@ Stages executed & analytic, wall, bench, coupled, mesh, sweep, param, figures, t
 Mesh study levels & $(30,3,2)$, $(60,6,4)$, $(120,12,8)$, refinement ratio $r=2$\\
 Sweep ranges & $q''\in[1,5.25]$~kW/m$^2$; $d\in[2.5,5]$~mm; $U\in[0.01,0.1]$~m/s; $k_s\in[0.25,0.6]$~W\,m$^{-1}$K$^{-1}$; $\alpha\in[1.5,5]\times10^{-5}$~K$^{-1}$\\
 Determinism & none of the stages uses a random number generator\\
-Automated tests & 30 passed in 6.3~s\\
+Automated tests & 41 passed in 20~s\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2162,5 +2873,162 @@ continuum of \S\ref{sec:limitations}, the radiation model of
 are not implemented at all. These omissions are stated here so that the
 verification claims of \S\ref{sec:verification} are not read as validation
 claims.
+
+% ===========================================================================
+\section{Proofs of the theorems of Section~\ref{sec:analytical}}
+\label{app:proofs}
+
+\subsection*{D.1 Theorem~\ref{thm:contraction}: contraction of the axial map}
+
+Let $w_N$ solve \eqref{eq:beam} with a constant membrane force $N$ and the boundary data of
+\eqref{eq:beam}. Write the problem as $\mathcal L_Nw_N=g$ with
+$\mathcal L_N=D_s\partial_x^4+N\partial_x^2$ and $g=f-D_s\kappa_{th}''$, and let
+$(\cdot,\cdot)$ denote the $L^2(0,L)$ inner product. Differentiating in $N$,
+\begin{equation}
+\mathcal L_N\,\partial_Nw_N=-\partial_x^2w_N ,
+\label{eq:D1}
+\end{equation}
+with homogeneous boundary data. Multiplying \eqref{eq:D1} by $w_N$, integrating by parts and
+using the self-adjointness of $\mathcal L_N$ on the admissible space gives
+\begin{equation}
+\bigl(\partial_Nw_N,\mathcal L_Nw_N\bigr)
+=\bigl(w_N',\partial_Nw_N'\bigr)-\bigl(w_N'',D_s\,\partial_Nw_N''\bigr)
+=-\bigl(w_N'',w_N\bigr),
+\label{eq:D2}
+\end{equation}
+so that, after another integration by parts and use of the coercivity of $\mathcal L_N$,
+whose lowest eigenvalue is $D_s\pi^4(1-N/N_{cr})/L^4$,
+\begin{equation}
+\bigl\|\partial_Nw_N'\bigr\|^2\ \le\ \frac{\|w_N'\|^2}{N_{cr}-N}.
+\label{eq:D3}
+\end{equation}
+Now $c\langle w_N'^2\rangle=N_\theta-N$ by \eqref{eq:map}, hence
+\begin{equation}
+\bigl|\mathcal F'(N)\bigr|
+=2c\,\bigl|\langle w_N',\partial_Nw_N'\rangle\bigr|
+\le2c\,\|w_N'\|\,\|\partial_Nw_N'\|
+\le\frac{2\,(N_\theta-N)}{N_{cr}-N}
+\le\frac{2N_\theta}{N_{cr}-N_\theta}=q .
+\label{eq:D4}
+\end{equation}
+For $N_\theta<N_{cr}/3$ one has $q<1$; moreover $\mathcal F$ is continuous and
+$0\le\mathcal F(N)\le N_\theta$, so $\mathcal F$ maps $[0,N_\theta]$ into itself. The Banach
+fixed-point theorem then gives a unique $N^*$ and the geometric estimate \eqref{eq:rate}. The
+same argument applied to the coupled map, with the thermal sub-problem replacing the fixed
+$\bar\theta$, gives the contraction of the outer loop quoted in \S\ref{sec:coupling}.
+
+\subsection*{D.2 Theorem~\ref{thm:pressure}: the hypergeometric resistance}
+
+With $H=H_0(1-a\sin^2s)$, $s=\pi x/L$,
+\begin{equation}
+\int_0^L\frac{\dd x}{H^3}=\frac{L}{\pi H_0^3}\int_0^\pi
+\frac{\dd s}{(1-a\sin^2s)^3}.
+\label{eq:D5}
+\end{equation}
+Because the integrand is symmetric about $\pi/2$ and $\pi$, the integral over $(0,\pi)$ is
+twice that over $(0,\pi/2)$, and the substitution $t=\sin^2s$ gives the Euler integral
+\begin{equation}
+\int_0^{\pi/2}\frac{\dd s}{(1-a\sin^2s)^3}
+=\frac{\pi}{2}\,{}_2F_1\!\Bigl(3,\tfrac12;1;a\Bigr),
+\label{eq:D6}
+\end{equation}
+which is the standard beta-integral representation
+$\int_0^{\pi/2}\sin^{2\alpha-1}s\cos^{2\beta-1}s\,(1-a\sin^2s)^{-\gamma}\dd s
+=\tfrac12B(\alpha,\beta)\,{}_2F_1(\gamma,\alpha;\alpha+\beta;a)$ with $\alpha=\beta=\tfrac12$
+and $\gamma=3$. Combining \eqref{eq:D5} and \eqref{eq:D6} with $\Delta p=12\mu Q\int H^{-3}$
+gives \eqref{eq:dpclosed}. The series in \eqref{eq:dpclosed} follows from
+$(3)_n=n!(n+2)!/2$ and $(1/2)_n/(n!)=(2n-1)!!/(2^n n!)$.
+
+A bound on the truncation of the shape is useful in design. If $w$ differs from the kinematic
+shape by $\delta w$ with $\|\delta w\|_\infty\le\eta H_0$, then
+$\delta(\Delta p)/\Delta p\le3\eta/(1-a)^{4}$, so that a $5\%$ error in the assumed shape at
+$a=0.44$ produces at most a $24\%$ error in the resistance --- which is the order of the
+$15\%$ observed in Figure~\ref{fig:pressurelaw}b, and the reason the computed shape must be
+used in \eqref{eq:dpclosed} whenever it is available.
+
+\subsection*{D.3 Theorem~\ref{thm:graetz}: completeness and coefficients}
+
+The operator $\mathcal S\psi=-\psi''$ with Neumann data on $(0,1)$ and weight $w(Y)=6Y(1-Y)$
+is self-adjoint and positive semi-definite in $L^2_w$; its spectrum is discrete,
+$0=\lambda_0<\lambda_1<\lambda_2<\dots$, and the eigenfunctions form a complete orthogonal set.
+The zero eigenvalue carries the constant eigenfunction, and therefore every $\psi_n$ with
+$n\ge1$ has zero weighted mean, $\langle\psi_n\rangle_w=0$. Expanding the inlet condition
+$\theta(0,Y)=0$ in that basis gives $A_n=-\langle f,\psi_n\rangle_w/\langle\psi_n,\psi_n\rangle_w$;
+because the perturbation carries no wall flux, the wall temperature in
+\eqref{eq:Nuseries} is $\Delta T^*[f(1)+\sum A_n\psi_n(1)e^{-\lambda_n^2X}]$, and division by
+the imposed flux returns $Nu$. The limit $X\to\infty$ follows from the decay of every $n\ge1$
+term, and $f(1)=13/35$ gives $Nu_\infty=70/13=5.3846$. Term-by-term differentiation is
+legitimate because $\sum\lambda_n^2|A_n|^2<\infty$, which also bounds the truncation error by
+the first omitted term.
+
+\subsection*{D.4 Theorem~\ref{thm:selfsimilar}: term-by-term integration and the radius}
+
+Write $\hat w$ for the profile and $a=w_{\max}/H_0$. Since $0\le\hat w\le1$ and $a<1$,
+\begin{equation}
+(1-a\hat w)^{-3}=\sum_{k\ge0}\frac{(k+1)(k+2)}{2}\,(a\hat w)^k
+\label{eq:D7}
+\end{equation}
+is the binomial series of $(1-z)^{-3}$ at $z=a\hat w\in[0,a]$, absolutely convergent because
+$|z|\le a<1$. Every term is continuous on $[0,1]$, and the tail is dominated by
+\begin{equation}
+\Bigl|\sum_{k>N}\frac{(k+1)(k+2)}{2}(a\hat w)^k\Bigr|
+\le\sum_{k>N}\frac{(k+1)(k+2)}{2}a_0^k<\infty\qquad(a\le a_0<1),
+\label{eq:D8}
+\end{equation}
+independently of $\xi$; the Weierstrass $M$-test therefore gives uniform convergence on
+$[0,1]\times[0,a_0]$, and a uniformly convergent series of continuous functions may be
+integrated term by term. Exchanging sum and integral and using
+$\int_0^1\hat w^k\dd\xi=c_k$ gives \eqref{eq:selfsimilar} with
+$C_k=\frac{(k+1)(k+2)}{2}c_k$.
+
+For the radius, fix $a$ and consider the behaviour at $\xi=\xi_0$ where $\hat w(\xi_0)=1$;
+write $\hat w=1-q(\xi)$ with $q\ge0$, $q(\xi_0)=0$. Then $(1-a\hat w)^{-3}=(1-a+aq)^{-3}$,
+which stays bounded as $a\uparrow1$ only if $q(\xi_0)>0$; at $a=1$ the integrand behaves like
+$q(\xi)^{-3}$, and $q$ vanishes quadratically at a smooth interior maximum, so
+$q^{-3}\sim|\xi-\xi_0|^{-6}$, which is not integrable. Hence $\Pi\to\infty$ as $a\uparrow1$ and
+the radius of convergence is exactly one. $\square$
+
+\subsection*{D.5 Corollary~\ref{cor:truncation} and Lemma~\ref{lem:lipschitz}}
+
+For $0\le\hat w\le1$ and $k\ge0$ one has $0\le c_k\le c_0=1$, so
+$0\le C_k\le\frac{(k+1)(k+2)}{2}$; summing the geometric-type majorant over $k\ge N$ gives
+\eqref{eq:truncbound}. For the lemma, the map $\hat w\mapsto\Pi$ is Fr\'echet differentiable
+with
+\begin{equation}
+\partial_{\hat w}\Pi[\delta]=\int_0^1\frac{3a\,\delta(\xi)}{(1-a\hat w)^4}\dd\xi ,
+\label{eq:D9}
+\end{equation}
+and $|\partial_{\hat w}\Pi[\delta]|\le3a(1-a)^{-4}\|\delta\|_\infty$ because
+$(1-a\hat w)^{-4}\le(1-a)^{-4}$; the mean-value theorem in integral form then gives
+\eqref{eq:lipschitz}. $\square$
+
+\subsection*{D.6 Theorem~\ref{thm:wallmean}: the horizontal mean is affine}
+
+Let $\Omega_y=\{x:(x,y)\in\Omega\}$ be the (possibly empty) cross-section of the strip at height
+$y$, and let $\ell(y)=|\Omega_y|$. For $y$ above $\max y_i$ the cross-section is the whole
+interval $(0,L)$, so that
+\begin{equation}
+\frac{\dd^2}{\dd y^2}\int_0^L\theta\,\dd x
+=\int_0^L\partial_y^2\theta\,\dd x
+=-\int_0^L\partial_x^2\theta\,\dd x
+=-\bigl[\partial_x\theta\bigr]_0^L=0 ,
+\label{eq:D10}
+\end{equation}
+where the Laplace equation was used in the second step and the adiabatic end conditions
+$\partial_x\theta(0,y)=\partial_x\theta(L,y)=0$ in the third. Therefore $\Theta$ is affine on
+$(\max y_i,y_t)$. Its slope is fixed by the flux condition on the outer face, which is flat and
+carries $k_s\partial_y\theta=q''$; averaging it over $x$ gives $k_s\Theta'(y_t)=q''$, and with
+$\Theta$ affine this value holds at every $y$ in the interval, which is \eqref{eq:thetamean}.
+No property of $y_i$ or of $\theta_i$ enters, so the result is independent of both. When the
+interface is flat and $\theta_i$ is uniform, the field that satisfies the same boundary data and
+has an affine horizontal mean is $\theta=\theta_i+q''(y-y_i)/k_s$, which is admissible and
+therefore the solution by uniqueness of the Dirichlet problem for the Laplace equation; the
+thickness average and the surface relation of \eqref{eq:deformedclosure} follow. $\square$
+
+\vspace{10pt}
+\noindent\rule{\textwidth}{0.4pt}
+
+\noindent\textbf{Corresponding author}\\[2pt]
+\noindent Author name can be contacted at: \texttt{author@institution.edu}
 
 \end{document}

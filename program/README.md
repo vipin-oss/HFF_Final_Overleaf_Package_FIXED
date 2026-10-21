@@ -82,10 +82,29 @@ and the runtime of each stage. The figures and tables are rendered **from the sa
 JSON**, so `python run_all.py --only figures,tables` regenerates the manuscript
 artefacts without re-running the solvers.
 
+## Semi-analytical theory
+
+`hff/asymptotics.py` holds the analytical part of the paper: the Graetz/Sturm--Liouville
+series, the closed-form hydraulic resistance (Gauss hypergeometric), the closed-form
+beam--column solution and the contraction data of the axial-compatibility map. It is run by
+
+```bash
+./.venv/bin/python tools/asymptotics_report.py    # outputs/data/asymptotics.json
+./.venv/bin/python tools/asymptotic_figures.py    # figures 13-15, tables *_asymptotics, *_pressure_series
+./.venv/bin/python tools/thermal_path_report.py   # outputs/data/thermal_path.json, table_thermal_path.tex
+```
+
+`thermal_path_report.py` re-runs the coupled baseline (≈30 s) and separates the wall
+temperature into the exact thickness average (Simpson along each column, exact for P2), the
+mid-surface value returned by the least-squares fit used in the coupling, the conduction path
+term `q''w/2k_s` and the curvature residual. `hff.thermal.column_average` is the routine
+behind it; `tests/test_thermal_path.py` checks the one-dimensional Neumann wall against its
+exact solution.
+
 ## Tests
 
 ```bash
-python -m pytest -q                 # 30 tests, ≈5 s
+python -m pytest -q                 # 41 tests, ≈20 s
 python -m pytest -q -m slow         # the coupled / multi-grid tests
 ```
 

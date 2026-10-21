@@ -167,6 +167,50 @@ def solve_thermal(fluid: fem.TriMesh, solid: fem.TriMesh, sol_flow: flow.FlowSol
 
 
 # ---------------------------------------------------------------------------
+#  Thickness average of the wall temperature
+# ---------------------------------------------------------------------------
+def column_average(solid: fem.TriMesh, T: np.ndarray, reference: float = 0.0
+                   ) -> Dict[str, np.ndarray]:
+    """Exact thickness average and mid-surface value of the wall temperature.
+
+    Along each column of the structured wall mesh the P2 field is a quadratic on
+    every element, so Simpson's rule integrates it exactly.  The returned
+    ``theta_avg`` is therefore the true thickness average
+    ``(1/h) int theta dy``, whereas ``theta_mid`` is the value at the geometric
+    mid-surface of the least-squares line of :func:`wall_profile`.  The two differ
+    by the curvature of the through-thickness profile, which vanishes in a
+    one-dimensional (uniform-flux) wall.
+    """
+    if solid.grid is None:
+        raise RuntimeError("column_average requires the structured solid grid map")
+    nid = solid.grid
+    lut = {tuple(sorted(p)): k for k, p in enumerate(np.sort(solid.edge_nodes, axis=1))}
+    ncol = nid.shape[1]
+    theta_avg = np.zeros(ncol)
+    theta_mid = np.zeros(ncol)
+    thick = np.zeros(ncol)
+    x = np.zeros(ncol)
+    for i in range(ncol):
+        ids = nid[:, i]
+        yv = solid.xy[ids, 1]
+        mids = np.array([solid.mid_offset + lut[tuple(sorted((int(a), int(b))))]
+                         for a, b in zip(ids[:-1], ids[1:])], dtype=int)
+        Tv = T[ids] - reference
+        Tm = T[mids] - reference
+        h = float(yv[-1] - yv[0])
+        theta_avg[i] = float(np.sum((yv[1:] - yv[:-1]) / 6.0
+                                    * (Tv[:-1] + 4.0 * Tm + Tv[1:])) / h)
+        y = np.concatenate([yv, 0.5 * (yv[:-1] + yv[1:])])
+        th = np.concatenate([Tv, Tm])
+        A = np.stack([np.ones_like(y), y - yv.mean()], axis=1)
+        theta_mid[i] = float(np.linalg.lstsq(A, th, rcond=None)[0][0])
+        thick[i] = h
+        x[i] = float(solid.xy[ids[0], 0])
+    return {"x": x, "theta_avg": theta_avg, "theta_mid": theta_mid,
+            "thickness": thick}
+
+
+# ---------------------------------------------------------------------------
 #  Post-processing
 # ---------------------------------------------------------------------------
 def boundary_heat_flux(mesh: fem.TriMesh, data: fem.ElementData, T: np.ndarray,

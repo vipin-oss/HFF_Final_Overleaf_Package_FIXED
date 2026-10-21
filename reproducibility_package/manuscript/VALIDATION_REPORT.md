@@ -28,7 +28,7 @@ Taken from `program/outputs/data/run_metadata.json` of the run whose outputs are
 | Total runtime | 775.2 s |
 | Parameter file | `program/params/baseline.json`, unchanged during the run |
 | Stochastic content | none (no random number generator is used anywhere) |
-| Automated tests | 30 passed in 6.32 s |
+| Automated tests | 41 passed in 20 s (`tests/test_hff.py`, `test_asymptotics.py`, `test_thermal_path.py`) |
 
 Stage timings, from the write times of the stage outputs: analytic 1 s, wall 35 s, bench 9 s,
 coupled 28 s, mesh 33 s, sweep (flux + thickness, 13 coupled runs) 323 s, param (Reynolds,
@@ -267,3 +267,27 @@ data).
 8. **The `param` sweep at $U=0.01$ m/s and the flux point at 5.25 kW/m² did not converge
    within the kinematic guard.** They are stored, excluded from the tables, and described in
    the text as predictors. Nothing is presented as a coupled solution unless it converged.
+
+
+## 11. v4 additions (deeper mathematics)
+
+The v4 revision adds no new physics inputs; it adds derivations and attributes the residuals of
+the v3 comparison to named mechanisms. Every number below is produced by the shipped tools.
+
+| Claim in the paper | Evidence |
+|---|---|
+| Self-similar reduction `Π(a;ŵ)=Σ C_k a^k`, `C_k=(k+1)(k+2)c_k/2` | `hff/asymptotics.py::pressure_series`, `self_similarity_moments`; test `test_pressure_series_reproduces_the_quadrature_for_a_self_similar_bow` |
+| Coefficients of `₂F₁(3,½;1;a)` are 1, 3/2, 9/4, 25/8 | `lubrication_shape_factor`; `lubrication_shape_factor(0.4)=2.3668232` and `₂F₁(0.2)=1.4237464` reproduced to 1e-6. **The v3 text printed 27/8 and 75/16, which is wrong and is corrected in v4.** |
+| Shape moments of the computed bow `c=(1,0.6588,0.5244,0.4483)` | `outputs/data/thermal_path.json` → `summary.moments_c` |
+| Quadrature of the law reproduces the computed strip drop to 0.2 % | `outputs/tables/table_pressure_series.tex` (7 rows) |
+| Series truncated at `O(a³)` loses 14.7 % at the design point | same table, last column |
+| A priori truncation bound | `pressure_truncation_bound`; test `test_self_similarity_moments_and_the_truncation_bound` |
+| Horizontal mean of `θ` is affine (Theorem) | proved in Appendix D.6; verified numerically by `test_neumann_wall_reproduces_the_one_dimensional_drop_exactly` (flat wall, exact to 1e-12) |
+| Deformed closure `θ̄=θ_i+q″(d+w)/2k_s` reproduces the exact thickness average to 0.0075 % | `outputs/data/thermal_path.json` → `residual_avg_vs_corrected_mean = 0.0025 K` |
+| Reference-thickness closure is short by `q″w/2k_s` = 1.442 K | same file, `path_term_mean` |
+| Mid-surface value exceeds the thickness average by 3.38 % | same file, `mid_vs_avg_rel`; `thermal.column_average` (Simpson, exact for P2) |
+| 1-D Neumann wall: `θ̄=30 K` exact | `tests/test_thermal_path.py`, residual `5e-14` |
+
+Reproduction: `program/tools/thermal_path_report.py` (≈30 s) writes both the JSON and
+`tables/table_thermal_path.tex`; `program/tools/asymptotic_figures.py` writes
+`tables/table_pressure_series.tex` and `figures/fig15_pressure_series.*`.

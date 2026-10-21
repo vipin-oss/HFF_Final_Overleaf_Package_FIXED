@@ -31,7 +31,7 @@ Convergence Index, and after the parameter sweeps were made complete runs.
 program/.venv/bin/python run_all.py           # 775.2 s, stages:
                                              # analytic, wall, bench, coupled, mesh,
                                              # sweep, param, figures, tables
-program/.venv/bin/python -m pytest -q        # 30 passed in 6.32 s
+program/.venv/bin/python -m pytest -q        # 41 passed in 20 s
 program/.venv/bin/python tools/supg_sensitivity.py   # 5 s, writes supg_sensitivity.json
 ```
 
@@ -148,3 +148,62 @@ program/README.md                       runtime, stages and tools updated
 reproducibility_package/                re-synchronised with the above
 legacy_report/                          untouched (superseded document, kept for provenance)
 ```
+
+
+## 7. v4 — analytical upgrade (21 October 2026)
+
+The manuscript now derives its model instead of postulating it. Added: §2.3 (two-field
+variational reduction, with the beam--column equation and the axial compatibility obtained as
+its Euler--Lagrange equations and the three discarded terms bounded); §4.1 (closed forms,
+Theorem 1 on the contraction of the axial map, Theorem 2 giving the hydraulic resistance as
+`₂F₁(3,½;1;a)`, Theorem 3 giving the Sturm--Liouville solution of the thermal-entry problem,
+five particular cases); §5.2 (comparison of the semi-analytical model with the finite-element
+solution, the scaling law `Nu/Nu_Graetz ≈ (H0/H)^0.79`); Appendix D (proofs).
+
+New files:
+
+```
+program/hff/asymptotics.py              the semi-analytical theory
+program/tools/asymptotics_report.py     runs it, writes outputs/data/asymptotics.json
+program/tools/asymptotic_figures.py     figures 13-14 and tables/table_asymptotics.tex
+program/tests/test_asymptotics.py       6 tests (36 in total, all passing)
+tools/insert_analysis.py                the anchored edit that inserted the new sections
+journal_submission/ANALYTICAL_UPGRADE.md  what is proved and how it was checked
+```
+
+Key verification numbers: the closed form reproduces the computed pressure drop to **+0.03 %**
+when the computed shape is used, the frozen-force closed-form bow to **−0.85 %**, and the
+developed Nusselt number `70/13` against the classical 5.385. No number in the new sections is
+typed by hand: the comparison table and both figures are generated from
+`outputs/data/asymptotics.json`.
+
+The abstract was rewritten for this version (249 words including the six headings) and the
+conclusions gained four "It is shown that …" items corresponding to the new theorems.
+
+
+## 8. v4 — what changed in the mathematics
+
+1. **New Theorem (self-similar reduction).** The hydraulic functional is now stated for an
+   arbitrary self-similar shape, with its moment coefficients, engine radius and truncation
+   bound, and a Lipschitz lemma in the shape. §5.1.4, proofs in Appendix D.4–D.5.
+2. **Correction of an error.** The Taylor coefficients of `₂F₁(3,½;1;a)` were printed as
+   `1, 3/2, 27/8, 75/16`; they are `1, 3/2, 9/4, 25/8, 525/128`. Fixed in \eqref{eq:dpclosed}
+   and in every downstream document.
+3. **New Theorem (thermal closure) and Corollaries.** The horizontal mean of the wall
+   temperature is affine in `y` for any interface shape and any interface temperature; the
+   one-dimensional closure is exact in the flat limit and, with the deformed thickness
+   `d+w`, reproduces the exact thickness average to 0.0075 %. §5.1.5, proof in D.6.
+4. **The 6.3 % wall-temperature discrepancy is resolved**, not excused: −4.36 % is the
+   lengthening of the conduction path by the bow (`w/d = 7.36 %` at the crown) and +3.38 % is
+   the difference between the mid-surface value used in the coupling and the thickness average.
+   New Table `tab:thermal_path`, new `hff.thermal.column_average`.
+5. **New benchmark.** The one-dimensional Neumann wall is added to §5.6.1 with its exact
+   solution (`θ̄=30 K`, `Γ=2×10⁴ K/m`, `Q′=150 W/m`), reproduced to round-off.
+6. **New figure and table.** `fig15_pressure_series` and `tab:pressure_series` carry the
+   law/shape/truncation decomposition over the seven converged sweep points.
+7. **Abstract rewritten** around the resolved decomposition; 240 words including headings.
+8. **Test suite** grows from 30 to 41 tests (`test_asymptotics.py` 7, `test_thermal_path.py` 5).
+
+Not claimed: no PDF was compiled (no TeX engine in the build container), so the LaTeX is
+validated structurally (`tools/check_tex.py`: 180 labels, 132 references, 55 citations against
+55 keys) and by careful reading, not by a successful `pdflatex` run.

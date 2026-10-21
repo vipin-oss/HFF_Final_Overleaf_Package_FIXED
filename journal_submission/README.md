@@ -2,7 +2,7 @@
 
 Journal research article in the layout of the *International Journal of Numerical Methods
 for Heat & Fluid Flow* (Emerald): single-column, structured abstract, nomenclature placed
-after the field equations, twelve figures, eleven tables, three appendices and 55
+after the field equations, fourteen figures, twelve tables, four appendices and 55
 references. The section tree follows the journal's 2023 pattern (Gupta, Kumar, Kumar and
 Barak, HFF 33(6), 2250-2277): Introduction -> Field equations (with limiting cases) ->
 Nomenclature -> Problem formulation -> Solution of the problem -> Numerical results and
@@ -46,6 +46,8 @@ Figure and table inventory (all produced by `../program/run_all.py` from
 | 10 | `fig10_reynolds.pdf` | Reynolds-number sensitivity |
 | 11 | `fig11_material.pdf` | wall conductivity and thermal expansion |
 | 12 | `fig12_model_form.pdf` | model-form error of the frozen-force closure |
+| 13 | `fig13_asymptotics.pdf` | Sturm--Liouville series vs computed Nusselt number; scaling collapse |
+| 14 | `fig14_pressure_law.pdf` | closed-form hydraulic resistance vs computed pressure drop |
 
 | Table | File | Content |
 |---|---|---|
@@ -60,6 +62,7 @@ Figure and table inventory (all produced by `../program/run_all.py` from
 | 9 | `table_expansion.tex` | thermal-expansion sweep |
 | 10 | `table_verification.tex` | code-verification benchmarks |
 | 11 | *(in `main.tex`)* | nested iterations, tolerances and test inventory (Appendices B–C) |
+| 12 | `table_asymptotics.tex` | semi-analytical model against the coupled computation |
 
 ## Compile locally
 
