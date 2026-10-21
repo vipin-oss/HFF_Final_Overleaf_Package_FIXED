@@ -148,3 +148,34 @@ program/README.md                       runtime, stages and tools updated
 reproducibility_package/                re-synchronised with the above
 legacy_report/                          untouched (superseded document, kept for provenance)
 ```
+
+
+## 7. v4 — analytical upgrade (21 October 2026)
+
+The manuscript now derives its model instead of postulating it. Added: §2.3 (two-field
+variational reduction, with the beam--column equation and the axial compatibility obtained as
+its Euler--Lagrange equations and the three discarded terms bounded); §4.1 (closed forms,
+Theorem 1 on the contraction of the axial map, Theorem 2 giving the hydraulic resistance as
+`₂F₁(3,½;1;a)`, Theorem 3 giving the Sturm--Liouville solution of the thermal-entry problem,
+five particular cases); §5.2 (comparison of the semi-analytical model with the finite-element
+solution, the scaling law `Nu/Nu_Graetz ≈ (H0/H)^0.79`); Appendix D (proofs).
+
+New files:
+
+```
+program/hff/asymptotics.py              the semi-analytical theory
+program/tools/asymptotics_report.py     runs it, writes outputs/data/asymptotics.json
+program/tools/asymptotic_figures.py     figures 13-14 and tables/table_asymptotics.tex
+program/tests/test_asymptotics.py       6 tests (36 in total, all passing)
+tools/insert_analysis.py                the anchored edit that inserted the new sections
+journal_submission/ANALYTICAL_UPGRADE.md  what is proved and how it was checked
+```
+
+Key verification numbers: the closed form reproduces the computed pressure drop to **+0.03 %**
+when the computed shape is used, the frozen-force closed-form bow to **−0.85 %**, and the
+developed Nusselt number `70/13` against the classical 5.385. No number in the new sections is
+typed by hand: the comparison table and both figures are generated from
+`outputs/data/asymptotics.json`.
+
+The abstract was rewritten for this version (249 words including the six headings) and the
+conclusions gained four "It is shown that …" items corresponding to the new theorems.

@@ -82,6 +82,17 @@ and the runtime of each stage. The figures and tables are rendered **from the sa
 JSON**, so `python run_all.py --only figures,tables` regenerates the manuscript
 artefacts without re-running the solvers.
 
+## Semi-analytical theory
+
+`hff/asymptotics.py` holds the analytical part of the paper: the Graetz/Sturm--Liouville
+series, the closed-form hydraulic resistance (Gauss hypergeometric), the closed-form
+beam--column solution and the contraction data of the axial-compatibility map. It is run by
+
+```bash
+./.venv/bin/python tools/asymptotics_report.py    # outputs/data/asymptotics.json
+./.venv/bin/python tools/asymptotic_figures.py    # figures 13-14, table_asymptotics.tex
+```
+
 ## Tests
 
 ```bash

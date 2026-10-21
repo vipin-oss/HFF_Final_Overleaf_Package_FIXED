@@ -25,10 +25,15 @@ SUB = ROOT / "journal_submission"
 
 
 def strip_comments(text: str) -> str:
+    """Remove LaTeX comments, respecting escaped percent signs (``\\%``)."""
     out = []
     for line in text.splitlines():
-        i = line.find("%")
-        out.append(line if i < 0 else line[:i])
+        cut = len(line)
+        for i, ch in enumerate(line):
+            if ch == "%" and (i == 0 or line[i - 1] != "\\"):
+                cut = i
+                break
+        out.append(line[:cut])
     return "\n".join(out)
 
 
