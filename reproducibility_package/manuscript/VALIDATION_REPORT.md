@@ -287,7 +287,10 @@ the v3 comparison to named mechanisms. Every number below is produced by the shi
 | Reference-thickness closure is short by `q″w/2k_s` = 1.442 K | same file, `path_term_mean` |
 | Mid-surface value exceeds the thickness average by 3.38 % | same file, `mid_vs_avg_rel`; `thermal.column_average` (Simpson, exact for P2) |
 | 1-D Neumann wall: `θ̄=30 K` exact | `tests/test_thermal_path.py`, residual `5e-14` |
+| Collapse: one shape integral predicts 24 runs to 0.40 % | `outputs/data/collapse.json` → `master_max_abs_rel_error`; `tables/table_collapse.tex`; `fig16_collapse` |
+| The same runs depart from the `sin²` law by up to 19.7 % (strip) and 15.1 % (total Δp) | `collapse.json` → `sin2_max_abs_rel_error`, `sin2_max_abs_rel_error_total` |
 
-Reproduction: `program/tools/thermal_path_report.py` (≈30 s) writes both the JSON and
+Reproduction: `program/tools/collapse_analysis.py` (≈2 s) writes `collapse.json`,
+`table_collapse.tex` and `fig16_collapse`; `program/tools/thermal_path_report.py` (≈30 s) writes both the JSON and
 `tables/table_thermal_path.tex`; `program/tools/asymptotic_figures.py` writes
 `tables/table_pressure_series.tex` and `figures/fig15_pressure_series.*`.

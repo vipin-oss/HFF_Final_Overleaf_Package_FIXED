@@ -73,7 +73,7 @@ that two identical runs produce bit-identical results.
 
 ```
 outputs/data/      *.json (all numerical results) and *.csv (flat tables)
-outputs/figures/   fig01..fig12 in vector PDF and 400 dpi PNG
+outputs/figures/   fig01..fig16 in vector PDF and 400 dpi PNG
 outputs/tables/    LaTeX fragments (\input-able) generated from outputs/data
 ```
 
@@ -92,7 +92,12 @@ beam--column solution and the contraction data of the axial-compatibility map. I
 ./.venv/bin/python tools/asymptotics_report.py    # outputs/data/asymptotics.json
 ./.venv/bin/python tools/asymptotic_figures.py    # figures 13-15, tables *_asymptotics, *_pressure_series
 ./.venv/bin/python tools/thermal_path_report.py   # outputs/data/thermal_path.json, table_thermal_path.tex
+./.venv/bin/python tools/collapse_analysis.py     # outputs/data/collapse.json, fig16_collapse, table_collapse.tex
 ```
+
+`collapse_analysis.py` re-reads the five sweeps and tests whether the strip resistance is a
+function of the bow ratio alone: one shape integral, computed once from the design-point
+profile with no fitted coefficient, is compared with every converged run.
 
 `thermal_path_report.py` re-runs the coupled baseline (≈30 s) and separates the wall
 temperature into the exact thickness average (Simpson along each column, exact for P2), the
@@ -104,7 +109,7 @@ exact solution.
 ## Tests
 
 ```bash
-python -m pytest -q                 # 41 tests, ≈20 s
+python -m pytest -q                 # 45 tests, ≈15 s
 python -m pytest -q -m slow         # the coupled / multi-grid tests
 ```
 
@@ -126,7 +131,7 @@ conservation, and the coupled driver on a coarse mesh (including determinism).
 | `mesh`                    | three coupled levels (30,3,2)…(120,12,8) + GCI     | 33 s      |
 | `sweep`                   | flux (8) and thickness (5) coupled runs            | 323 s     |
 | `param`                   | Reynolds (5), conductivity (4), expansion (4) runs | 336 s     |
-| `figures`, `tables`       | 12 figures, 9 LaTeX tables                         | 10 s      |
+| `figures`, `tables`       | 16 figures, 13 LaTeX tables                        | 12 s      |
 | **total**                 | `python run_all.py` (no flags)                     | **775 s** |
 
 Measured on 2 vCPU / 3 GB RAM with the versions recorded in
