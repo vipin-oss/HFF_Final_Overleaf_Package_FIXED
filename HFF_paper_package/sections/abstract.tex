@@ -5,12 +5,12 @@ thermal expansion, widening the passage.\\
 \textbf{Design/methodology/approach} -- A steady formulation with one consistent set of sign and interface
 conventions is given. Closed-form thermoelastic results (free curvature, bowing, buckling, beam--column
 amplification) define a baseline and admissibility guards. A finite-element method and a
-fixed-point coupling algorithm are specified; the wall is verified with plane-strain eight-node
-computations, including a restrained, geometrically nonlinear case.\\
+fixed-point coupling algorithm are specified; the wall is verified with two independent plane-strain codes, including a restrained,
+geometrically nonlinear case.\\
 \textbf{Findings} -- For water at $\mathrm{Re}=\NumRe$ and a flux of \SI{5}{\kilo\watt\per\square\metre} on a
 \SI{3}{\milli\metre} PEEK-class strip, the strip bows away from the channel by $\NumWscH\,H_0$
-(reduced order) or $\NLwFEH\,H_0$ (finite element), the two differing by $\NLoverScPct\,\%$. Deformation and stress,
-not buckling, bound the admissible flux. Indicative estimates suggest a roughly halved pressure drop and a higher wall excess
+(reduced order) or $\NLwFEH\,H_0$ (finite element); the difference of $\NLoverScPct\,\%$ vanishes for slender strips. Deformation and stress,
+not buckling, bound the flux. Indicative estimates suggest a roughly halved pressure drop and a higher wall excess
 temperature, while the return effect of the flow on the bow is small.\\
 \textbf{Research limitations/implications} -- No coupled fluid--structure result is reported; the flow-side
 estimates are reduced-order, the material data are representative; contact, heater and casing are idealised.\\

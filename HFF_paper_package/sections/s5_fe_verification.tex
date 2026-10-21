@@ -94,7 +94,7 @@ Level & Test & Reference & Status \\
 V1 & Shape functions, patch test (Q8) & exact polynomial field & Done \\
 V2 & Closed forms of Section~\ref{sec:reduced} against an independent boundary-value solution & analytic/numerical BVP & Done \\
 V3 & Free bow of the wall, end supports, mesh study & $\kth L^2/8$ & Done \\
-V4 & Restrained nonlinear wall, amplification and membrane force & beam--column & Done \\
+V4 & Restrained nonlinear wall, amplification and membrane force; independent code; thin-strip limit & beam--column & Done \\
 V5 & Rigid slit, pressure drop and velocity profile & $12\mu UL/H_0^2$ (Poiseuille) & Planned \\
 V6 & Rigid slit, one wall heated, developed Nusselt number & \citet{shah1978laminar} & Planned \\
 V7 & Conjugate transfer with a rigid thick wall & \citet{rahimi2024conjugate} & Planned \\
@@ -109,7 +109,7 @@ V10 & Iteration history and interface energy balance of the fixed point & intern
 \label{sec:q8}
 Two plane-strain computations with eight-node serendipity (Q8) elements, $3\times3$ Gauss quadrature and
 a sparse direct solver, are reported. Both are own implementations (\texttt{code/q8\_strip.py} and
-\texttt{code/q8\_nonlinear.py}). The shape functions are checked for partition of unity and for their
+\texttt{code/q8\_nonlinear.py}); the second is cross-checked with an independent code in Section~\ref{sec:slender}. The shape functions are checked for partition of unity and for their
 derivatives against central differences, and the patch test (the exact stress-free thermal-bending field must
 satisfy the discrete equations) is passed on every mesh with a maximum relative residual of
 $\QPatchMax$.
@@ -153,7 +153,7 @@ finite-element value converges slowly to a small negative number (Table~\ref{tab
 extrapolated $\QClampInfEight$ at $N_y=8$). The observed order is below two ($p=\QClampOrderEight$ at $N_y=8$), so the
 asymptotic range has not been established and the GCI of $\QClampGCIEight\,\%$ is indicative only. The relevant
 conclusions are that the pin idealisation is reproduced to $\QPinDefect\,\%$ and that the clamp, which is not
-used in this paper, suppresses the bow to within $\QClampLastEight$ of the pinned value, in agreement with beam theory
+used in this paper, reduces the bow to $\QClampLastEight$ times the pinned bow, in agreement with beam theory (zero)
 to that level.
 
 \subsubsection{Restrained, geometrically nonlinear wall}
@@ -194,21 +194,52 @@ $\NLwFE$~m ($\NLwFEH\,H_0$), an amplification $\NLampFE$ over the linear value, 
 therefore under-predicts the bow by a factor $\NLampFE$, which is why the total-Lagrangian form is specified in
 Section~\ref{sec:fe}. (iv) The membrane force relaxes from $\NLNmidLin$ to $\NLNmidNL$~kN\,m$^{-1}$, that is by
 $\NLrelaxFE\,\%$, against $\NumRelax\,\%$ in the beam model: the arc-stretching relaxation of
-Section~\ref{sec:beamcolumn} is reproduced in magnitude. (v) The finite-element deflection exceeds the self-consistent
-beam--column value by $\NLoverScPct\,\%$ and the frozen-force value by $\NLoverFrozenPct\,\%$. The difference is not
-explained by the force alone: the beam--column formula evaluated with the finite-element force is still
-$\NLbcAtFEPct\,\%$ below it, of which a Timoshenko-type shear flexibility of the strip
-($\kappa_s=5/6$) accounts for about $\NLshearPct\,\%$. The rest was not isolated; two-dimensional end effects of a strip
-with $d/L=0.1$ are a candidate, not a finding. (vi) The nonlinear result changes by $\NLconvAxial\,\%$ between $N_x=96$ and
-$192$ and by $\NLconvThick\,\%$ between $N_y=4$ and $8$, so it is mesh-converged at this level.
+Section~\ref{sec:beamcolumn} is reproduced in magnitude. (v) The finite-element deflection exceeds the
+self-consistent beam--column value by $\NLoverScPct\,\%$ and the frozen-force value by $\NLoverFrozenPct\,\%$.
+(vi) The nonlinear result changes by $\NLconvAxial\,\%$ between $N_x=96$ and $192$ and by $\NLconvThick\,\%$ between
+$N_y=4$ and $8$, so it is mesh-converged at this level.
 
-The reduced-order deflection of Section~\ref{sec:baseline} is therefore a slight under-estimate, by about
-$\NLoverScPct\,\%$, of the two-dimensional wall response at the baseline. The guard values and ceiling heat fluxes derived
-from it are correspondingly a little non-conservative, and the frozen-force values, which are
-closer to the finite-element result, are the safer of the two reduced-order estimates.
+\subsubsection{Independent solution and the thin-strip limit}
+\label{sec:slender}
+\emph{Independent code.} The same boundary-value problem was solved with a different code base and discretisation:
+scikit-fem, six-node quadratic triangles, Lagrange-multiplier constraints for the end conditions, a different mesh
+(\IndElements{} triangles at the finest level) and different quadrature (\texttt{code/fe\_independent.py}). It gives
+$\IndW$~m for the nonlinear bow, which differs from the Q8 value by $\IndDiffPct\,\%$, and the mid-span membrane force
+differs by $\IndNDiffPct\,\%$; the linear solutions agree to within $10^{-4}\,\%$. The result of the triangle mesh
+itself changes by $\IndConv\,\%$ between the last two refinements. The two codes share the equations
+(St~Venant--Kirchhoff kinematics, eigenstrain model), so this agreement verifies the implementation and the
+discretisation but not the modelling assumptions.
+
+\emph{Is the departure from the beam model a thickness effect?} Beam theory contains neither shear flexibility nor
+end effects, so if the $\NLoverScPct\,\%$ of item (v) were due to the thickness of the strip ($d/L=0.1$) it must
+vanish as $d/L\to0$ at fixed dimensionless loading. The study of Table~\ref{tab:slender} keeps the free curvature and the
+force ratio $N_c/\ncr=\SlForceRatio$ fixed (so $\bar\theta\propto d^2$ and $\Delta T_t\propto d$) and varies $d$ with the
+independent code. The departure from the self-consistent beam--column value falls from $\SlFirstPct\,\%$ at $d/L=0.1$ to
+$\SlMidPct\,\%$ at $d/L=\SlMidDL$ and $\SlLastPct\,\%$ at $d/L=\SlLastDL$, roughly as $(d/L)^2$, and the
+finite-element membrane force tends to the self-consistent beam force. At $d/L=\SlLastDL$ the result changes by only $\SlMeshPct\,\%$ between the $192\times8$ and $384\times16$ meshes, so the
+residual of $\SlLastPct\,\%$ is not a mesh error. It is of the size expected of the higher-order rotation terms that the
+von K\'arm\'an beam--column model omits (the maximum slope is $\NumSlope$), but this was not isolated. The departure of the baseline is therefore a finite-thickness effect of the
+two-dimensional wall, and not a disagreement between the equations of the beam model and those of the finite-element
+model. The finite-element value, in contrast, lies $\SlLastFrozenPct\,\%$ below the frozen-force value at $d/L=\SlLastDL$: its proximity to the baseline
+finite-element result ($\NLoverFrozenPct\,\%$) is a coincidence of thickness, not an accuracy property.
+
+\begin{table}[t]
+\centering\small
+\caption{Thin-strip study with the independent code: curvature $\kth=\NumKappa$~m$^{-1}$ and $N_c/\ncr=\SlForceRatio$ held
+fixed, mesh $192\times8$. Columns: linear bow relative to $\kth L^2/8$, nonlinear bow relative to the self-consistent (sc)
+and frozen-force (ff) beam--column values, and membrane force relative to the self-consistent beam force.}
+\label{tab:slender}
+\input{tab_slender}
+\end{table}
+
+For the baseline strip the reduced-order deflection of Section~\ref{sec:baseline} is therefore a slight under-estimate,
+by $\NLoverScPct\,\%$, of the two-dimensional wall response. For design use the finite-element value
+$\NLwFEH\,H_0$ should be preferred for this thickness; the guard values and ceiling heat fluxes derived from the
+reduced-order model are correspondingly slightly non-conservative.
 
 \subsection{What has been verified}
 The reduced-order model of the wall is verified against an independent boundary-value solution (V2) and, in
-two dimensions, against finite elements for the free bow, the end condition, the membrane force and the
-nonlinear amplification (V1, V3, V4). The fluid-side estimates of Section~\ref{sec:indicative}, the coupling
+two dimensions, against finite elements (two independent codes) for the free bow, the end condition, the membrane force and the
+nonlinear amplification, including the limit of a slender strip (V1, V3, V4). The constitutive and kinematic assumptions common to all
+the wall models are not independently validated against experiment. The fluid-side estimates of Section~\ref{sec:indicative}, the coupling
 algorithm and the formulation of the interface remain unverified until V5--V10 are carried out.
