@@ -31,13 +31,17 @@ def test_first_eigenvalue_of_the_entry_problem():
 
 
 def test_hypergeometric_resistance_matches_its_series():
-    # Taylor coefficients of 2F1(3, 1/2; 1; a) are 1, 3/2, 27/8, 75/16
-    h = 1e-4
-    sf = asymptotics.lubrication_shape_factor(h)
-    first = (sf["closed"] - 1.0) / h
-    assert first == pytest.approx(1.5, rel=1e-3)
-    sf2 = asymptotics.lubrication_shape_factor(0.2)
-    assert sf2["closed"] == pytest.approx(1.4237464, rel=1e-6)
+    # Taylor coefficients of 2F1(3, 1/2; 1; a) are (k+1)(k+2)/2 * C(2k,k)/4^k
+    # = 1, 3/2, 9/4, 25/8, ...
+    from math import comb
+    for a in (0.05, 0.2):
+        sf = asymptotics.lubrication_shape_factor(a)
+        assert sf["series"] == pytest.approx(sf["closed"], rel=1e-3)
+    # the truncated series is asymptotic: 2% short at a = 0.4
+    assert asymptotics.lubrication_shape_factor(0.4)["closed"] == pytest.approx(2.3668232, rel=1e-6)
+    expected = [1.0, 1.5, 2.25, 3.125]
+    for k, c in enumerate(expected):
+        assert 0.5 * (k + 1) * (k + 2) * comb(2 * k, k) / 4**k == pytest.approx(c)
 
 
 def test_resistance_tends_to_the_undeformed_value(cfg):
@@ -60,3 +64,14 @@ def test_closed_form_bow_reproduces_the_scaling_of_the_Euler_load(cfg):
     # geometric amplification of the thermal bow by the membrane force
     assert 1.3 < b["amplification"] < 1.5
     assert b["w_max_frozen"] == pytest.approx(2.19e-4, rel=0.02)
+
+
+def test_pressure_series_reproduces_the_quadrature_for_a_self_similar_bow(cfg):
+    x = np.linspace(0.0, cfg["geometry"]["L"], 121)
+    w = 1e-4 * np.sin(np.pi * x / cfg["geometry"]["L"]) ** 2
+    sweep = [{"q_flux": cfg["operating"]["q_flux"], "w_max": float(w.max()),
+              "flow_dp": 314.508369, "converged": True}]
+    rows = asymptotics.pressure_sweep(cfg, sweep, x, w)
+    assert len(rows) == 1
+    # series truncated at a^3 must agree with the quadrature at a = 0.2
+    assert abs(rows[0]["series"] - rows[0]["exact"]) / rows[0]["exact"] < 0.02

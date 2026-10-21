@@ -204,13 +204,16 @@ def lubrication_shape_factor(a: float) -> Dict[str, float]:
     """``\int_0^L dx/H^3`` for ``H = H0 (1 - a sin^2 pi x/L)``.
 
     Closed form ``(L/H0^3) * 2F1(3, 1/2; 1; a)``; the series
-    ``1 + 3a/2 + 27a^2/8 + 75a^3/16 + ...`` is returned with its first four
-    coefficients as a check on the hypergeometric evaluation.
+    ``1 + 3a/2 + 9a^2/4 + 25a^3/8 + ...`` is returned as a check on the
+    hypergeometric evaluation.
     """
     if a >= 1.0:
         raise ValueError("a must be < 1: the wall would touch the opposite face")
     closed = float(hyp2f1(3.0, 0.5, 1.0, a))
-    series = 1.0 + 1.5 * a + 3.375 * a**2 + 4.6875 * a**3 + 4.98046875 * a**4
+    # coefficients (k+1)(k+2)/2 * C(2k,k)/4^k = 1, 3/2, 9/4, 25/8, ...
+    from math import comb
+    series = sum(0.5 * (k + 1) * (k + 2) * comb(2 * k, k) / 4.0**k * a**k
+                 for k in range(6))
     return {"closed": closed, "series": series, "a": a}
 
 
@@ -248,6 +251,126 @@ def pressure_drop_lubrication(cfg: Dict[str, Any], w_max: float | None = None,
 
 def pressure_drop_undeformed(cfg: Dict[str, Any]) -> float:
     return analytic.pressure_drop(cfg)
+
+
+def pressure_series(self_similarity: Dict[str, Any], a: float,
+                    n_terms: int = 4) -> Dict[str, float]:
+    """Binomial series of the resistance for a self-similar bow.
+
+    If ``w(x;q) = a(q) * wh_ref(x)`` then
+
+        \int_0^L dx/H^3 = (L/H0^3) * sum_k (k+1)(k+2)/2 * c_k * a^k,
+        c_k = <wh_ref^k>,
+
+    and the strip pressure-drop ratio is that sum.  The exact quadrature of the same
+    shape is returned alongside, so that the truncation of the series can be measured.
+    """
+    wh = np.asarray(self_similarity["wh_ref"]) * a
+    x = np.asarray(self_similarity["x"])
+    L = float(x[-1] - x[0])
+    exact = float(np.trapezoid(1.0 / (1.0 - wh) ** 3, x) / L)
+    series = 0.0
+    terms = []
+    for k in range(n_terms):
+        ck = float(np.trapezoid(np.asarray(self_similarity["wh_ref"]) ** k, x) / L)
+        coef = 0.5 * (k + 1) * (k + 2)
+        term = coef * ck * a**k
+        terms.append(term)
+        series += term
+    return {"a": a, "series": series, "exact": exact, "terms": terms}
+
+
+def pressure_sweep(cfg: Dict[str, Any], sweep: List[Dict[str, Any]],
+                   x_profile: np.ndarray, w_profile: np.ndarray) -> List[Dict[str, float]]:
+    """Apply the series and the exact quadrature to every converged sweep point.
+
+    The bow is taken as self-similar, ``w(x;q) = (a(q)/a_ref) w_ref(x)``, with the
+    reference profile the computed shape at the design point; the assumption is tested
+    by the residual column of the returned table.
+    """
+    g, f, op = cfg["geometry"], cfg["fluid"], cfg["operating"]
+    H0, L, Le, Lo = g["H0"], g["L"], g["Le"], g["Lo"]
+    Q = op["U"] * H0
+    strip0 = 12.0 * f["mu"] * Q * L / H0**3
+    rigid = 12.0 * f["mu"] * Q * (Le + Lo) / H0**3
+    x = np.asarray(x_profile)
+    a_ref = float(np.max(w_profile) / H0)
+    ref = {"x": x, "wh_ref": np.asarray(w_profile) / H0 / a_ref}
+    out = []
+    for row in sweep:
+        if not row.get("converged"):
+            continue
+        a = float(row["w_max"] / H0)
+        res = pressure_series(ref, a)
+        measured = (float(row["flow_dp"]) - rigid) / strip0
+        out.append({
+            "q_flux": float(row["q_flux"]),
+            "a": a,
+            "measured": measured,
+            "series": res["series"],
+            "exact": res["exact"],
+            "err_series": (res["series"] - measured) / measured,
+            "err_exact": (res["exact"] - measured) / measured,
+        })
+    return out
+
+
+def self_similarity_moments(x_profile: np.ndarray, w_profile: np.ndarray,
+                            n_moments: int = 4) -> Dict[str, Any]:
+    """Moment coefficients of the normalised bow ``wh = w/w_max``.
+
+    Returns ``c_k = <wh^k> = (1/L) int_0^L wh^k dx`` and the coefficients
+    ``C_k = (k+1)(k+2)/2 * c_k`` of the resistance series of
+    :func:`pressure_series`.  ``wh(0) = wh(L) = 0`` and ``max wh = 1`` by
+    construction, so ``c_0 = 1`` and ``c_k`` decreases monotonically in ``k``.
+    """
+    x = np.asarray(x_profile, dtype=float)
+    w = np.asarray(w_profile, dtype=float)
+    L = float(x[-1] - x[0])
+    wh = w / float(np.max(w))
+    c = [float(np.trapezoid(wh**k, x) / L) for k in range(n_moments)]
+    return {"x": x, "wh": wh, "c": c,
+            "C": [0.5 * (k + 1) * (k + 2) * c[k] for k in range(n_moments)]}
+
+
+def pressure_truncation_bound(a: float, n_terms: int = 4) -> float:
+    """A priori remainder of the series truncated after ``n_terms`` terms.
+
+    Because ``0 <= c_k <= c_1 <= 1`` the tail obeys
+    ``sum_{k>=N} (k+1)(k+2)/2 c_k a^k <= 1/(1-a)^3 - sum_{k<N}(k+1)(k+2)/2 a^k``,
+    the right-hand side being the remainder of the geometric-type series with
+    ``c_k = 1``.  The bound is informative for small ``a`` only; it is returned so
+    that the range over which the series can be used *a priori* is explicit.
+    """
+    if a >= 1.0:
+        raise ValueError("a must be < 1")
+    partial = sum(0.5 * (k + 1) * (k + 2) * a**k for k in range(n_terms))
+    return float(1.0 / (1.0 - a) ** 3 - partial)
+
+
+def wall_path_closure(cfg: Dict[str, Any], theta_i: np.ndarray, w: Optional[np.ndarray],
+                      q_flux: float | None = None) -> Dict[str, np.ndarray]:
+    """Thickness-averaged wall rise from the (deformed) conduction path.
+
+    The wall strip is loaded by a uniform flux ``q''`` on the outer face and its
+    inner face is at the interface temperature ``theta_i(x)``.  The vertical
+    profile is linear to leading order, so the value at the mid-surface is
+
+        theta_bar(x) = theta_i(x) + q'' [d + w(x)] / (2 k_s),
+
+    where ``d + w(x)`` is the *deformed* thickness: the bow lengthens the thermal
+    path by ``w``.  The reference-thickness closure used before
+    (``q'' d / 2k_s``) therefore carries a relative error ``w / d``.
+    """
+    g, op, s = cfg["geometry"], cfg["operating"], cfg["solid"]
+    q = float(op["q_flux"] if q_flux is None else q_flux)
+    d, k = float(g["d"]), float(s["k"])
+    ti = np.asarray(theta_i, dtype=float)
+    bow = np.zeros_like(ti) if w is None else np.asarray(w, dtype=float)
+    ref = ti + q * d / (2.0 * k)
+    cor = ti + q * (d + bow) / (2.0 * k)
+    return {"reference": ref, "corrected": cor,
+            "offset": q * bow / (2.0 * k), "rel_offset": bow / d}
 
 
 # ---------------------------------------------------------------------------
