@@ -1,0 +1,39 @@
+{
+  "dof": {
+    "fluid_p2_nodes": 1885,
+    "fluid_p1_nodes": 1885,
+    "solid_p2_nodes": 2853
+  },
+  "element_peclet": {
+    "median": 10.173817254934946,
+    "max": 96.65160179850508,
+    "min": 0.0006151180499687789
+  },
+  "element_size": {
+    "median": 9.304170042597048e-05,
+    "min": 6.023133865002806e-06,
+    "max": 0.00037231668075465336
+  },
+  "tau_median": 0.000874805826928857,
+  "cases": {
+    "supg": {
+      "theta_bar_mean": 34.258718084700014,
+      "theta_bar_max": 35.42041988173217,
+      "Nu_mean": 8.690741790295238,
+      "energy_imbalance": 8.364207068477002e-05,
+      "interface_flux_jump": 0.02681115876523165
+    },
+    "no_supg": {
+      "theta_bar_mean": 34.25536993676863,
+      "theta_bar_max": 35.4172936013381,
+      "Nu_mean": 8.701338872477011,
+      "energy_imbalance": 0.0004815457911492638,
+      "interface_flux_jump": 0.026719732405963197
+    }
+  },
+  "differences": {
+    "theta_bar_mean_rel": -9.773126720928828e-05,
+    "Nu_mean_rel": 0.0012193530123753835,
+    "energy_imbalance_ratio": 5.757219868026846
+  }
+}

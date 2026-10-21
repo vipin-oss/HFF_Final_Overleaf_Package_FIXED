@@ -1,156 +1,150 @@
-# Build report
+# Build report — v2 manuscript
 
-What was built, how, and what could not be checked. Read together with
-`VALIDATION_REPORT.md` (numerical evidence) and `../program/README.md` (how to run the code).
+Date of build: 21 October 2026.
+Branch: `arena/75958f95-hff-final-overleaf-package-fix` (merged to `main` through the pull
+request that carries this report).
 
-## 1. What this package is
+This report states what was produced, how it was checked, and what was **not** checked. It
+supersedes the v1 build report, which described a 16-page article-class document with 18
+references.
 
-A conventional single-column journal article replacing the previous
-`report`-class document (cover page, table of contents, 11 chapters, appendices). The old
-document was a pre-implementation design and audit record: it contained the formulation, the
-baseline arithmetic and a verification *plan*, but no computed results and no code. The new
-article keeps the scientific content that could be substantiated — geometry, assumptions with
-their quantitative checks, governing equations, boundary and interface conditions, the reduced
-wall equation, the dimensionless groups and regime bounds, the closed-form baseline and the
-limitations — and adds what was missing: an executable implementation, executed results,
-generated figures, verification against analytical solutions, and a refinement study.
+## 1. What was rebuilt and why
 
-Nothing was invented. Every numerical statement in the manuscript comes from a file in
-`../program/outputs/data/`; the figures and tables are rendered from those files by
-`hff/figures.py` and `hff/tables.py`. Where the study does not support a claim, the claim is
-removed or explicitly qualified (see §5 below).
-
-## 2. Manuscript structure
-
-`main.tex`, `\documentclass[11pt,a4paper]{article}`, single column, no cover page, no table of
-contents, no chapters, no preface. Sections:
-
-1. Introduction
-2. Physical model and formulation (geometry; assumptions A1–A10 with quantitative support;
-   governing equations; interface and boundary conditions; reduced wall equation; dimensionless
-   groups and regime bounds)
-3. Computational formulation (discretisation; flow sub-problem; conjugate thermal sub-problem;
-   structure sub-problem; coupling algorithm)
-4. Results and discussion (closed-form baseline; flow; conjugate heat transfer; wall response
-   and the coupled state; model-form error of the frozen-force closure; sensitivity)
-5. Verification and convergence (benchmarks; mesh study; conservation and reproducibility)
-6. Limitations
-7. Conclusions
-8. Declarations (data and code availability, competing interests, funding, contributions)
-9. References
-
-Nine figures and six tables, all cited in the text. The .bib file is the project's existing,
-verified bibliography; three entries that were previously uncited (the FSI benchmark, the
-geometric-conservation-law paper and the stratified-flow paper) are now cited where they are
-actually relevant, and no entry was added.
-
-## 3. Figures
-
-| file | content | source of the data |
+| Item | v1 (superseded) | v2 (this package) |
 |---|---|---|
-| `fig01_geometry` | configuration and boundary conditions | **schematic**, drawn to scale from the parameter file; stated as such in the caption |
-| `fig02_mesh` | discretisation and detail of the throat | `coupled_baseline.json` (converged shape) |
-| `fig03_flow` | velocity profiles and pressure distribution | `coupled_baseline.json: samples` |
-| `fig04_thermal` | local Nusselt number; wall/bulk/mean temperatures | `coupled_baseline.json` |
-| `fig05_wall` | deflection and bending moment | `wall_baseline.json`, `coupled_baseline.json` |
-| `fig06_convergence` | coupling convergence and mesh refinement | `coupled_baseline.json: history`, `mesh_study.json` |
-| `fig07_sensitivity` | flux and thickness sweeps | `sweep_flux.json`, `sweep_thickness.json` |
-| `fig08_verification` | benchmark errors and values | `verification_benchmarks.json` |
-| `fig09_model_form` | frozen-force closure error | `wall_baseline.json: consistency` |
+| Length | 16 pp, report-like density | 2 190 source lines, 12 560 words of prose, 34 display equations, 12 figures, 11 tables, 3 appendices; estimated 30–36 compiled pages |
+| Front matter | plain `abstract` | Emerald-style structured abstract (Purpose / Design / Findings / Research limitations / Practical implications / Originality, 249 words including the six headings), keywords, article classification, nomenclature table |
+| References | 18 entries | **55 entries** (46 articles, 7 books, 2 chapters); **every entry cited**; **48 DOIs resolved against Crossref on 21 Oct 2026** |
+| Structure | intro → formulation → results → verification → conclusions | introduction and literature review with a stated gap → physical model and assumptions → governing equations and non-dimensionalisation → full reduced-wall derivation → computational formulation → boundary-condition table → grid independence with GCI → verification → results → discussion → limitations → conclusions → three appendices |
+| Figures | 9 | 12, all rendered from the current run of `program/run_all.py` |
+| Tables | 6 | 11 (9 generated from `outputs/data`, 2 typeset in the source) |
+| Numbers | v1 run (2026-10-18) | v2 run of 21 Oct 2026, 775.2 s, all nine stages |
 
-Each figure is a vector PDF (used by the manuscript) and a 400 dpi PNG (for inspection), with a
-consistent serif font at 8 pt, 0.6 pt axes, panel labels (a)/(b) and colour-blind-safe palette.
-File names are zero-padded and descriptive. Only `fig01_geometry` is not computed; it is
-labelled "schematic, not to scale" in its caption, exactly as the old document did.
+The scientific content, the model, the solvers and the limitations of v1 are preserved. What
+changed is the presentation depth, the reference base and the numbers, which were regenerated
+from scratch after the mesh study was extended with the observed order and the Grid
+Convergence Index, and after the parameter sweeps were made complete runs.
 
-## 4. Compilation status
+## 2. Reproducible numerical build
 
-**Not compiled.** No TeX engine is available in the build environment: `pdflatex`, `latexmk`,
-`xelatex`, `lualatex` and `tectonic` are absent, `apt-get` cannot reach a mirror and no
-TeX distribution is installable from PyPI. The instruction "ship a compiled PDF if possible"
-therefore results in no PDF.
+```
+program/.venv/bin/python run_all.py           # 775.2 s, stages:
+                                             # analytic, wall, bench, coupled, mesh,
+                                             # sweep, param, figures, tables
+program/.venv/bin/python -m pytest -q        # 30 passed in 6.32 s
+program/.venv/bin/python tools/supg_sensitivity.py   # 5 s, writes supg_sensitivity.json
+```
 
-What was done instead — mechanical checks of the LaTeX source:
+`program/outputs/data/run_metadata.json` records interpreter, library versions, platform,
+the nine stages and the total runtime. Every number quoted in the manuscript is traceable to
+one of these files:
 
-| check | result |
+| Manuscript element | Source file |
 |---|---|
-| `\begin`/`\end` environments balanced, correctly nested (main + 6 tables) | pass |
-| braces balanced in every file | pass |
-| `$` count even in every file | pass |
-| every `\ref`/`\eqref` has a matching `\label` | pass (40 references, 62 labels) |
-| duplicate labels | none |
-| every `\cite` key present in `references.bib`; every bib entry cited | pass (18/18) |
-| every `\includegraphics` target exists | pass: all 9 PDFs are present in `figures/` and are resolved through `\graphicspath{{figures/}}` (the checker reports them as "missing" only because it does not expand `\graphicspath`) |
-| every `\input` target exists | pass (6 table fragments; the directory is selected at compile time, see §4.1) |
-| control sequences used | all standard `amsmath`/`amssymb`/`graphicx`/`booktabs`/`siunitx`/`longtable`/`caption`/`natbib`/`hyperref` commands plus locally defined macros |
-| packages required | only those in a standard TeX Live/MiKTeX; no shell escape, no `biber`, no external fonts |
-| numbers in tables | every numeric cell goes through `siunitx`'s `\num{}`; no math command is used in text mode, so the tables cannot raise "Missing $ inserted" |
+| Table 1 (parameters) | `params/baseline.json` |
+| Table 3 (closed-form baseline), §3.4 groups, §4.7 critical load | `outputs/data/analytic_baseline.json` |
+| Table 4 (coupled state), Fig. 5–8, §9.2–9.5 | `outputs/data/coupled_baseline.json` |
+| Table 5 (grid study, GCI), Fig. 3 | `outputs/data/mesh_study.json` |
+| Table 6 (flux sweep) and the thickness sweep, Fig. 9 | `outputs/data/sweep_flux.json`, `sweep_thickness.json` |
+| Table 7, Fig. 10 | `outputs/data/sweep_reynolds.json` |
+| Tables 8–9, Fig. 11 | `outputs/data/sweep_conductivity.json`, `sweep_expansion.json` |
+| Table 10, Fig. 4 | `outputs/data/verification_benchmarks.json` |
+| Fig. 12, §9.9 model-form error | `outputs/data/wall_baseline.json` (`consistency`) |
+| Kinematic/strength/stability ceilings (§9.6, §10.3) | `outputs/data/wall_baseline.json` (`envelope_crossings`) |
+| Element Péclet numbers and the SUPG measurement (§5.3) | `outputs/data/supg_sensitivity.json` |
 
-The `plainnat` bibliography style and `natbib` are used, so the sequence
-`pdflatex → bibtex → pdflatex → pdflatex` is sufficient. This is the standard Overleaf flow and
-requires no configuration.
+The figures and the nine generated tables were written by the same run, from the JSON above,
+by `hff/figures.py` and `hff/tables.py`. They were not edited afterwards; the two typeset
+tables (boundary conditions; iteration/tolerance inventory) contain no numerical result that
+is not already in the JSON files.
 
-### 4.1 Path handling (two project layouts)
+## 3. Reference audit (how the 55 entries were checked)
 
-The same `main.tex` must compile both from a ZIP whose root is this folder and from a
-GitHub-synced project whose root is the repository (one level above this folder). Instead of
-maintaining two copies, the file carries a five-line path block:
+1. Every entry with a DOI (48 of 55) was resolved through the Crossref REST API on
+   21 October 2026 using `https://api.crossref.org/works?filter=doi:...&select=DOI,title,
+   container-title,volume,page,issued`. Title, container title, volume, pages and year in
+   `references.bib` were read from the response, not transcribed.
+2. Four earlier pairings that had proved wrong in the v1 bibliography were re-sourced and are
+   now correct: `10.1017/jfm.2018.30` is Christov, Cognet, Shidhore and Stone on deformable
+   shallow microchannels; `10.1108/HFF-07-2023-0380` is Gupta and Barak on photo-thermo-piezo-elastic
+   waves; `10.1017/jfm.2025.10162` is Draškić et al. on stratified supercritical CO₂;
+   `10.1108/HFF-09-2017-0348` is Zargartalebi et al. on a flexible partition.
+3. Four DOIs that were found in v1 to belong to unrelated work
+   (`10.1016/0045-7930(73)90017-0`, `10.1109/T-ED.1981.20303`, `10.1137/S0895479895290954`,
+   `10.1002/nme.2354`) were removed with their entries and are not cited anywhere.
+4. The seven entries without a DOI are monographs and conference proceedings of the theory
+   background (Bird et al. 1960; Carslaw and Jaeger 1947; Boley and Weiner 1960; Timoshenko
+   and Goodier 1970; Timoshenko and Gere 1961; Shah and London 1978; Hood and Taylor 1974);
+   their imprint details are those of the publisher/library record. They carry no DOI to
+   resolve, and this is stated in the file header.
+5. The complete per-DOI log, with the resolved title and container, is in
+   `VALIDATION_REPORT.md` §6.
 
-```latex
-\graphicspath{{figures/}{journal_submission/figures/}}
-\newcommand{\tabdir}{tables/}
-\IfFileExists{tables/table_parameters.tex}{}{%
-  \renewcommand{\tabdir}{journal_submission/tables/}}
+No reference was generated or inferred. Where an entry could not be verified it was dropped
+rather than "repaired".
+
+## 4. LaTeX validation actually performed
+
+No TeX distribution exists in the build environment (`pdflatex`, `latex`, `xelatex` and
+`tectonic` are all absent, and the sandbox has no route to a TeX repository), so **no PDF was
+produced here**. Instead:
+
+1. **Strict parse of the whole document.** `pylatexenc`'s `LatexWalker` in non-tolerant mode
+   consumed all 112 801 characters of `main.tex` with no parse error, which excludes
+   unbalanced braces and mismatched `\begin`/`\end` pairs.
+2. **Custom audit** — `python3 tools/check_tex.py`, which is shipped with the package:
+   123 labels (114 in the manuscript, 9 inside the generated table fragments), 83
+   `\ref`/`\eqref` uses, 0 duplicate labels, 0 unresolved references, 0 unused
+   bibliography keys, 55 citations against 55 keys, **0 undefined citations**, all 12 figure
+   files present, all 9 `\tabinput` fragments present. Exit code 0.
+3. **Path resolution in both layouts.** Each `\includegraphics` file exists in
+   `journal_submission/figures/`; `\tabinput{...}` resolves `tables/` first and falls back to
+   `journal_submission/tables/`; `\graphicspath` lists both directories; the bibliography is
+   located by `\IfFileExists`. The same `main.tex` therefore compiles as a ZIP upload and
+   from the repository root (GitHub sync).
+4. **Archive check.** `python3 tools/build_zip.py --check` writes
+   `hff_journal_submission.zip` (38 members, 2.57 MB), re-opens it, verifies the CRC of every
+   member, confirms that `main.tex` is at the archive root, and confirms that all 12 figure
+   PDFs are referenced from the source.
+
+## 5. What is *not* verified
+
+* **No compiled PDF.** The exact page count, the float placement and the absence of Overfull
+  boxes are unknown until the first Overleaf compile. The page estimate of 30–36 pp is
+  arithmetic (word count, float count, reference list length), not a measurement.
+* **`emerald.cls` was not used.** The manuscript reproduces the Emerald house style
+  (structured abstract, nomenclature, author–year citations, section numbering) with the
+  standard `article` class so that it compiles anywhere. Swapping in the journal class at
+  submission is described in `README.md`; that swap has not been tested.
+* **The author block is a placeholder.** Names, affiliations and the corresponding author's
+  e-mail are marked "to be inserted before submission"; inventing them would have been
+  improper.
+* **No experimental validation.** Nothing in this package compares the model with measured
+  hardware, and the manuscript says so in §11 and §12. "Verification" is used in its
+  computational sense throughout (code against analytical solutions, grid convergence,
+  conservation), never as validation.
+* **Publisher house rules** (reference style details, figure resolution thresholds,
+  cover-letter requirements) were not applied beyond the layout described above.
+
+## 6. Files changed or added in this revision
+
 ```
-
-the six table includes are written `\input{\tabdir table_*.tex}`, and the bibliography is
-selected the same way with `\IfFileExists{references.bib}`. In the ZIP layout the tests
-succeed on the local paths; in a synced repository they fail and fall back to the prefixed
-ones. Nothing outside the archive/repository is ever referenced.
-
-The repository root additionally contains a four-line `main.tex` that inputs
-`journal_submission/main.tex`, so a synced project can use the root document it finds
-automatically. The superseded report-class document and its TikZ figures were moved to
-`legacy_report/` (unchanged) so that its `figures/` directory cannot shadow the search path.
-
-The remaining risk is a LaTeX error that a mechanical check cannot see (for example a
-`siunitx` version difference in a unit expression). A first compile in Overleaf is therefore
-the next action before submission; `README.md` gives the exact steps.
-
-## 5. Claims removed or qualified relative to the earlier document
-
-The earlier document contained statements that the executed study does not support. They were
-not carried over:
-
-* **A two-dimensional plane-strain thermoelastic continuum solver.** It does not exist in the
-  implementation. The wall is the reduced beam–column of the formulation, and the manuscript
-  says so in §3.4 and in the limitations. The frozen-versus-self-consistent comparison measures
-  the axial-compatibility closure only.
-* **"Future solver" placeholders** (verification gates V-A…V-G, audit registers D-1…D-20,
-  arithmetic cells A1–A9). These were planning artefacts. The verification that is actually
-  performed is reported as such (§5 of the manuscript, `VALIDATION_REPORT.md`).
-* **`Γ_p` inconsistency between chapters** (1.7×10³ in one place, 2.4×10³ in another). The two
-  numbers use different definitions: 1.7×10³ is the ratio of the *linear* bow to the
-  pressure-only bow, 2.4×10³ the ratio of the *computed* bow to the pressure-only bow. Both are
-  now reported explicitly with their definitions.
-* **The stress fraction quoted as 0.15 of σ_y.** The computed total stress is 14.6 MPa, i.e.
-  0.16 σ_y; the manuscript quotes the computed value and identifies the ceiling used.
-* **`Nu` quoted as a single fully developed value.** The computed local Nusselt number varies
-  from 18.6 to 6.2 along the strip; the manuscript reports the profile and states that no single
-  value characterises the wall.
-* **An "exact" treatment of the interface flux condition.** The condition holds in the weak
-  sense; its pointwise residual is 2.85 % in the L2 norm and is reported.
-
-## 6. Reproducibility
-
-`../reproducibility_package/` contains the complete source, the parameter file, the saved
-numerical results, the figures and tables, the test suite and the environment record. The
-manuscript artefacts are regenerated by
-
-```bash
-python run_all.py --only figures,tables   # from saved JSON, seconds
-python run_all.py                        # from scratch, 402 s (6.7 min) on 2 vCPU
+journal_submission/main.tex             rewritten (v2, 2 190 lines)
+journal_submission/references.bib       rewritten (55 entries, all DOIs resolved)
+journal_submission/figures/fig01..12    replaced by the v2 run (24 files, PDF + PNG)
+journal_submission/tables/*.tex         regenerated (9 files; mesh table mislabelled unit fixed)
+journal_submission/README.md            rewritten (Overleaf routes A and B, inventory)
+journal_submission/BUILD_REPORT.md      this file
+journal_submission/VALIDATION_REPORT.md rewritten (numbers, conservation, DOI log)
+main.tex                                unchanged wrapper (\input of the v2 manuscript)
+tools/build_zip.py                      added (archive builder + verifier)
+tools/check_tex.py                      added (label/reference/citation/figure audit)
+hff_journal_submission.zip              rebuilt from v2 sources
+program/hff/figures.py                  figure numbering aligned with the manuscript order
+program/hff/tables.py                   mesh-table unit label fixed; GCI block unchanged
+program/run_all.py                      envelope crossings added to the wall stage
+program/tools/supg_sensitivity.py       added (Péclet statistics and SUPG measurement)
+program/README.md                       runtime, stages and tools updated
+reproducibility_package/                re-synchronised with the above
+legacy_report/                          untouched (superseded document, kept for provenance)
 ```
-
-`outputs/data/run_metadata.json` records the parameter file, the library versions, the platform
-and the runtime of each stage of the run that produced the reported numbers.
