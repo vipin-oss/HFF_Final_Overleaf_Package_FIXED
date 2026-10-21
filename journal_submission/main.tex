@@ -87,37 +87,37 @@ a coupled conjugate flow, heat-transfer and thermoelastic analysis}
 
 \begin{structuredabstract}
 \abshead{Purpose}
-A closed model is derived and verified for a flux-heated channel wall that deforms under its own
-temperature field, and the feedback on the conjugate flow and heat transfer quantified.
+A closed model is derived and verified for a flux-heated channel wall that deforms under its
+own temperature field, and the feedback on the conjugate flow and heat transfer is quantified.
 
 \abshead{Design/methodology/approach}
-Plane-strain thermoelasticity is reduced to an axially restrained beam--column strip by a
-variational principle, the flow in the lubrication limit and the entry problem by a
-Sturm--Liouville expansion. Closed forms follow for the resistance (a Gauss
-hypergeometric function generalised to self-similar shapes), the bow and the buckling
-threshold; the axial map is proved a contraction and the thermal closure an exact property of
-the horizontal mean of the wall temperature. A coupled finite-element solution on $24$ parameter
-sets verifies every formula.
+Plane-strain thermoelasticity is reduced to an axially restrained beam--column strip; the flow
+is treated in the lubrication limit and the entry problem by a Sturm--Liouville expansion.
+Closed forms follow for the resistance (a Gauss hypergeometric function generalised to
+self-similar shapes), the bow and the buckling threshold, the axial map is proved a
+contraction, and the thermal closure is shown to be exact for the horizontal mean. A coupled
+finite-element solution on $24$ parameter sets verifies every formula.
 
 \abshead{Findings}
 At $\ReDh=50$ and $q''=5\,\mathrm{kW/m^2}$ the strip bows $0.441\,H_0$ and the pressure drop
-rises from $144$ to $315$~Pa. The resistance integral over the computed shape reproduces this to
-$0.03\%$; the $\sin^2$ idealisation underpredicts it by $15\%$, a shape and truncation effect. One shape integral, with no fitted coefficient, reproduces the strip
-resistance of all $24$ converged runs of the five sweeps to $0.4\%$. The wall rise is $34.3$~K, its $7.5\%$ excess over one-dimensional conduction
-being the $7.4\%$ path lengthening by the bow plus a mid-surface convention.
-The frozen-force closure overpredicts the bow by $1.2\%$ at the design point and $14.9\%$ at
+rises from $144$ to $315$~Pa; the resistance integral over the computed shape reproduces this
+to $0.03\%$, whereas the $\sin^2$ idealisation underpredicts it by $15\%$. One shape integral
+without fitted coefficients reproduces the strip resistance of all $24$ runs to $0.4\%$. The
+wall temperature rise is $34.3$~K, its $7.5\%$ excess over one-dimensional conduction being
+path lengthening plus a mid-surface convention, not a convective effect. The frozen-force
+closure overpredicts the bow by $1.2\%$ at the design point and $14.9\%$ at
 $10\,\mathrm{kW/m^2}$. Deformation raises the local Nusselt number by up to $70\%$.
 
 \abshead{Research limitations/implications}
-Plane strain, steady laminar flow, small slopes ($|w|/H_0\le0.45$), no experiment.
+Plane strain, steady laminar flow, small slopes ($|w|/H_0\le0.45$); no experiment.
 
 \abshead{Practical implications}
-Design formulae replace semi-empirical corrections; deformation, not strength, sets the
-range.
+Design formulae replace semi-empirical corrections, and deformation rather than strength sets
+the range.
 
 \abshead{Originality/value}
-The loop is closed in closed form, every formula is verified, and the feedback collapses onto
-one curve.
+The loop is closed in closed form, every formula is verified, and the hydraulic feedback
+collapses onto one curve.
 
 \vspace{3pt}
 \noindent\textbf{Keywords:} conjugate heat transfer; thermoelastic stability;
@@ -256,6 +256,63 @@ approaches the passage height, which for the present geometry happens inside
 the range of fluxes that an application would use. The useful engineering
 output of the analysis is therefore not a single number but the location of
 that ceiling together with the accuracies that can be claimed below it.
+
+Table~\ref{tab:positioning} states the difference from each of the three literatures in a
+single view. The rows are not claims of superiority; they record which of the four ingredients
+--- a thermal load, a two-way thermal coupling, a restraint that makes the deformation
+nonlinear, and a verified closed form for the hydraulic consequence --- each literature
+supplies, and which are supplied here.
+
+\begin{table}[htbp]
+\centering
+\caption{Positioning of the present work relative to the three literatures reviewed above.
+``Load'' is what bends the wall; ``thermal coupling'' says whether the wall temperature that
+sets the load is itself computed from the flow it changes; ``verification'' is what the cited
+studies compare their results with. The last column states what the present paper takes from
+the strand and what it adds.}
+\label{tab:positioning}
+\footnotesize
+\begin{tabular}{@{}p{3.0cm}p{2.5cm}p{2.6cm}p{3.0cm}p{3.2cm}@{}}
+\toprule
+Strand & Load on the wall & Thermal coupling & Verification & What is added here\\
+\midrule
+Pressure-driven compliant channels
+\citep{gervais2006flow,christov2018flow,wang2019theory,boyko2022flow} &
+Pressure &
+No: the energy equation is passive or absent &
+Flow-rate relation against experiment and lubrication theory &
+The same hydraulic functional, evaluated on a bow produced by temperature rather than by
+pressure; the pressure-only bow here is $1.7\times10^{3}$ times smaller.\\
+Cavity and fin fluid--structure interaction with heat transfer
+\citep{soti2015flow,alamiri2011fluid,alsabery2019transient,zargartalebi2018fluid} &
+Fluid shear and buoyancy on a flexible boundary &
+One-way in the solid: the wall temperature is a by-product of the flow &
+Solver-to-solver comparison against the benchmark of \citet{turek2006proposal} &
+The solid is the source of the load: the eigenstrain of the wall sets the bow, and the bow
+sets the convective resistance that sets the temperature.\\
+Thermal buckling of plates, shells and strips
+\citep{mansfield1962bending,hoff1964buckling,ross1965buckling,mehrabi2025axisymmetric} &
+Thermal eigenstrain &
+No fluid at all &
+Classical stability criteria and post-buckling paths &
+The same eigenstrain, but in the small-slope regime where the bow changes the passage height,
+so that the stability problem has a hydraulic output.\\
+Conjugate wall conduction
+\citep{quintero2017laminar,arici2010heat,rahimi2024numerical,vishnuvardhanarao2009computational} &
+None: the wall is rigid &
+Two-way in the fluid, none in the solid &
+Exact series and computational solutions &
+The wall is simultaneously thick enough to conduct and thin enough to bend; \S\ref{sec:wallclosure}
+states exactly when the one-dimensional closure suffices and what the residual is.\\
+\midrule
+\textbf{Present work} &
+Thermal eigenstrain in an axially restrained strip &
+Two-way, iterated to convergence &
+Every closed form against an independent coupled finite-element solution on $24$ parameter sets &
+A design chart with a measured family-wide error of $0.4\%$ (\S\ref{sec:collapse}).\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 This paper makes seven contributions.
 (i) A complete and self-consistent statement of the coupled problem with the
@@ -1976,7 +2033,7 @@ between them, as it must for a layer that is neither fully developed nor freshly
 problem: the deformation raises the heat-transfer coefficient precisely where it constricts
 the passage, so that the wall runs cooler than a straight-channel estimate predicts.
 
-The wall temperature is $6.3\%$ higher in the computation than in the series-plus-conduction
+The wall temperature is $6.7\%$ higher in the computation than in the series-plus-conduction
 model ($34.26$ against $32.10$~K), and \S\ref{sec:wallclosure} resolves that gap completely.
 Of the $7.5\%$ difference between the computed mid-surface value and the reference-thickness
 closure, $4.21\%$ is the lengthening of the conduction path by the bow --- the interface sits
@@ -2222,7 +2279,8 @@ even at $1$~kW/m$^2$, where the bow is only $0.067\,H_0$, the pressure drop is
 already $7.4\%$ above the undeformed value. The mean wall temperature grows
 almost linearly, from $6.5$~K to $34.3$~K, with a slope of
 $6.9$~K per kW/m$^2$ against the $6.45$ predicted by the one-dimensional
-estimate; the small excess is again the developing boundary layer.
+estimate; the small excess is again the path lengthening and the mid-surface
+convention of \S\ref{sec:wallclosure}, not the entry region.
 
 Because the coupling is stopped once the predicted bow exceeds $0.45\,H_0$,
 the coupled sweep brackets rather than reaches the kinematic ceiling. The
@@ -2473,7 +2531,13 @@ $3.0\%$ for the peak bending stress.
 (ii) Material data: the wall properties are representative datasheet values,
 and the sensitivities of \S\ref{sec:material} translate a $\pm10\%$ change of
 $k_s$ into roughly $\mp12\%$ of the bow and a $\pm10\%$ change of $\alpha$ into
-roughly $\pm10\%$ of the bow at the design point.
+roughly $\pm10\%$ of the bow at the design point. The collapse of
+\S\ref{sec:collapse} converts that into a hydraulic number, because $\Pi$ depends
+on the material only through $a$: at the design point $\dd\ln\Pi/\dd a=3.9$, so a
+$\pm10\%$ uncertainty in $\alpha$ moves the strip resistance by $\pm17\%$. The chart
+is therefore as good as the expansion coefficient near its upper end, which is why
+it is published as a curve with a stated slope rather than as a coefficient that a
+designer might extrapolate.
 (iii) Fluid properties: constant-property water over a computed passage
 temperature rise of at most $2.8$~K, with a viscosity sensitivity of about
 $7\%$ over that range.

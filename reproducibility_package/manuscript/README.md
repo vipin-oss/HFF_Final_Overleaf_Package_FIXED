@@ -22,8 +22,8 @@ for both build layouts); the first real compile will happen in Overleaf. See
 main.tex                 the manuscript (article class, 11 pt, A4, single column)
 references.tex           generated bibliography (thebibliography, 55 entries)
 references.bib           55 entries: 46 articles, 7 books, 2 book chapters
-figures/fig01..fig12     PDF (vector) and PNG (400 dpi) of every figure
-tables/table_*.tex       nine generated LaTeX tables (\tabinput by main.tex)
+figures/fig01..fig16     PDF (vector) and PNG (400 dpi) of every figure
+tables/table_*.tex       thirteen generated LaTeX tables (\tabinput by main.tex)
 README.md                this file
 BUILD_REPORT.md          how the package was built, what was verified, what was not
 VALIDATION_REPORT.md     numerical results, conservation, verification and DOI evidence
@@ -48,6 +48,8 @@ Figure and table inventory (all produced by `../program/run_all.py` from
 | 12 | `fig12_model_form.pdf` | model-form error of the frozen-force closure |
 | 13 | `fig13_asymptotics.pdf` | Sturm--Liouville series vs computed Nusselt number; scaling collapse |
 | 14 | `fig14_pressure_law.pdf` | closed-form hydraulic resistance vs computed pressure drop |
+| 15 | `fig15_pressure_series.pdf` | series, exact quadrature and coupled pressure drop against the bow |
+| 16 | `fig16_collapse.pdf` | collapse of the strip resistance over the five sweeps |
 
 | Table | File | Content |
 |---|---|---|
@@ -63,6 +65,9 @@ Figure and table inventory (all produced by `../program/run_all.py` from
 | 10 | `table_verification.tex` | code-verification benchmarks |
 | 11 | *(in `main.tex`)* | nested iterations, tolerances and test inventory (Appendices B–C) |
 | 12 | `table_asymptotics.tex` | semi-analytical model against the coupled computation |
+| 13 | `table_pressure_series.tex` | series, quadrature and coupled pressure drop against the bow |
+| 14 | `table_thermal_path.tex` | attribution of the wall temperature to path lengthening |
+| 15 | `table_collapse.tex` | collapse of the strip resistance over the five sweeps |
 
 ## Compile locally
 
@@ -97,7 +102,7 @@ from the repository root without edits.
 
 1. Build the archive with `python3 tools/build_zip.py` from the repository root (or use the
    ready-made `hff_journal_submission.zip`). The archive contains `main.tex`,
-   `references.bib`, `figures/` and `tables/` at its **root**.
+   `main.tex`, `references.tex`, `references.bib`, `figures/` and `tables/` at its **root**.
 2. Overleaf → *New Project* → *Upload Project* → choose the ZIP.
 3. The project opens with `main.tex` as the root document; press *Recompile*. The first pass
    reports undefined references; a second pass resolves them. No BibTeX run is needed,
