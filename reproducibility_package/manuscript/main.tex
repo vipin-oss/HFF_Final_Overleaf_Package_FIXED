@@ -78,47 +78,22 @@ a coupled conjugate flow, heat-transfer and thermoelastic analysis}
 
 \begin{structuredabstract}
 \abshead{Purpose}
-This paper quantifies how a thin, axially restrained channel wall deforms
-under the heat that it conducts, and how that self-deformation feeds back on
-the flow and on the conjugate heat transfer that it bounds.
+This paper quantifies how a thin, axially restrained channel wall deforms under the heat it conducts, and how that deformation feeds back on the flow and heat transfer.
 
 \abshead{Design/methodology/approach}
-A plane channel whose upper wall over a heated segment is a pinned--pinned
-strip is described by the steady incompressible Navier--Stokes and energy
-equations in a body-fitted deformed passage, by a monolithic conjugate
-conduction problem that shares the interface temperature unknowns, and by a
-von~K\'arm\'an beam--column strip with axial compatibility. The sub-problems
-are coupled by a partitioned fixed-point iteration, discretised with
-$P_2$--$P_1$ Taylor--Hood triangles and streamline-upwind Petrov--Galerkin
-stabilisation, and verified against classical channel solutions, closed-form
-beam--column results and a grid-convergence study.
+A plane channel whose heated upper wall is a pinned--pinned strip is solved with steady incompressible Navier--Stokes and energy equations in the deformed passage, a monolithic conjugate conduction problem sharing interface temperatures, and a von~K\'arm\'an beam--column strip with axial compatibility, coupled by a partitioned fixed-point iteration and discretised with $P_2$--$P_1$ Taylor--Hood triangles and streamline-upwind stabilisation.
 
 \abshead{Findings}
-At $\ReDh=50$ and $q''=5\,\mathrm{kW/m^2}$ the strip bows
-$0.441\,H_0$, of which $40\%$ is geometric amplification of the linear bow;
-the pressure drop rises from $144$ to $315$~Pa and the core velocity by
-$79\%$. The thickness-averaged wall temperature rise is $34.3$~K, $6.2\%$
-above the one-dimensional estimate, and the compressive membrane resultant
-reaches $0.28$ of the Euler load. The frozen-force closure over-predicts the
-bow by $1.2\%$ at $5\,\mathrm{kW/m^2}$ and by $14.9\%$ at
-$10\,\mathrm{kW/m^2}$.
+At $\ReDh=50$ and $q''=5\,\mathrm{kW/m^2}$ the strip bows $0.441\,H_0$, $40\%$ of it geometric amplification, and the pressure drop rises from $144$ to $315$~Pa. The wall temperature rise is $34.3$~K, $6.2\%$ above the one-dimensional estimate, and the membrane resultant reaches $0.28$ of the Euler load. The frozen-force wall closure over-predicts the bow by $1.2\%$ at $5\,\mathrm{kW/m^2}$ and by $14.9\%$ at $10\,\mathrm{kW/m^2}$.
 
 \abshead{Research limitations/implications}
-The wall is a reduced beam--column strip, the flow is steady,
-two-dimensional, laminar and of constant properties, no experiment is
-reported, and the kinematic ceiling $|w|/H_0\lesssim0.5$ bounds the
-admissible load.
+The wall is a reduced beam--column strip; the flow is steady, two-dimensional, laminar and constant-property; no experiment is reported; and the kinematic ceiling $|w|/H_0\lesssim0.5$ bounds the admissible load.
 
 \abshead{Practical implications}
-Deformation, not strength or buckling, is the binding constraint on the
-operating range, and the amplification is large enough that pressure-only
-estimates of the hydraulic resistance are unusable once the thermal bow
-develops.
+Deformation, not strength or buckling, binds the operating range, and pressure-only estimates of the hydraulic resistance fail once the thermal bow develops.
 
 \abshead{Originality/value}
-The thermoelastic--hydraulic loop is closed, solved and verified as a whole,
-and the model-form error of the wall closure that design estimates are most
-likely to adopt is quantified across its admissible range.
+The thermoelastic--hydraulic loop is closed, solved and verified as a whole, and the model-form error of the wall closure used in design estimates is quantified across the admissible range.
 
 \vspace{3pt}
 \noindent\textbf{Keywords:} conjugate heat transfer; fluid--structure

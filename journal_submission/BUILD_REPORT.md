@@ -13,7 +13,7 @@ references.
 | Item | v1 (superseded) | v2 (this package) |
 |---|---|---|
 | Length | 16 pp, report-like density | 2 190 source lines, 12 560 words of prose, 34 display equations, 12 figures, 11 tables, 3 appendices; estimated 30–36 compiled pages |
-| Front matter | plain `abstract` | Emerald-style structured abstract (Purpose / Design / Findings / Research limitations / Practical implications / Originality, 232 words), keywords, article classification, nomenclature table |
+| Front matter | plain `abstract` | Emerald-style structured abstract (Purpose / Design / Findings / Research limitations / Practical implications / Originality, 249 words including the six headings), keywords, article classification, nomenclature table |
 | References | 18 entries | **55 entries** (46 articles, 7 books, 2 chapters); **every entry cited**; **48 DOIs resolved against Crossref on 21 Oct 2026** |
 | Structure | intro → formulation → results → verification → conclusions | introduction and literature review with a stated gap → physical model and assumptions → governing equations and non-dimensionalisation → full reduced-wall derivation → computational formulation → boundary-condition table → grid independence with GCI → verification → results → discussion → limitations → conclusions → three appendices |
 | Figures | 9 | 12, all rendered from the current run of `program/run_all.py` |

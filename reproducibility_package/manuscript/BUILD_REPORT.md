@@ -13,7 +13,7 @@ references.
 | Item | v1 (superseded) | v2 (this package) |
 |---|---|---|
 | Length | 16 pp, report-like density | 2 190 source lines, 12 560 words of prose, 34 display equations, 12 figures, 11 tables, 3 appendices; estimated 30–36 compiled pages |
-| Front matter | plain `abstract` | Emerald-style structured abstract (Purpose / Design / Findings / Research limitations / Practical implications / Originality, 232 words), keywords, article classification, nomenclature table |
+| Front matter | plain `abstract` | Emerald-style structured abstract (Purpose / Design / Findings / Research limitations / Practical implications / Originality, 249 words including the six headings), keywords, article classification, nomenclature table |
 | References | 18 entries | **55 entries** (46 articles, 7 books, 2 chapters); **every entry cited**; **48 DOIs resolved against Crossref on 21 Oct 2026** |
 | Structure | intro → formulation → results → verification → conclusions | introduction and literature review with a stated gap → physical model and assumptions → governing equations and non-dimensionalisation → full reduced-wall derivation → computational formulation → boundary-condition table → grid independence with GCI → verification → results → discussion → limitations → conclusions → three appendices |
 | Figures | 9 | 12, all rendered from the current run of `program/run_all.py` |
@@ -92,10 +92,11 @@ produced here**. Instead:
 1. **Strict parse of the whole document.** `pylatexenc`'s `LatexWalker` in non-tolerant mode
    consumed all 112 801 characters of `main.tex` with no parse error, which excludes
    unbalanced braces and mismatched `\begin`/`\end` pairs.
-2. **Custom audit** (`tools/../program/.venv` script, output kept in the build log):
-   114 labels, 83 `\ref`/`\eqref` uses, 0 duplicate labels, 0 unresolved references
-   (the nine `tab:*` references resolve to labels inside `tables/*.tex`), 55 citations,
-   55 bibliography keys, **0 uncited keys and 0 undefined citations**.
+2. **Custom audit** — `python3 tools/check_tex.py`, which is shipped with the package:
+   123 labels (114 in the manuscript, 9 inside the generated table fragments), 83
+   `\ref`/`\eqref` uses, 0 duplicate labels, 0 unresolved references, 0 unused
+   bibliography keys, 55 citations against 55 keys, **0 undefined citations**, all 12 figure
+   files present, all 9 `\tabinput` fragments present. Exit code 0.
 3. **Path resolution in both layouts.** Each `\includegraphics` file exists in
    `journal_submission/figures/`; `\tabinput{...}` resolves `tables/` first and falls back to
    `journal_submission/tables/`; `\graphicspath` lists both directories; the bibliography is
@@ -137,6 +138,7 @@ journal_submission/BUILD_REPORT.md      this file
 journal_submission/VALIDATION_REPORT.md rewritten (numbers, conservation, DOI log)
 main.tex                                unchanged wrapper (\input of the v2 manuscript)
 tools/build_zip.py                      added (archive builder + verifier)
+tools/check_tex.py                      added (label/reference/citation/figure audit)
 hff_journal_submission.zip              rebuilt from v2 sources
 program/hff/figures.py                  figure numbering aligned with the manuscript order
 program/hff/tables.py                   mesh-table unit label fixed; GCI block unchanged
