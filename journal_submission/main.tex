@@ -94,19 +94,20 @@ own temperature field, and the feedback on the conjugate flow and heat transfer 
 Plane-strain thermoelasticity is reduced to an axially restrained beam--column strip; the flow
 is treated in the lubrication limit and the entry problem by a Sturm--Liouville expansion.
 Closed forms follow for the resistance (a Gauss hypergeometric function generalised to
-self-similar shapes), the bow and the buckling threshold, the axial map is proved a
-contraction, and the thermal closure is shown to be exact for the horizontal mean. A coupled
-finite-element solution on $24$ parameter sets verifies every formula.
+self-similar shapes), the bow and the buckling threshold; the axial map is proved a contraction
+and the thermal closure is exact for the horizontal mean. A coupled finite-element solution on
+$19$ parameter sets verifies every formula.
 
 \abshead{Findings}
 At $\ReDh=50$ and $q''=5\,\mathrm{kW/m^2}$ the strip bows $0.441\,H_0$ and the pressure drop
 rises from $144$ to $315$~Pa; the resistance integral over the computed shape reproduces this
-to $0.03\%$, whereas the $\sin^2$ idealisation underpredicts it by $15\%$. One shape integral
-without fitted coefficients reproduces the strip resistance of all $24$ runs to $0.4\%$. The
-wall temperature rise is $34.3$~K, its $7.5\%$ excess over one-dimensional conduction being
-path lengthening plus a mid-surface convention, not a convective effect. The frozen-force
-closure overpredicts the bow by $1.2\%$ at the design point and $14.9\%$ at
-$10\,\mathrm{kW/m^2}$. Deformation raises the local Nusselt number by up to $70\%$.
+to $0.03\%$, whereas the $\sin^2$ idealisation underpredicts it by $15\%$. One shape integral,
+with no fitted coefficient, reproduces the strip resistance of all $19$ distinct parameter sets
+to $0.40\%$, and an explicit inequality bounds the residual shape sensitivity at $1.2\%$. The
+wall rise is $34.3$~K, its $7.5\%$ excess over one-dimensional conduction being path
+lengthening plus a mid-surface convention. The frozen-force closure overpredicts the bow by
+$1.2\%$ at the design point and $14.9\%$ at $10\,\mathrm{kW/m^2}$; deformation raises the local
+Nusselt number by up to $70\%$.
 
 \abshead{Research limitations/implications}
 Plane strain, steady laminar flow, small slopes ($|w|/H_0\le0.45$); no experiment.
@@ -117,7 +118,7 @@ the range.
 
 \abshead{Originality/value}
 The loop is closed in closed form, every formula is verified, and the hydraulic feedback
-collapses onto one curve.
+collapses onto one certified curve.
 
 \vspace{3pt}
 \noindent\textbf{Keywords:} conjugate heat transfer; thermoelastic stability;
@@ -343,9 +344,11 @@ stability lemma in the shape; and an exact statement of the thermal closure of t
 from which the residual of the one-dimensional model is attributed to the lengthening of the
 conduction path (\S\ref{sec:analytical}, Appendix~\ref{app:proofs}).
 (vii) A collapse of the hydraulic feedback across the parameter space: a single shape integral,
-with no fitted coefficient, reproduces the strip resistance of all twenty-four converged runs
-of the five sweeps to $0.4\%$, which converts the design rule of (ii) from a formula checked at
-a point into a chart with a measured error bar (\S\ref{sec:collapse}).
+with no fitted coefficient, reproduces the strip resistance of all nineteen distinct parameter
+sets of the five sweeps to $0.40\%$, and an explicit inequality bounds the shape
+sensitivity of that number at $1.17\%$, which converts the design rule of (ii) from a formula
+checked at a point into a chart with a measured and a certified error bar
+(\S\ref{sec:collapse}).
 
 \S\ref{sec:limitations} states what the model excludes; the reduced
 structural model is the most consequential of those exclusions and it is not
@@ -2053,11 +2056,12 @@ carried forward as a conservative margin, as \S\ref{sec:wallclosure} explains.
 Everything compared so far has been anchored at one design point, and a design formula that
 has been checked at one point is a formula, not a law. The five sweeps of
 \S\ref{sec:sensitivity}--\S\ref{sec:material} supply the family needed to test the stronger
-statement. Every converged run among them --- twenty-four coupled computations spanning
-$\ReDh=25$--$100$, $d=2.5$--$5$~mm, $k_s=0.25$--$0.6$~W\,m$^{-1}$K$^{-1}$,
-$\alpha=1.5$--$5\times10^{-5}$~K$^{-1}$ and $q''=1$--$5$~kW/m$^2$ --- is a separate solution of
-the whole loop, with its own bow, flow, temperature field and membrane force; none of them
-enters the other.
+statement. The sweeps contain nineteen distinct parameter sets, spanning $\ReDh=25$--$100$,
+$d=2.5$--$5$~mm, $k_s=0.25$--$0.6$~W\,m$^{-1}$K$^{-1}$, $\alpha=1.5$--$5\times10^{-5}$~K$^{-1}$
+and $q''=1$--$5$~kW/m$^2$. They are delivered as twenty-four coupled solutions because every
+sweep is centred on the design point, which therefore appears five times; the duplicates are
+counted once below. Each is a separate solution of the whole loop, with its own bow, flow,
+temperature field and membrane force, and none of them enters another.
 
 The hypothesis is that the strip resistance is a function of the bow ratio alone,
 \begin{equation}
@@ -2067,12 +2071,46 @@ The hypothesis is that the strip resistance is a function of the bow ratio alone
 where $\hat w_0$ is the \emph{design-point} shape and nothing else: no Reynolds number, no
 thickness, no conductivity, no expansion coefficient, and no fitted coefficient enters
 \eqref{eq:master}. Table~\ref{tab:collapse} and Figure~\ref{fig:collapse} show that it holds.
-The single curve predicts all twenty-four runs to within $0.40\%$, with a mean absolute error
-of $0.11\%$; the largest deviation is $0.40\%$ in the thickness sweep, which is the sweep that
+The single curve predicts every one of them to within $0.40\%$, with a mean absolute error
+of $0.14\%$; the largest deviation is $0.40\%$ in the thickness sweep, which is the sweep that
 changes the shape most, and the smallest is $0.07\%$ in the Reynolds sweep, which changes the
 shape not at all. The same table gives the two alternatives at the same $a$: the kinematic
 $\sin^2$ law is off by up to $19.7\%$ of the strip resistance ($15.1\%$ of the total pressure
 drop) and the moment series truncated at $O(a^3)$ by up to $15.2\%$.
+
+That agreement can be bounded rather than merely observed. Write $\Pi(a;\hat w)$ for
+\eqref{eq:master} evaluated on an arbitrary admissible profile and let $\hat w_0$ be the
+design-point shape. Since
+\begin{equation}
+\frac{\partial}{\partial\hat w}\bigl(1-a\hat w\bigr)^{-3}=3a\bigl(1-a\hat w\bigr)^{-4}
+\label{eq:certderiv}
+\end{equation}
+increases with $\hat w$ on $[0,1]$, the mean-value theorem may be applied with the \emph{larger} of
+the two shapes, and for $0\le a<1$
+\begin{equation}
+\bigl|\Pi(a;\hat w)-\Pi(a;\hat w_0)\bigr|
+\le\int_0^1\frac{3a\,|\hat w-\hat w_0|}
+{\bigl[1-a\max(\hat w,\hat w_0)\bigr]^{4}}\,\dd\xi
+\le\frac{3a}{(1-a)^4}\,\|\hat w-\hat w_0\|_{L^\infty}.
+\label{eq:certificate}
+\end{equation}
+The right-hand side needs nothing but the two profiles, so it can be evaluated for every run
+without a fit, a parameter or an assumption about the shape family.
+Table~\ref{tab:certificate} does exactly that. Across the nineteen distinct parameter sets
+the normalised bow differs from the design-point bow by at most $1.2\%$ of itself
+($\|\hat w-\hat w_0\|_\infty\le0.0120$), the weighted bound \eqref{eq:certificate} is at most
+$1.17\%$, and the deviation actually observed is at most $0.40\%$. The bound exceeds the deviation
+it covers by a factor of between $1.5$ and $3.0$, and it is sharp: evaluated against the integral it
+bounds, it overestimates by less than $0.5\%$, so the inequality is not loose by construction.
+
+Two consequences matter. First, substituting each run's \emph{own} computed shape into
+\eqref{eq:master} reproduces its coupled pressure drop to $0.085\%$, an order of magnitude
+better than the collapse itself: the $0.40\%$ is the difference between shapes, not an error of
+the integral, and the integral is therefore verified independently of the collapse. Second, the
+residual sensitivity of the design chart to the shape family is now an explicit function of a
+measurable quantity, $\|\hat w-\hat w_0\|_\infty$, instead of a hope that the family is
+sufficiently narrow; for a new parameter set outside the sweeps, \eqref{eq:certificate} gives the
+error of reading the chart from the shape difference alone.
 
 The collapse is not an accident of the chosen parameters; it is what the structure of the
 reduced model requires. The bow shape is the solution of a linear problem driven by
@@ -2096,11 +2134,13 @@ of the computation that verifies it are of the same size.
 
 \tabinput{table_collapse.tex}
 
+\tabinput{table_certificate.tex}
+
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\textwidth]{fig16_collapse.pdf}
 \caption{Collapse of the hydraulic feedback. (a) The strip resistance ratio $\Pi$ of all
-twenty-four converged coupled runs against the bow ratio $a$, with the master integral
+nineteen distinct parameter sets against the bow ratio $a$, with the master integral
 \eqref{eq:master} evaluated on the design-point shape (no fitted coefficient) and the
 kinematic $\sin^2$ law. (b) Deviation of every run from the master integral, in per cent; the
 runs lie inside $\pm0.4\%$ across the whole parameter space, whereas the $\sin^2$ law departs
@@ -2674,9 +2714,11 @@ and that the excess collapses onto $\bigl(H_0/H\bigr)^{0.79}$ with $R^2=0.81$, b
 two exponents $(\tfrac12,1)$ that bracket a layer thinned by acceleration and by wall shear.
 \item It is shown that the hydraulic feedback is a function of the bow ratio alone: one shape
 integral, evaluated once on the design-point profile and containing no fitted coefficient,
-reproduces the strip resistance of all twenty-four converged runs of the five sweeps
-($\ReDh=25$--$100$, $d=2.5$--$5$~mm, and the conductivity and expansion sweeps) to $0.4\%$,
-whereas the kinematic $\sin^2$ law departs from the same runs by up to $19.7\%$. The design rule
+reproduces the strip resistance of all nineteen distinct parameter sets of the five sweeps
+($\ReDh=25$--$100$, $d=2.5$--$5$~mm, and the conductivity and expansion sweeps) to $0.40\%$,
+whereas the kinematic $\sin^2$ law departs from the same runs by up to $19.7\%$; and that the
+shape sensitivity of the collapse is bounded, not assumed, by
+\eqref{eq:certificate} at $1.17\%$. The design rule
 therefore has a measured family-wide error bar, and the chart that carries it is one curve.
 \end{enumerate}
 

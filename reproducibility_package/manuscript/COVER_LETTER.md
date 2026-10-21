@@ -27,12 +27,13 @@ whose height the bow controls, so the loop has no natural truncation.
    self-similar shapes, with an a priori truncation bound and a stability lemma in the shape.
 2. *The hydraulic feedback collapses onto one curve.* A single shape integral, evaluated once
    on the design-point profile and containing no fitted coefficient, reproduces the strip
-   resistance of all twenty-four converged coupled runs of five independent parameter sweeps to
-   0.40 % (mean 0.11 %), against 19.7 % for the kinematic $\sin^2$ law. This converts the design
+   resistance of all nineteen distinct parameter sets of five independent parameter sweeps to
+   0.40 % (mean 0.14 %), against 19.7 % for the kinematic $\sin^2$ law, and the deviation is
+   bounded by an explicit inequality rather than merely measured. This converts the design
    rule from a formula checked at a point into a chart with a measured, family-wide error bar —
    the point on which single-point studies are usually criticised.
 3. *Every number is computed twice.* The reduced model is verified against an independent
-   coupled finite-element solution on twenty-four parameter sets, and the solver is verified
+   coupled finite-element solution on nineteen parameter sets, and the solver is verified
    against classical analytical solutions (plane-channel Nusselt number to 0.5 %, the
    closed-form beam–column solution to $2.5\times10^{-8}$, an exact Neumann wall to
    $5\times10^{-14}$), with a Grid Convergence Index on five quantities of interest.

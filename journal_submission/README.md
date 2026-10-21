@@ -2,7 +2,7 @@
 
 Journal research article in the layout of the *International Journal of Numerical Methods
 for Heat & Fluid Flow* (Emerald): single-column, structured abstract, nomenclature placed
-after the field equations, fourteen figures, twelve tables, four appendices and 55
+after the field equations, sixteen figures, nineteen tables, four appendices and 55
 references. The section tree follows the journal's 2023 pattern (Gupta, Kumar, Kumar and
 Barak, HFF 33(6), 2250-2277): Introduction -> Field equations (with limiting cases) ->
 Nomenclature -> Problem formulation -> Solution of the problem -> Numerical results and
@@ -23,7 +23,7 @@ main.tex                 the manuscript (article class, 11 pt, A4, single column
 references.tex           generated bibliography (thebibliography, 55 entries)
 references.bib           55 entries: 46 articles, 7 books, 2 book chapters
 figures/fig01..fig16     PDF (vector) and PNG (400 dpi) of every figure
-tables/table_*.tex       thirteen generated LaTeX tables (\tabinput by main.tex)
+tables/table_*.tex       fourteen generated LaTeX tables (\tabinput by main.tex)
 README.md                this file
 BUILD_REPORT.md          how the package was built, what was verified, what was not
 VALIDATION_REPORT.md     numerical results, conservation, verification and DOI evidence
@@ -68,6 +68,7 @@ Figure and table inventory (all produced by `../program/run_all.py` from
 | 13 | `table_pressure_series.tex` | series, quadrature and coupled pressure drop against the bow |
 | 14 | `table_thermal_path.tex` | attribution of the wall temperature to path lengthening |
 | 15 | `table_collapse.tex` | collapse of the strip resistance over the five sweeps |
+| 16 | `table_certificate.tex` | shape mismatch and the bound that certifies the collapse |
 
 ## Compile locally
 
