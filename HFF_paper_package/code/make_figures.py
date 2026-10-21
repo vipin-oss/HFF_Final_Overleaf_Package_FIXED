@@ -26,7 +26,8 @@ FIG = HERE.parent / "figures"
 FIG.mkdir(exist_ok=True)
 RES = HERE / "results"
 
-BLUE, VERM, GREEN, BLACK, GREY = "#0072B2", "#D55E00", "#009E73", "#000000", "#666666"
+BLUE, VERM, GREEN, BLACK, GREY = "#0072BD", "#D95319", "#009E73", "#000000", "#666666"
+PINK, YELLOW = "#CC79A7", "#EDB120"   # colour set of the authors' earlier MATLAB figures
 
 plt.rcParams.update({
     "font.family": "serif",
@@ -38,11 +39,16 @@ plt.rcParams.update({
     "ytick.labelsize": 9,
     "legend.fontsize": 8.5,
     "axes.linewidth": 0.8,
-    "xtick.direction": "in",
-    "ytick.direction": "in",
-    "xtick.top": True,
-    "ytick.right": True,
-    "lines.linewidth": 1.3,
+    "xtick.direction": "out",
+    "ytick.direction": "out",
+    "xtick.top": False,
+    "ytick.right": False,
+    "axes.grid": True,
+    "grid.linestyle": "-",
+    "grid.linewidth": 0.4,
+    "grid.color": "#d4d4d4",
+    "axes.axisbelow": True,
+    "lines.linewidth": 1.7,
     "pdf.fonttype": 42,
     "ps.fonttype": 42,
     "savefig.bbox": "tight",
@@ -52,6 +58,10 @@ W = 6.3  # inches, full text width
 
 
 def save(fig, name: str) -> None:
+    for ax in fig.axes:                      # minor dotted grid, as in the authors' earlier figures
+        ax.minorticks_on()
+        ax.grid(which="minor", linestyle=":", linewidth=0.3, color="#e0e0e0")
+        ax.tick_params(which="minor", length=1.5)
     for ext in ("pdf", "eps"):
         fig.savefig(FIG / f"{name}.{ext}")
     fig.savefig(FIG / f"{name}.png", dpi=200)
@@ -85,7 +95,7 @@ def fig2_bowing(p: hm.Params) -> None:
     a.set_xlim(0, 1)
     a.set_ylim(0, 0.62)
     a.legend(loc="lower center", frameon=False, handlelength=2.4)
-    tag(a, "(a)")
+    tag(a, "(a)", y=0.28)
 
     q = np.linspace(50.0, 10e3, 100)
     wl, wf, ws = [], [], []
@@ -135,7 +145,7 @@ def fig3_q8() -> None:
     a.set_xticklabels([str(n) for n in nxs])
     a.set_title("full-edge pin ($u_y=0$ on each end edge)", fontsize=9)
     a.legend(loc="center right", frameon=False, title="through-thickness elements", title_fontsize=8.5)
-    tag(a, "(a)")
+    tag(a, "(a)", y=0.28)
     for ny, s in sty.items():
         y = [runs[(nx, ny)]["CLAMP"]["d/2"] for nx in nxs]
         b.plot(nxs, y, ms=4.5, mfc="white", **s)
@@ -216,7 +226,7 @@ def fig5_nonlinear(p: hm.Params) -> None:
     a.set_xlim(0, 1)
     a.set_ylim(0, 0.85)
     a.legend(loc="upper center", frameon=False, handlelength=2.2, fontsize=8, bbox_to_anchor=(0.55, 1.0))
-    tag(a, "(a)")
+    tag(a, "(a)", y=0.28)
     cx = np.array(fine["nonlinear"]["col_x"]) / L
     b.plot(cx, np.array(fine["linear"]["col_N"]) / 1e3, color=GREEN, ls=":", label="Q8, linear")
     b.plot(cx, np.array(fine["nonlinear"]["col_N"]) / 1e3, color=BLACK, ls="-", label="Q8, nonlinear")
@@ -231,9 +241,48 @@ def fig5_nonlinear(p: hm.Params) -> None:
     save(fig, "fig5_q8_nonlinear")
 
 
+# --------------------------------------------------------------------------------------
+def fig6_convergence(p: hm.Params) -> None:
+    C = json.loads((RES / "convergence.json").read_text())
+    SL = json.loads((RES / "slenderness.json").read_text())
+    lv = C["levels"]
+    h = np.array([x["h_x"] for x in lv]) * 1e3
+    fig, (a, b) = plt.subplots(1, 2, figsize=(W, 2.75), gridspec_kw={"wspace": 0.34})
+    for key, ric, col, mk, ls, lab in (("w_q8", "w_q8_richardson", BLUE, "o", "-", "Q8 quadrilaterals"),
+                                       ("w_p2", "w_p2_richardson", VERM, "s", "--", "P2 triangles")):
+        w = np.array([x[key] for x in lv])
+        wext = C[ric][1]
+        err = np.abs(w - wext) / wext
+        a.loglog(h[:-1], err[:-1], marker=mk, ls=ls, color=col, ms=4.5, mfc="white", label=f"{lab}, $p={C[ric][0]:.2f}$")
+    hh = np.array([h[0], h[-2]])
+    a.loglog(hh, 0.6 * (hh / hh[0]) ** 2 * 1.0e-1 * 0.5 * 0.55, color=BLACK, ls=":", lw=1.0, label="slope 2")
+    a.set_xlabel("axial element size $h_x$  (mm)")
+    a.set_ylabel("$|w-w_{\\rm ext}|\\,/\\,w_{\\rm ext}$")
+    from matplotlib.ticker import NullFormatter, FixedLocator, FixedFormatter
+    a.xaxis.set_minor_formatter(NullFormatter())
+    a.xaxis.set_major_locator(FixedLocator([0.25, 0.5, 1, 2]))
+    a.xaxis.set_major_formatter(FixedFormatter(["0.25", "0.5", "1", "2"]))
+    a.legend(loc="upper left", frameon=False, fontsize=8, bbox_to_anchor=(0.0, 0.9))
+    tag(a, "(a)", y=0.28)
+    rows = SL["rows"]
+    dl = np.array([r["d_over_L"] for r in rows])
+    dev = np.array([100 * (r["fe_w_nl"] / r["beam"]["w_sc"] - 1) for r in rows])
+    b.plot(dl, dev, "o-", color=BLUE, ms=4.5, mfc="white", label="P2 FE vs beam--column (sc)".replace("--", "\u2013"))
+    xx = np.linspace(0, dl.max(), 100)
+    b.plot(xx, dev[0] * (xx / dl[0]) ** 2, color=GREY, ls="--", lw=1.1, label="$\\propto (d/L)^2$")
+    b.axhline(0, color=BLACK, lw=0.7, ls=":")
+    b.set_xlabel("slenderness $d/L$")
+    b.set_ylabel("departure of $w_{\\max}$ from beam model  (%)")
+    b.set_xlim(0, 0.11)
+    b.legend(loc="upper left", frameon=False, fontsize=8, bbox_to_anchor=(0.0, 0.93))
+    tag(b, "(b)", y=0.28)
+    save(fig, "fig6_convergence")
+
+
 if __name__ == "__main__":
     P = hm.Params()
     fig2_bowing(P)
     fig3_q8()
     fig4_passage(P)
     fig5_nonlinear(P)
+    fig6_convergence(P)

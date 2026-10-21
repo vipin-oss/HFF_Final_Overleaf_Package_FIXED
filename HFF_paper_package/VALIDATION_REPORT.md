@@ -10,10 +10,17 @@ are consistency checks and are not offered as scientific validation. Numerical t
 * Searched all four remote branches (`main`, `arena/c875f9b3-…`, `claude/independent-audit-7c9749f`,
   `hff-manuscript-package`) for earlier FEM research papers. **None exists**: the repository holds a chapter-style
   manuscript (`chapters/ch01–ch11`), audit/reconciliation notes and reference tables only.
-* Therefore no previous FEM paper was used as a template. Structure, figure conventions and referencing follow the
-  Emerald/HFF author guidelines (structured abstract ≤ 250 words, ≤ 6 keywords, Harvard references, Roman-numeral tables,
-  EPS/PDF figures, 280 words per float). Published HFF fluid–structure papers (Alsabery 2019, Saleh 2025) are cited as
-  literature; their full text was **not** available, so their figure style was not copied.
+* The HFF repository has no earlier FEM paper, but the author's other repositories do. The author's own FEM paper
+  (`vipin-oss/fem_1_submitted_fead`, `final_R1.tex`; also `fem_2_submitted_fead`) was inspected as the structure and
+  figure template. Adopted: introduction ending in a numbered contribution list; formulation → particular cases →
+  finite-element formulation → numerical results (parameters, verification against closed form first, mesh convergence
+  with observed order, parametric studies) → limitations list → conclusions; figure conventions from the MATLAB scripts
+  (Times, axis font 9 / label 10, box on, ticks out, minor dotted grid, line width 1.5–2, blue/vermillion/green/pink/yellow
+  palette, black dashed reference, PDF+EPS+PNG). Not adopted: the `elsarticle` class and numeric references, because HFF
+  requires Harvard references and its own format. Figures are produced with matplotlib, not MATLAB, so match the
+  conventions but not pixel-for-pixel. EPS files could not be rendered here (no Ghostscript); PDFs and PNGs were inspected.
+* Published HFF fluid–structure papers (Alsabery 2019, Saleh 2025) are cited as literature; their full text was
+  **not** available, so their figure style was not copied.
 
 ## 2. Decision register (compact)
 
@@ -41,6 +48,7 @@ are consistency checks and are not offered as scientific validation. Numerical t
 | T8 | Restrained nonlinear wall, Q8, 24×2…192×8 | w = 2.221e-4 m = 0.444 H0; amplification 1.413; force relaxation 6.5 % (beam 5.9 %); mesh change 0.014 % (axial), 0.07 % (thickness) | `q8_nl.json` |
 | T9 | Independent code (scikit-fem P2 triangles, 3072 el.) | w_NL 2.222e-4 m (0.018 % from Q8); mid-span force 0.01 %; linear solution < 1e-4 %; mesh change 0.03 % | `fe_independent.py` |
 | T10 | Thin-strip study, d/L = 0.1 … 0.025 at fixed κ and N_c/N_cr = 0.275 | FE/beam(sc) = 1.038, 1.023, 1.009, 1.002, 0.998; force ratio → 1.00; mesh check at d/L=0.025: 0.01 % | `slenderness_study.py` → `slenderness.json` |
+| T10b | Simultaneous h-refinement 12×2…192×32, both codes (Richardson, GCI Fs=1.25) | observed order 1.99 (Q8), 1.97 (P2); extrapolated 2.2207e-4 m for both; GCI 0.0087 % / 0.016 % | `convergence_study.py` → `convergence.json` |
 | T11 | Closed forms vs independent `solve_bvp` (frozen force, self-consistent fixed point) | relative differences < 1e-6 / 1e-5 | `check_manuscript.py` C5 |
 | T12 | Hand recomputation of κ_th, θ̄, N_c, N_cr, p̄, Γp | exact to rounding | `check_manuscript.py` C5 |
 

@@ -210,6 +210,22 @@ itself changes by $\IndConv\,\%$ between the last two refinements. The two codes
 (St~Venant--Kirchhoff kinematics, eigenstrain model), so this agreement verifies the implementation and the
 discretisation but not the modelling assumptions.
 
+\emph{Observed order of convergence.} Both codes were also refined simultaneously in both directions
+($\CvCoarse$ to $\CvFine$ elements, $\CvLevels$ levels, ratio~2; \texttt{code/convergence\_study.py}). The mid-span bow
+converges with observed order $\CvOrderQ$ (Q8) and $\CvOrderP$ (P2), Figure~\ref{fig:conv}(a). Richardson extrapolation
+gives $\CvExtQ$~m and $\CvExtP$~m, which differ by $\CvExtDiffPct\,\%$; the grid-convergence index of the finest
+level is $\CvGciQ\,\%$ (Q8) and $\CvGciP\,\%$ (P2) \citep{celik2008procedure}, and the finest Q8 value is $\CvFineQP\,\%$ from the extrapolated
+one. The extrapolated value is a property of the discretised model, not an experimental truth.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig6_convergence.pdf}
+\caption{(a) Relative error of the restrained-wall bow against the Richardson-extrapolated value, simultaneous
+refinement, both codes. (b) Departure of the P2 nonlinear bow from the self-consistent beam--column value at fixed
+curvature and $N_c/\ncr$ (Table~\ref{tab:slender}).}
+\label{fig:conv}
+\end{figure}
+
 \emph{Is the departure from the beam model a thickness effect?} Beam theory contains neither shear flexibility nor
 end effects, so if the $\NLoverScPct\,\%$ of item (v) were due to the thickness of the strip ($d/L=0.1$) it must
 vanish as $d/L\to0$ at fixed dimensionless loading. The study of Table~\ref{tab:slender} keeps the free curvature and the

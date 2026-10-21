@@ -12,7 +12,7 @@
 
 ## Procedure
 `./build.sh` runs, in order: `hff_model.py`, `q8_strip.py`, `q8_nonlinear.py`, `fe_independent.py`,
-`slenderness_study.py`, `make_numbers.py`, `make_figures.py`; builds `figures/fig1_geometry.pdf/.eps`; then
+`slenderness_study.py`, `convergence_study.py`, `make_numbers.py`, `make_figures.py`; builds `figures/fig1_geometry.pdf/.eps`; then
 `pdflatex`, `bibtex`, `pdflatex` ×2 on `main.tex`. Then `python3 code/check_manuscript.py`.
 
 ## Result
@@ -21,7 +21,7 @@
 * The rebuilt `main.pdf` has text identical (`pdftotext`) to the included `main.pdf`, and the regenerated
   `numbers.tex`, `tab_*.tex` and all five `code/results/*.json` are byte-identical to the included files. (PDF binaries
   differ only by creation timestamps.)
-* `check_manuscript.py`: 53 checks, 0 failed (after the clean build).
+* `check_manuscript.py`: 54 checks, 0 failed (after the clean build).
 * LaTeX log: 0 overfull boxes, 7 underfull boxes (cosmetic, in the table/abstract line breaking), 0 undefined
   references or citations. BibTeX: no warnings.
 * `pdftotext` prints "Mismatch between font type and embedded font file" for `main.pdf`. This comes from the

@@ -190,6 +190,21 @@ def main() -> None:
     put("NLNmidAmpEuler", f"{1 / (1 - fine['nonlinear']['Nc_mid'] / NcrBeam):.3f}")
 
 
+    # ---- simultaneous h-refinement, both codes (Section 5) ----
+    CV = json.loads((RES / "convergence.json").read_text())
+    put("CvLevels", f"{len(CV['levels'])}")
+    put("CvCoarse", f"{CV['levels'][0]['nx']}\\times{CV['levels'][0]['ny']}")
+    put("CvFine", f"{CV['levels'][-1]['nx']}\\times{CV['levels'][-1]['ny']}")
+    put("CvOrderQ", f"{CV['w_q8_richardson'][0]:.2f}")
+    put("CvOrderP", f"{CV['w_p2_richardson'][0]:.2f}")
+    put("CvExtQ", sci(CV['w_q8_richardson'][1], 4))
+    put("CvExtP", sci(CV['w_p2_richardson'][1], 4))
+    put("CvGciQ", f"{100 * CV['w_q8_richardson'][2]:.4f}".rstrip("0"))
+    put("CvGciP", f"{100 * CV['w_p2_richardson'][2]:.3f}")
+    put("CvExtDiffPct", f"{100 * abs(CV['w_q8_richardson'][1] / CV['w_p2_richardson'][1] - 1):.4f}")
+    put("CvFineQP", f"{100 * abs(CV['levels'][-1]['w_q8'] / CV['w_q8_richardson'][1] - 1):.3f}")
+
+
     # ---- independent P2-triangle code and thin-strip study (Section 5) ----
     IND = json.loads((RES / "fe_independent.json").read_text())
     iruns = {(x["nx"], x["ny"]): x for x in IND["runs"]}

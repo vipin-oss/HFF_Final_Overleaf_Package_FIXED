@@ -21,8 +21,9 @@ flow-side number is labelled a reduced-order estimate. See `VALIDATION_REPORT.md
 | `code/q8_nonlinear.py` | restrained, geometrically nonlinear Q8 wall (Table VII, Fig. 5) |
 | `code/fe_independent.py` | independent check: scikit-fem, quadratic triangles (Section 5.4.3) |
 | `code/slenderness_study.py` | thin-strip study (Table VIII) |
+| `code/convergence_study.py` | simultaneous h-refinement, observed order, GCI, both codes (Fig. 6a) |
 | `code/make_numbers.py`, `code/make_figures.py` | regenerate macros, tables and figures from `code/results/*.json` |
-| `code/check_manuscript.py` | consistency checks (53; see `VALIDATION_REPORT.md` for which are numerical) |
+| `code/check_manuscript.py` | consistency checks (54; see `VALIDATION_REPORT.md` for which are numerical) |
 | `code/results/` | result data used in tables and figures |
 | `main.pdf` | built manuscript (18 pages) |
 | `BUILD_REPORT.md`, `VALIDATION_REPORT.md`, `MANIFEST.txt` | build environment and clean-copy result; tests, limitations, decisions; file list with SHA-256 |
